@@ -1,258 +1,413 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Athens Urban Observations Archive</title>
-<meta name="description" content="A collaborative online archive documenting Athens' transitional, informal, and reappropriated urban spaces through ethnography, visual research, cartography, and citizen contributions.">
-<link rel="icon" type="image/png" href="favicon.png" />
-<!-- Keywords -->
-<meta name="keywords" content="Athens, Urban Studies, Ethnography, Greece, Urban Anthropology, Micro-spaces, Graffiti, Wastelands, Friches, Cartography, Visual Ethnography, Urban Research, Athenian Spaces, Critical Urbanism">
-<meta property="og:image" content="athens-urban-observations-archive.webp">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Archives Architecturales — Brutal</title>
+  <meta name="description" content="Archives architecturales — collection d'images, plans et notices dans un style brutaliste." />
+  <style>
+/* ——————————————————————————————
+   BRUTAL MODERNE — esthétique radicale,
+   typographie massive, blocs durs,
+   monochrome, grands espacements, interactions abruptes
+—————————————————————————————— */
 
-<style>
-
-/* ----------- Global Styles ----------- */
-body {
-    margin: 0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    background: #fafafa;
-    color: #222;
-    line-height: 1.6;
+:root{
+  --bg:#fdfdfd;
+  --ink:#000;
+  --ink-mute:#777;
+  --panel:#f4f4f4;
+  --line:2px solid #000;
+  --gap:32px;
+  --radius:0;
+  --font-sans:"Inter", "Helvetica Neue", Arial, sans-serif;
+  /*--font-serif:"Playfair Display", Georgia, serif;*/
+  --font-serif:"Inter", "Helvetica Neue", Arial, sans-serif;
 }
 
-h1, h2, h3, h4 {
-    font-family: "Georgia", serif;
-    font-weight: 600;
-    color: #1a1a1a;
+/* Reset général */
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.4;}
+body{padding:40px;}
+*{box-sizing:border-box;letter-spacing:-0.01em;}
+
+/* Layout principal */
+.wrap{
+  max-width:1240px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:var(--gap);
 }
 
-.container {
-    width: 88%;
-    max-width: 1200px;
-    margin: auto;
-    padding: 40px 0;
+/* HEADER */
+header{
+  grid-column:1/-1;
+  border-bottom:var(--line);
+  padding-bottom:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+}
+.site-title{
+  font-family:var(--font-serif);
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+header small{font-size:12px;color:var(--ink-mute)}
+
+nav{display:flex;gap:18px;}
+nav a{
+  text-decoration:none;
+  color:var(--ink);
+  font-weight:600;
+  padding:6px 0;
+  border-bottom:2px solid transparent;
+}
+nav a:hover{
+  border-bottom:2px solid var(--ink);
 }
 
-header {
-    background: #111;
-    color: #fff;
-    padding: 40px 0;
+/* HERO SECTION */
+.hero{
+  padding:38px 32px;
+  background:var(--panel);
+  border:var(--line);
+  display:flex;flex-direction:column;
+  gap:18px;
+}
+.hero h1{
+  margin:0;
+  font-family:var(--font-serif);
+  font-size:40px;
+  line-height:1.1;
+}
+.hero p{margin:0;color:var(--ink-mute);max-width:70%;font-size:15px;}
+.hero .cta{
+  padding:12px 18px;
+  border:var(--line);
+  background:#fff;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.hero .cta:hover{
+  background:var(--ink);
+  color:#fff;
 }
 
-header h1 {
-    font-size: 2.4rem;
-    margin-bottom: 10px;
+/* ARCHIVES */
+.archive{
+  border:var(--line);
+  padding:20px;
+  background:#fff;
 }
 
-header .subtitle {
-    font-size: 1.2rem;
-    opacity: 0.8;
+/* Controls */
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:20px;
+}
+.controls input[type=search]{
+  flex:1;
+  padding:12px;
+  border:var(--line);
+  font-family:var(--font-sans);
+}
+.controls button{
+  padding:12px 14px;
+  border:var(--line);
+  background:#fff;
+  font-weight:700;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.controls button:hover{
+  background:var(--ink);
+  color:#fff;
 }
 
-nav {
-    margin-top: 25px;
+/* LISTE ARCHIVES */
+.list{display:flex;flex-direction:column;gap:22px;}
+
+.item{
+  border:var(--line);
+  background:#fafafa;
+  padding:0;
 }
 
-nav a {
-    color: #fff;
-    margin-right: 20px;
-    text-decoration: none;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
+.item summary{
+  cursor:pointer;
+  list-style:none;
+  padding:16px 18px;
+  border-bottom:var(--line);
+  display:flex;
+  justify-content:space-between;
+  font-weight:800;
+  font-size:15px;
+}
+.item summary::-webkit-details-marker{display:none;}
+
+.details-body{
+  padding:20px;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.thumb{
+  width:100%;
+  max-height:280px;
+  object-fit:cover;
+  border:var(--line);
+  margin-bottom:16px;
 }
 
-/* ----------- Section Styling ----------- */
-section {
-    margin-bottom: 60px;
+/* GRID infos */
+.info{
+  display:grid;
+  grid-template-columns:1fr 150px;
+  gap:18px;
 }
 
-.section-title {
-    font-size: 1.8rem;
-    border-left: 4px solid #333;
-    padding-left: 12px;
-    margin-bottom: 20px;
+.meta-tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.tag{
+  padding:4px 8px;
+  border:var(--line);
+  background:#fff;
+  font-size:11px;
+  font-weight:700;
+}
+.tag:hover{
+  background:var(--ink);
+  color:#fff;
 }
 
-/* Cards layout */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 25px;
+.meta-small{font-size:13px;color:var(--ink-mute);}
+
+/* Sidebar */
+aside{position:sticky;top:40px;}
+
+.meta{
+  border:var(--line);
+  padding:18px;
+  background:#fff;
+}
+.meta h3{
+  margin-top:0;
+  font-size:14px;
+  letter-spacing:0;
+}
+.meta button{
+  padding:6px 10px;
+  border:var(--line);
+  background:#fff;
+  font-size:12px;
+  font-weight:700;
+}
+.meta button:hover{
+  background:var(--ink);
+  color:#fff;
 }
 
-.card {
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    padding: 20px;
+/* FOOTER */
+footer{
+  grid-column:1/-1;
+  border-top:var(--line);
+  padding-top:16px;
+  margin-top:32px;
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
 }
 
-.card h3 {
-    margin-top: 0;
+/* Mobile */
+@media(max-width:980px){
+  body{padding:20px;}
+  .wrap{grid-template-columns:1fr;}
+  aside{order:3;margin-top:20px;}
+  .archive{order:2;}
+  .hero{order:1;}
+  .info{grid-template-columns:1fr;}
 }
 
-/* Lists */
-ul {
-    padding-left: 20px;
-}
-
-.key-questions {
-    background: #f0f0f0;
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 15px;
-}
-
-/* Footer */
-footer {
-    background: #111;
-    color: #ddd;
-    padding: 30px;
-    text-align: center;
-    font-size: 0.9rem;
-    margin-top: 60px;
-}
-
-</style>
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div>
+          <div class="site-title" style="font-weight: bold;">Athens Urban Observations Archive</div>
+          <div style="font-size:12px;color:var(--muted)">An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</div>
+        </div>
+      </div>
+      <nav aria-label="Navigation principale">
+        <a href="#archives">Project</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-<header>
-    <div class="container">
-        <h1>Athens Urban Observations Archive</h1>
-        <div class="subtitle">An Online Ethnographic and Urban Repository on Athenian Spaces in Transition<br>— English & Greek —</div>
-        <nav>
-            <a href="#vision">Vision</a>
-            <a href="#objectives">Objectives</a>
-            <a href="#scope">Scope</a>
-            <a href="#methods">Methods</a>
-            <a href="#architecture">Website Architecture</a>
-            <a href="#ethics">Ethics</a>
-            <a href="#outputs">Outputs</a>
-        </nav>
-    </div>
-</header>
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">Athens Urban Observations Archive :<br>
+An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1>
+        <p>The project aims to create a collaborative online archive documenting subtle, overlooked, or transitional spaces of Athens. It blends urban studies, ethnography, visual culture, and citizen contributions to build a living memory of the city’s informal, contested, or reappropriated places.</p>
+      </section>
 
-<div class="container">
+      <section id="archives" class="archive" aria-labelledby="archives-title">
 
-    <!-- 1. Vision ---------------------------------------------------------->
-    <section id="vision">
-        <h2 class="section-title">1. Project Vision</h2>
-        <p>
-            The project aims to create a collaborative online archive documenting subtle, overlooked, or transitional
-            spaces of Athens. It blends urban studies, ethnography, visual culture, and citizen contributions to build
-            a living memory of the city’s informal, contested, or reappropriated places.
-        </p>
-        <p>
-            The platform serves as a digital observatory of everyday Athenian life, focusing on how inhabitants reinterpret,
-            reclaim, or resist urban space.
-        </p>
-    </section>
+        <div class="controls">
+          <input id="searchbox" type="search" placeholder="Rechercher" oninput="filterList()" />
+          <!--<input id="searchbox" type="search" placeholder="Rechercher (ex: 'centrale', '1969', 'béton')" oninput="filterList()" />-->
+          <button onclick="resetFilters()">Réinitialiser</button>
+          <button onclick="sortBy('date')">Trier par date</button>
+        </div>
 
-    <!-- 2. Objectives ---------------------------------------------------------->
-    <section id="objectives">
-        <h2 class="section-title">2. Objectives</h2>
+        <div id="list" class="list" role="list">
 
-        <div class="cards">
-
-            <div class="card">
-                <h3>Urbanistic Objectives</h3>
-                <ul>
-                    <li>Map urban voids, vacant lots, derelict spaces.</li>
-                    <li>Understand how these spaces transform or are reused by communities.</li>
-                </ul>
+          <!-- Example item 1 -->
+          <!--<details class="item" open>-->
+          <details class="item">
+            <summary>
+              <span>1969 — Entrée 1</span>
+              <span style="font-size:12px;color:var(--muted)">béton — photo 1</span>
+            </summary>
+            <div class="details-body">
+              <img class="thumb" src="image.jpeg" alt="Centrale thermique, vue extérieure"/>
+              <div class="info">
+                <div>
+                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Photographie extérieure de la centrale — document conservé au format 24x30. Auteur inconnu.</p>
+                  <div class="meta-tags">
+                    <span class="tag">béton</span>
+                    <span class="tag">industriel</span>
+                    <span class="tag">1969</span>
+                  </div>
+                </div>
+                <div class="meta-small">
+                  <div><strong>Réf:</strong> ARC-1969-MRS-01</div>
+                  <div><strong>Localisation:</strong> Marseille</div>
+                </div>
+              </div>
             </div>
+          </details>
 
-            <div class="card">
-                <h3>Ethnographic Objectives</h3>
-                <ul>
-                    <li>Record informal uses such as kiosks or micro-places of daily life.</li>
-                    <li>Analyze symbolic markings and inscriptions as traces of identity and tension.</li>
-                    <li>Capture stories and lived experiences around these spaces.</li>
-                </ul>
+          <!-- Example item 2 -->
+          <details class="item">
+            <summary>
+              <span>1974 — École Technique / Nantes</span>
+              <span style="font-size:12px;color:var(--muted)">plan — 2 feuilles</span>
+            </summary>
+            <div class="details-body">
+              <img class="thumb" src="https://images.unsplash.com/photo-1504280390361-6a8f6b1f7d0d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Plan de l'école technique"/>
+              <div class="info">
+                <div>
+                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Plans d'exécution — échelle 1:100. Signé par l'atelier Lepage.</p>
+                  <div class="meta-tags">
+                    <span class="tag">Plaka</span>
+                    <span class="tag">Monastiraki</span>
+                    <span class="tag">Kolonaki</span>
+                    <span class="tag">Exarcheia</span>
+                    <span class="tag">Koukaki</span>
+                  </div>
+                </div>
+                <div class="meta-small">
+                  <div><strong>Réf:</strong> ARC-1974-NTE-02</div>
+                  <div><strong>Localisation:</strong> Nantes</div>
+                </div>
+              </div>
             </div>
+          </details>
 
-            <div class="card">
-                <h3>Visual & Cartographic Objectives</h3>
-                <ul>
-                    <li>Integrate sketches, photography, and cartographic layers.</li>
-                    <li>Create visual narratives of micro-geographies.</li>
-                </ul>
+          <!-- Example item 3 -->
+          <details class="item">
+            <summary>
+              <span>1958 — Immeuble social / Paris 13</span>
+              <span style="font-size:12px;color:var(--muted)">photo intérieure</span>
+            </summary>
+            <div class="details-body">
+              <img class="thumb" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Hall d'immeuble social"/>
+              <div class="info">
+                <div>
+                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Hall d'entrée — mobilier d'origine conservé.</p>
+                  <div class="meta-tags">
+                    <span class="tag">logement</span>
+                    <span class="tag">1958</span>
+                    <span class="tag">rénovation</span>
+                  </div>
+                </div>
+                <div class="meta-small">
+                  <div><strong>Réf:</strong> ARC-1958-PAR13-07</div>
+                  <div><strong>Localisation:</strong> Paris 13ᵉ</div>
+                </div>
+              </div>
             </div>
-
-            <div class="card">
-                <h3>Participatory Objectives</h3>
-                <ul>
-                    <li>Allow contributions via email: photos, texts, memories.</li>
-                    <li>Build a collective memory of Athens’ hidden or marginal places.</li>
-                </ul>
-            </div>
+          </details>
 
         </div>
-    </section>
+      </section>
+    </main>
 
-    <!-- 3. Scope ---------------------------------------------------------->
-    <section id="scope">
-        <h2 class="section-title">3. Scope of Study</h2>
+    <aside>
+      <div class="meta">
+        <h3>Quick filters</h3>
+        <p>Click on a tag in the list below to filter the results.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button onclick="filterTag('béton')" style="padding:6px;">béton</button>
+          <button onclick="filterTag('plan')" style="padding:6px;">plan</button>
+          <button onclick="filterTag('1958')" style="padding:6px;">1958</button>
+        </div>
+      </div>
 
-        <h3>A. Urban Wastelands (Φρίχες / Friches)</h3>
-        <ul>
-            <li>Empty lots</li>
-            <li>Abandoned buildings</li>
-            <li>Suspended construction sites</li>
-            <li>Informal green spaces</li>
-        </ul>
-        <div class="key-questions"><strong>Key questions:</strong> Who uses these spaces? How do they evolve? What do they reveal about community needs or land pressures?</div>
+      <div style="height:16px"></div>
 
-        <h3>B. Reappropriated Spaces</h3>
-        <ul>
-            <li>Squats and self-managed places</li>
-            <li>Community gardens</li>
-            <li>Informal meeting points</li>
-            <li>Reclaimed rooftops, stairways, shortcuts</li>
-        </ul>
-        <div class="key-questions"><strong>Key questions:</strong> How do Athenians reclaim the urban fabric? What forms of autonomy or creativity emerge?</div>
+      <div class="meta">
+        <h3>About</h3>
+        <p>Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural.</p>
+      </div>
+    </aside>
 
-        <h3>C. Micro-Spaces of Everyday Life</h3>
-        <ul>
-            <li>Kiosks, koulouri stands, street vendors</li>
-            <li>Benches, shaded corners, small squares</li>
-            <li>Local cafés and informal gathering spots</li>
-        </ul>
-        <div class="key-questions"><strong>Key questions:</strong> How do micro-spaces shape social life? How do they resist gentrification?</div>
+    <footer>
+      <div>© <strong>Archives Architecturales</strong> — Collection Brutal • 2025</div>
+      <div style="color:var(--muted)">Référence interne • ARC-INDEX</div>
+    </footer>
+  </div>
 
-        <h3>D. Symbolic & Political Traces</h3>
-        <ul>
-            <li>Anti-tourist graffiti</li>
-            <li>Anarchist/political slogans</li>
-            <li>Neighborhood identity tags</li>
-            <li>Posters, stickers, signs</li>
-        </ul>
-        <div class="key-questions"><strong>Key questions:</strong> What do these inscriptions reveal about conflict, identity, or resistance?</div>
-    </section>
-
-    <!-- 4. Methods ---------------------------------------------------------->
-    <section id="methods">
-        <h2 class="section-title">4. Methods & Data Collected</h2>
-        <ul>
-            <li><strong>Field Notes & Observations:</strong> micro-descriptions, sensory notes.</li>
-            <li><strong>Drawings & Sketches:</strong> architectural details, diagrams, perspectives.</li>
-            <li><strong>Photographs:</strong> contemporary & archival.</li>
-            <li><strong>Cartographies:</strong> interactive maps, GIS layers, temporal evolution.</li>
-            <li><strong>Contributions by Email:</strong> stories, memories, multilingual submissions.</li>
-        </ul>
-    </section>
-</div>
-
-<footer>
-    Athens Urban Observations Archive — 2025 · Bilingual Platform (EN/GR)
-</footer>
-
+  <script>
+    // Simple client-side filtering + sort
+    function filterList(){
+      const q = document.getElementById('searchbox').value.toLowerCase();
+      const items = Array.from(document.querySelectorAll('#list .item'));
+      items.forEach(it=>{
+        const text = it.innerText.toLowerCase();
+        it.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+    function resetFilters(){
+      document.getElementById('searchbox').value = '';
+      filterList();
+    }
+    function filterTag(tag){
+      document.getElementById('searchbox').value = tag;
+      filterList();
+    }
+    function sortBy(mode){
+      const list = document.getElementById('list');
+      const items = Array.from(list.querySelectorAll('.item'));
+      if(mode === 'date'){
+        // crude date sorter based on numbers in text
+        items.sort((a,b)=>{
+          const da = (a.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+          const db = (b.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+          return parseInt(db) - parseInt(da);
+        });
+      }
+      items.forEach(i=>list.appendChild(i));
+    }
+  </script>
 </body>
 </html>
