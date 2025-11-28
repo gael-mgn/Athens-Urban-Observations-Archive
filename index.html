@@ -4,13 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Athens Urban Observations Archive — AUOA</title>
-  <meta name="description" content="Archives architecturales — collection d'images, plans et notices dans un style brutaliste." />
+  <meta name="description" content="Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural." />
+
+   <meta name="keywords" content="Athens, Urban Observations, Urbanism, Archive, digital archive">
+
+  <meta property="og:image" content="athens-urban-observations-archive.webp" />
+
+
+
+
   <style>
-/* ——————————————————————————————
-   BRUTAL MODERNE — esthétique radicale,
-   typographie massive, blocs durs,
-   monochrome, grands espacements, interactions abruptes
-—————————————————————————————— */
 
 :root{
   --bg:#fdfdfd;
@@ -23,6 +26,10 @@
   --font-sans:"Inter", "Helvetica Neue", Arial, sans-serif;
   /*--font-serif:"Playfair Display", Georgia, serif;*/
   --font-serif:"Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+a {
+  color: var(--ink);
 }
 
 /* Reset général */
@@ -115,6 +122,10 @@ nav a:hover{
   border:var(--line);
   font-family:var(--font-sans);
 }
+input[type="checkbox"] {
+  accent-color: black;
+}
+
 .controls button{
   padding:12px 14px;
   border:var(--line);
@@ -136,17 +147,22 @@ nav a:hover{
   background:#fafafa;
   padding:0;
 }
-
-.item summary{
-  cursor:pointer;
-  list-style:none;
-  padding:16px 18px;
-  border-bottom:var(--line);
-  display:flex;
-  justify-content:space-between;
-  font-weight:800;
-  font-size:15px;
+.item summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 18px;
+  border-bottom: var(--line);
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 15px;
+  transition: background-color 0.4s ease, color 0.4s ease; /* Ajout de transitions pour un effet plus fluide */
 }
+.item summary:hover {
+ background: black;
+  color: white;
+}
+
 .item summary::-webkit-details-marker{display:none;}
 
 .details-body{
@@ -155,11 +171,21 @@ nav a:hover{
 
 .thumb{
   width:100%;
-  max-height:280px;
+  /*max-height:280px;*/
   object-fit:cover;
   border:var(--line);
-  margin-bottom:16px;
 }
+/*Figcaption*/
+figure {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+figcaption {
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+
 
 /* GRID infos */
 .info{
@@ -180,22 +206,44 @@ nav a:hover{
   background:#fff;
   font-size:11px;
   font-weight:700;
+  cursor:pointer;
 }
 .tag:hover{
   background:var(--ink);
   color:#fff;
 }
+#quickFilters button {
+  cursor:pointer;
+}
+#quickFilters button.active, #formatFilters button.active {
+  background: black;
+  color: white;
+  border-color: black;
+}
+
 
 .meta-small{font-size:13px;color:var(--ink-mute);}
 
 /* Sidebar */
-aside{position:sticky;top:40px;}
-
+aside {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh); /* 32px = marge avant footer */
+}
 .meta{
   border:var(--line);
   padding:18px;
   background:#fff;
 }
+.meta select {
+  width: 100%;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  border: var(--line);
+  background: #fff;
+  font-size: 13px;
+}
+
 .meta h3{
   margin-top:0;
   font-size:14px;
@@ -228,10 +276,16 @@ footer{
 @media(max-width:980px){
   body{padding:20px;}
   .wrap{grid-template-columns:1fr;}
-  aside{order:3;margin-top:20px;}
+  aside{order:3;margin-top:0px;}
+
+  aside {
+  position: relative;
+}
+
   .archive{order:2;}
   .hero{order:1;}
   .info{grid-template-columns:1fr;}
+  .hero p{max-width:100%;}
 }
 
   </style>
@@ -246,7 +300,7 @@ footer{
         </div>
       </div>
       <nav aria-label="Navigation principale">
-        <a href="#archives">Project</a>
+        <a href="">Project</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -262,139 +316,349 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
       <section id="archives" class="archive" aria-labelledby="archives-title">
 
         <div class="controls">
-          <input id="searchbox" type="search" placeholder="Rechercher" oninput="filterList()" />
+          <input id="searchbox" type="search" placeholder="Search" oninput="filterList()" />
           <!--<input id="searchbox" type="search" placeholder="Rechercher (ex: 'centrale', '1969', 'béton')" oninput="filterList()" />-->
-          <button onclick="resetFilters()">Réinitialiser</button>
-          <button onclick="sortBy('date')">Trier par date</button>
+          <button onclick="resetFilters()">Reset filters</button>
+          <button onclick="sortBy('date')">Sort by date</button>
         </div>
 
-        <div id="list" class="list" role="list">
-
-          <!-- Example item 1 -->
-          <!--<details class="item" open>-->
-          <details class="item">
-            <summary>
-              <span>1969 — Entrée 1</span>
-              <span style="font-size:12px;color:var(--muted)">béton — photo 1</span>
-            </summary>
-            <div class="details-body">
-              <img class="thumb" src="image.jpeg" alt="Centrale thermique, vue extérieure"/>
-              <div class="info">
-                <div>
-                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Photographie extérieure de la centrale — document conservé au format 24x30. Auteur inconnu.</p>
-                  <div class="meta-tags">
-                    <span class="tag">béton</span>
-                    <span class="tag">industriel</span>
-                    <span class="tag">1969</span>
-                  </div>
-                </div>
-                <div class="meta-small">
-                  <div><strong>Réf:</strong> ARC-1969-MRS-01</div>
-                  <div><strong>Localisation:</strong> Marseille</div>
-                </div>
-              </div>
-            </div>
-          </details>
-
-          <!-- Example item 2 -->
-          <details class="item">
-            <summary>
-              <span>1974 — École Technique / Nantes</span>
-              <span style="font-size:12px;color:var(--muted)">plan — 2 feuilles</span>
-            </summary>
-            <div class="details-body">
-              <img class="thumb" src="https://images.unsplash.com/photo-1504280390361-6a8f6b1f7d0d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Plan de l'école technique"/>
-              <div class="info">
-                <div>
-                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Plans d'exécution — échelle 1:100. Signé par l'atelier Lepage.</p>
-                  <div class="meta-tags">
-                    <span class="tag">Plaka</span>
-                    <span class="tag">Monastiraki</span>
-                    <span class="tag">Kolonaki</span>
-                    <span class="tag">Exarcheia</span>
-                    <span class="tag">Koukaki</span>
-                  </div>
-                </div>
-                <div class="meta-small">
-                  <div><strong>Réf:</strong> ARC-1974-NTE-02</div>
-                  <div><strong>Localisation:</strong> Nantes</div>
-                </div>
-              </div>
-            </div>
-          </details>
-
-          <!-- Example item 3 -->
-          <details class="item">
-            <summary>
-              <span>1958 — Immeuble social / Paris 13</span>
-              <span style="font-size:12px;color:var(--muted)">photo intérieure</span>
-            </summary>
-            <div class="details-body">
-              <img class="thumb" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Hall d'immeuble social"/>
-              <div class="info">
-                <div>
-                  <p style="margin:0 0 8px 0"><strong>Note:</strong> Hall d'entrée — mobilier d'origine conservé.</p>
-                  <div class="meta-tags">
-                    <span class="tag">logement</span>
-                    <span class="tag">1958</span>
-                    <span class="tag">rénovation</span>
-                  </div>
-                </div>
-                <div class="meta-small">
-                  <div><strong>Réf:</strong> ARC-1958-PAR13-07</div>
-                  <div><strong>Localisation:</strong> Paris 13ᵉ</div>
-                </div>
-              </div>
-            </div>
-          </details>
-
-        </div>
+        <div id="list" class="list" role="list"></div>
       </section>
     </main>
 
     <aside>
       <div class="meta">
         <h3>Quick filters</h3>
-        <p>Click on a tag in the list below to filter the results.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <button onclick="filterTag('béton')" style="padding:6px;">béton</button>
-          <button onclick="filterTag('plan')" style="padding:6px;">plan</button>
-          <button onclick="filterTag('1958')" style="padding:6px;">1958</button>
-        </div>
+        <p style="margin-bottom: 0;">Click on a tag in the list below to filter the results.</p>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+  <input type="checkbox" id="andModeCheckbox" onchange="toggleAndMode()" />
+  Match all tags (AND)
+</label>
+        <div id="quickFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
 
       <div style="height:16px"></div>
 
+
+
       <div class="meta">
+        <h3>Localisation</h3>
+        <select id="positionFilter" onchange="filterLocation()">
+        </select>
+
+        <select id="municipaliteFilter" onchange="filterLocation()">
+        </select>
+
+        <select id="quartierFilter" onchange="filterLocation()">
+        </select>
+      </div>
+
+      <div style="height:16px"></div>
+
+
+
+
+      <div class="meta">
+        <h3>Format</h3>
+        <div id="formatFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <!--<div class="meta">
         <h3>About</h3>
         <p>Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural.</p>
-      </div>
+      </div>-->
     </aside>
 
     <footer>
-      <div>© <strong>Archives Architecturales</strong> — Collection Brutal • 2025</div>
-      <div style="color:var(--muted)">Référence interne • ARC-INDEX</div>
+      <div>© <strong>Athens Urban Observations Archive</strong> — <span id="year"></span></div>
+      <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+      <!--<div style="color:var(--muted)">Référence interne • ARC-INDEX</div>-->
     </footer>
   </div>
 
+
+
+<script src="data.js"></script>
+
   <script>
-    // Simple client-side filtering + sort
-    function filterList(){
-      const q = document.getElementById('searchbox').value.toLowerCase();
-      const items = Array.from(document.querySelectorAll('#list .item'));
-      items.forEach(it=>{
-        const text = it.innerText.toLowerCase();
-        it.style.display = text.includes(q) ? '' : 'none';
-      });
+
+const articles = [
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Koulouri stands",
+    type: ["Picture"],
+    images: [
+      { url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" },
+    ],
+    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",
+    tags: ["shops", "cultural", "food"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Athina"
+    },    
+  },
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Nerantzies",
+    type: ["Picture"],
+    images: [
+      { url: "data/images/DSCF0628.webp", alt: "Koulouri stand at Panepistimio" },
+    ],
+    note: "This is a species of orange tree that is used in urban settings and is for decorative purposes only",
+    tags: ["three", "natural", "vegetation"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Athina"
+    },    
+    sources : [
+      {title:"Seven Surprising Things About Athens, Greece", url:"https://www.brentandmichaelaregoingplaces.com/p/seven-things-that-surprised-me-about"}
+    ]
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Map of abandoned building of Athens",
+    type: ["Map"],
+    note: "Map of abandoned building of Athens",
+    tags: ["building"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Athina"
+    },
+    sources : [
+      {title:"Map of abandoned building of Athens", url:""}
+    ]
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Yellow Taxis",
+    type: ["Picture"],
+    images: [
+      { url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" },
+    ],
+    note: "While Athens uses yellow, other cities in Greece may use different colors for their taxis",
+    tags: ["taxi", "moblity", "cars"],
+    localisation: {
+      position: "Athens"
     }
-    function resetFilters(){
-      document.getElementById('searchbox').value = '';
-      filterList();
+  },
+      {
+    id: 1,
+    annee: 2025,
+    titre: "Mailboxes",
+    type: ["Picture"],
+    images: [
+      { url: "data/images/DSCF0637.webp", alt: "Mailboxe" },
+    ],
+    note: "The mailboxes of Athens, primarily managed by the national postal service ELTA, are a subtle yet essential element of the urban landscape. Recognizable by their distinctive yellow color, they are often covered in graffiti or stickers, many of which have political connotations, including the anarchist symbol.",
+    tags: ["graffiti", "activism", "politic"],
+    localisation: {
+      position: "Athens"
     }
-    function filterTag(tag){
-      document.getElementById('searchbox').value = tag;
-      filterList();
+    }/*,
+    {
+    id: 1,
+    annee: 1940,
+    titre: "Entrée 3",
+    type: ["Text"],
+    note: "Photographie d'un vendeur",
+    tags: ["béton", "industriel", "1969"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Athina",
+      quartier: "Plaka"
+    },
+    sources: [
+      { title: "Journal local – édition 1950", url: "https://example.com/journal1950" },
+      { title: "Archives départementales B13-502", url: "" }
+    ]
+  },
+  {
+    id: 2,
+    annee: 1969,
+    titre: "Entrée 2",
+    type: ["Map"],
+    note: "Photographie d'un vendeur de koulou",
+    tags: ["béton", "test", "1969"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Piraeus"
     }
+  }*/
+];
+
+
+let andModeQuick = false;
+
+function toggleAndMode() {
+  andModeQuick = document.getElementById("andModeCheckbox").checked;
+  applyFilters();
+}
+
+
+// --- Fonction principale de filtrage ---
+function applyFilters() {
+  let result = [...articles];
+
+  // filtre texte
+  if (searchQuery.trim() !== "") {
+    result = result.filter(a =>
+      (a.titre + " " + a.note + " " + a.tags.join(" "))
+        .toLowerCase()
+        .includes(searchQuery)
+    );
+  }
+
+  // filtre tags cumulatif avec AND / OR
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    if (andModeQuick) {
+      // AND → l'article doit contenir tous les tags sélectionnés
+      result = result.filter(a => activeTags.every(tag => a.tags.includes(tag)));
+    } else {
+      // OR → l'article contient au moins un des tags sélectionnés
+      result = result.filter(a => a.tags.some(tag => activeTags.includes(tag)));
+    }
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    result = []; // aucun tag sélectionné → rien n'affiche
+  }
+
+
+  // filtre formats cumulatif
+  if (!activeFormats.includes("All") && activeFormats.length > 0) {
+    result = result.filter(a => a.type.some(type => activeFormats.includes(type)));
+  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
+    result = []; // aucun format sélectionné → rien n'affiche
+  }
+
+  // filtre localisation
+  if (locPosition) result = result.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) result = result.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) result = result.filter(a => a.localisation?.quartier === locQuartier);
+
+  renderArticles(result);
+}
+
+
+// --- Recherche ---
+function filterList() {
+  searchQuery = document.getElementById("searchbox").value.toLowerCase();
+  applyFilters();
+}
+
+
+// --- Filtrage tags cumulatif ---
+function filterTag(tag) {
+  const buttons = document.querySelectorAll("#quickFilters button");
+
+  if (tag === "All") {
+    activeTags = ["All"];
+  } else {
+    // retirer All si un autre tag est sélectionné
+    activeTags = activeTags.filter(t => t !== "All");
+
+    if (activeTags.includes(tag)) {
+      activeTags = activeTags.filter(t => t !== tag);
+    } else {
+      activeTags.push(tag);
+    }
+
+    // si aucun tag n'est sélectionné → All est désactivé mais on affiche rien
+  }
+
+  buttons.forEach(b => b.classList.toggle("active", activeTags.includes(b.innerText)));
+  applyFilters();
+}
+
+// --- Filtrage formats cumulatif ---
+function filterFormat(format) {
+  const buttons = document.querySelectorAll("#formatFilters button");
+
+  if (format === "All") {
+    activeFormats = ["All"];
+  } else {
+    activeFormats = activeFormats.filter(f => f !== "All");
+
+    if (activeFormats.includes(format)) {
+      activeFormats = activeFormats.filter(f => f !== format);
+    } else {
+      activeFormats.push(format);
+    }
+  }
+
+  buttons.forEach(b => b.classList.toggle("active", activeFormats.includes(b.innerText)));
+  applyFilters();
+}
+
+
+
+function resetFilters() {
+
+
+  // reset localisation
+  locPosition = "";
+  locMunicipalite = "";
+  locQuartier = "";
+
+  // réinitialisation des selects si présents
+  if (document.getElementById("positionFilter"))
+    document.getElementById("positionFilter").value = "";
+
+  if (document.getElementById("municipaliteFilter"))
+    document.getElementById("municipaliteFilter").value = "";
+
+  if (document.getElementById("quartierFilter"))
+    document.getElementById("quartierFilter").value = "";
+
+  // reset le champ de recherche
+  document.getElementById('searchbox').value = "";
+
+  // reset les Filtres (mots clefs et formats)
+  document.querySelectorAll("#quickFilters button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("#formatFilters button").forEach(b => b.classList.remove("active"));
+
+    // reset les Filtres (mots clefs et formats)
+  activeTags = ["All"];
+  activeFormats = ["All"];
+  // remettre "All" en actif visuellement
+  const allTagBtn = document.querySelector("#quickFilters button");
+  if(allTagBtn) allTagBtn.classList.add("active");
+  const allFormatBtn = document.querySelector("#formatFilters button");
+  if(allFormatBtn) allFormatBtn.classList.add("active");
+
+  applyFilters();
+}
+
+let activeTags = ["All"];      // Tags sélectionnés, "All" par défaut
+let activeFormats = ["All"];   // Formats sélectionnés, "All" par défaut
+  let searchQuery = "";
+
+    let locPosition = "";
+let locMunicipalite = "";
+let locQuartier = "";
+
+function filterLocation() {
+  // Lire les valeurs actuelles
+  locPosition = document.getElementById("positionFilter").value;
+  locMunicipalite = document.getElementById("municipaliteFilter").value;
+  locQuartier = document.getElementById("quartierFilter").value;
+
+  // Mettre à jour dynamiquement les options et réinitialiser les filtres invalides
+  renderLocationFilters();
+
+  // Appliquer les filtres sur la liste d'articles
+  applyFilters();
+}
+
+
+
+
+
+
     function sortBy(mode){
       const list = document.getElementById('list');
       const items = Array.from(list.querySelectorAll('.item'));
@@ -408,6 +672,242 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
       }
       items.forEach(i=>list.appendChild(i));
     }
+
+
+function renderArticles(data = articles) {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(article => {
+
+    // Génération des images
+    let imagesHTML = "";
+    if (article.images && article.images.length) {
+      imagesHTML = article.images
+        .map(img => `
+          <figure>
+            <img class="thumb" src="${img.url}" alt="${img.alt}">
+            <figcaption>${img.alt}</figcaption>
+          </figure>
+        `)
+        .join("");
+    }
+
+    const html = `
+      <details class="item">
+        <summary>
+          <span>+ ${article.annee} — ${article.titre}</span>
+          <span style="font-size:12px;color:var(--muted)">${article.type.join(", ")}</span>
+        </summary>
+
+        <div class="details-body">
+          ${imagesHTML}
+
+          <div class="info">
+            <div>
+              <p><strong>Note:</strong> ${article.note}</p>
+
+              ${
+                article.sources?.length
+                ? `<p><strong>Sources :</strong></p>
+                   <ul>${article.sources.map(src =>
+                       src.url
+                         ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>`
+                         : `<li>${src.title}</li>`
+                   ).join("")}</ul>`
+                : ""
+              }
+
+              <div class="meta-tags">
+                ${article.tags.map(t =>
+                  `<span class="tag" onclick="filterTag('${t}')">${t}</span>`
+                ).join("")}
+              </div>
+            </div>
+
+             ${
+                article.localisation
+                  ? `
+                    <div class="meta-small">
+                      <strong>Localisation :</strong><br>
+                      ${[
+                        article.localisation.position,
+                        article.localisation.municipalite,
+                        article.localisation.quartier
+                      ].filter(Boolean).join(", ")}
+                    </div>
+                  `
+                  : ""
+              }
+            </div>
+        </div>
+      </details>
+    `;
+
+    list.insertAdjacentHTML("beforeend", html);
+  });
+}
+
+
+
+
+
+
+function getAllLocations(articles) {
+  const positions = new Set();
+  const municipalites = new Set();
+  const quartiers = new Set();
+
+  articles.forEach(a => {
+    if (a.localisation) {
+      if (a.localisation.position) positions.add(a.localisation.position);
+      if (a.localisation.municipalite) municipalites.add(a.localisation.municipalite);
+      if (a.localisation.quartier) quartiers.add(a.localisation.quartier);
+    }
+  });
+
+  return {
+    positions: [...positions],
+    municipalites: [...municipalites],
+    quartiers: [...quartiers]
+  };
+}
+function renderLocationFilters() {
+  const posSel = document.getElementById("positionFilter");
+  const munSel = document.getElementById("municipaliteFilter");
+  const quaSel = document.getElementById("quartierFilter");
+
+  // Reset options
+  posSel.innerHTML = `<option value="">Position</option>`;
+  munSel.innerHTML = `<option value="">Municipality</option>`;
+  quaSel.innerHTML = `<option value="">Neighborhood</option>`;
+
+  // --- Positions (toujours toutes les positions) ---
+  const allPositions = new Set();
+  articles.forEach(a => {
+    if (a.localisation?.position) allPositions.add(a.localisation.position);
+  });
+  allPositions.forEach(p => posSel.insertAdjacentHTML("beforeend", `<option value="${p}">${p}</option>`));
+
+  // --- Municipalités filtrées par position seulement ---
+  let filteredByPosition = articles;
+  if (locPosition) {
+    filteredByPosition = filteredByPosition.filter(a => a.localisation?.position === locPosition);
+  }
+  const municipalites = new Set();
+  filteredByPosition.forEach(a => {
+    if (a.localisation?.municipalite) municipalites.add(a.localisation.municipalite);
+  });
+  municipalites.forEach(m => munSel.insertAdjacentHTML("beforeend", `<option value="${m}">${m}</option>`));
+
+  // --- Quartiers filtrés par position + municipalité ---
+  let filteredByPosAndMun = filteredByPosition;
+  if (locMunicipalite) {
+    filteredByPosAndMun = filteredByPosAndMun.filter(a => a.localisation?.municipalite === locMunicipalite);
+  }
+  const quartiers = new Set();
+  filteredByPosAndMun.forEach(a => {
+    if (a.localisation?.quartier) quartiers.add(a.localisation.quartier);
+  });
+  quartiers.forEach(q => quaSel.insertAdjacentHTML("beforeend", `<option value="${q}">${q}</option>`));
+
+  // --- Réinitialiser les valeurs invalides ---
+  if (!allPositions.has(locPosition)) locPosition = "";
+  if (!municipalites.has(locMunicipalite)) locMunicipalite = "";
+  if (!quartiers.has(locQuartier)) locQuartier = "";
+
+  // --- Réappliquer les valeurs restantes ---
+  posSel.value = locPosition;
+  munSel.value = locMunicipalite;
+  quaSel.value = locQuartier;
+}
+
+
+
+function getAllTags(articles) {
+  const set = new Set();
+  articles.forEach(a => a.tags.forEach(t => set.add(t)));
+  return [...set];
+}
+// --- Rendu filtres tags ---
+function renderQuickFilters() {
+  const container = document.getElementById("quickFilters");
+  const tags = ["All", ...getAllTags(articles)];
+
+  // Trier les tags (en excluant "All" du tri)
+  const sortedTags = tags.slice(1).sort(); // Trier tout sauf "All"
+
+  // Recomposer la liste avec "All" en premier
+  const sortedTagsWithAll = ["All", ...sortedTags];
+
+  container.innerHTML = sortedTagsWithAll
+    .map(tag => `<button onclick="filterTag('${tag}')">${tag}</button>`)
+    .join("");
+
+  // Par défaut, "All" est actif
+  container.querySelector("button").classList.add("active");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getAllFormats(articles) {
+  const set = new Set();
+  articles.forEach(a => a.type.forEach(f => set.add(f)));
+  return [...set];
+}
+
+
+// --- Rendu filtres formats ---
+function renderFormatFilters() {
+  const container = document.getElementById("formatFilters");
+  const formats = ["All", ...getAllFormats(articles)];
+  container.innerHTML = formats
+    .map(f => `<button onclick="filterFormat('${f}')">${f}</button>`)
+    .join("");
+
+  container.querySelector("button").classList.add("active");
+}
+
+renderQuickFilters();
+renderFormatFilters();
+renderLocationFilters();
+renderArticles();
+
   </script>
 </body>
 </html>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth < 980) {
+    const hero = document.querySelector(".hero");
+    const aside = document.querySelector("aside");
+    hero.insertAdjacentElement("afterend", aside);
+  }
+});
+</script>
