@@ -432,6 +432,20 @@ const articles = [
   {
     id: 1,
     annee: 2025,
+    titre: "Film NOUS N'AVONS PAS PEUR DES RUINES (Grèce, 2024)",
+    type: ["Film"],
+    note: "Que se passe-t-il en Grèce ? Voici un film qui offre un autre regard que celui proposé par les médias dominants. Un regard depuis l'intérieur du mouvement social à Athènes, en Crète et jusqu'à Paros. Un voyage en musique au sein de collectifs grecs en lutte pour une société plus juste et plus solidaire.",
+    tags: ["Yannis Youlountas", "protest", "anarchism", "activism", "politic"],
+    localisation: {
+      position: "Athens",
+      municipalite: "Athina",
+      quartier: "Exárcheia"
+    },    
+    link : "https://www.youtube.com/watch?v=W1IcUvKz-dE"
+  },
+  {
+    id: 1,
+    annee: 2025,
     titre: "Map of abandoned building of Athens",
     type: ["Map"],
     note: "Map of abandoned building of Athens",
@@ -467,7 +481,7 @@ const articles = [
       { url: "data/images/DSCF0637.webp", alt: "Mailboxe" },
     ],
     note: "The mailboxes of Athens, primarily managed by the national postal service ELTA, are a subtle yet essential element of the urban landscape. Recognizable by their distinctive yellow color, they are often covered in graffiti or stickers, many of which have political connotations, including the anarchist symbol.",
-    tags: ["graffiti", "activism", "politic"],
+    tags: ["graffiti", "activism", "politic", "anarchism"],
     localisation: {
       position: "Athens"
     }
@@ -504,7 +518,11 @@ const articles = [
 ];
 
 
-let andModeQuick = false;
+let andModeQuick = true;
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("andModeCheckbox").checked = true;
+});
+
 
 function toggleAndMode() {
   andModeQuick = document.getElementById("andModeCheckbox").checked;
@@ -513,13 +531,18 @@ function toggleAndMode() {
 
 
 // --- Fonction principale de filtrage ---
+// --- Fonction principale de filtrage (mise à jour pour rafraîchir les counts) ---
 function applyFilters() {
+  // Avant tout, mettre à jour l'affichage des counts de formats
+  renderQuickFilters();
+  renderFormatFilters();
+
   let result = [...articles];
 
   // filtre texte
   if (searchQuery.trim() !== "") {
     result = result.filter(a =>
-      (a.titre + " " + a.note + " " + a.tags.join(" "))
+      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
         .toLowerCase()
         .includes(searchQuery)
     );
@@ -529,19 +552,18 @@ function applyFilters() {
   if (!activeTags.includes("All") && activeTags.length > 0) {
     if (andModeQuick) {
       // AND → l'article doit contenir tous les tags sélectionnés
-      result = result.filter(a => activeTags.every(tag => a.tags.includes(tag)));
+      result = result.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
     } else {
       // OR → l'article contient au moins un des tags sélectionnés
-      result = result.filter(a => a.tags.some(tag => activeTags.includes(tag)));
+      result = result.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
     }
   } else if (!activeTags.includes("All") && activeTags.length === 0) {
     result = []; // aucun tag sélectionné → rien n'affiche
   }
 
-
-  // filtre formats cumulatif
+  // filtre formats cumulatif (ici on applique la sélection des formats pour filtrer la liste)
   if (!activeFormats.includes("All") && activeFormats.length > 0) {
-    result = result.filter(a => a.type.some(type => activeFormats.includes(type)));
+    result = result.filter(a => a.type && a.type.some(type => activeFormats.includes(type)));
   } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
     result = []; // aucun format sélectionné → rien n'affiche
   }
@@ -552,13 +574,6 @@ function applyFilters() {
   if (locQuartier) result = result.filter(a => a.localisation?.quartier === locQuartier);
 
   renderArticles(result);
-}
-
-
-// --- Recherche ---
-function filterList() {
-  searchQuery = document.getElementById("searchbox").value.toLowerCase();
-  applyFilters();
 }
 
 
@@ -585,13 +600,14 @@ function filterTag(tag) {
   applyFilters();
 }
 
-// --- Filtrage formats cumulatif ---
+// --- Filtrage formats cumulatif (mise à jour pour utiliser data-format proprement) ---
 function filterFormat(format) {
   const buttons = document.querySelectorAll("#formatFilters button");
 
   if (format === "All") {
     activeFormats = ["All"];
   } else {
+    // retirer All si un autre format est sélectionné
     activeFormats = activeFormats.filter(f => f !== "All");
 
     if (activeFormats.includes(format)) {
@@ -599,17 +615,24 @@ function filterFormat(format) {
     } else {
       activeFormats.push(format);
     }
+
+    // si on a désélectionné tout -> comportement: aucune sélection -> vide (comme avant)
   }
 
-  buttons.forEach(b => b.classList.toggle("active", activeFormats.includes(b.innerText)));
+  // Mettre à jour le visuel en comparant data-format
+  buttons.forEach(b => {
+    const fmt = b.dataset.format;
+    b.classList.toggle("active", activeFormats.includes(fmt));
+  });
+
+  // Recalculer la liste et aussi rafraîchir les counts de formats
   applyFilters();
 }
 
 
 
+// --- Reset filters (assure la mise à jour des counts et des états visuels) ---
 function resetFilters() {
-
-
   // reset localisation
   locPosition = "";
   locMunicipalite = "";
@@ -632,15 +655,21 @@ function resetFilters() {
   document.querySelectorAll("#quickFilters button").forEach(b => b.classList.remove("active"));
   document.querySelectorAll("#formatFilters button").forEach(b => b.classList.remove("active"));
 
-    // reset les Filtres (mots clefs et formats)
   activeTags = ["All"];
   activeFormats = ["All"];
-  // remettre "All" en actif visuellement
-  const allTagBtn = document.querySelector("#quickFilters button");
+
+  // remettre "All" en actif visuellement pour les deux groupes
+  const firstTagBtn = document.querySelector("#quickFilters button[data-format]"); // fallback
+  // mieux : activer le bouton All dans quickFilters et formatFilters
+  const allTagBtn = Array.from(document.querySelectorAll("#quickFilters button")).find(b => b.innerText.startsWith("All"));
   if(allTagBtn) allTagBtn.classList.add("active");
-  const allFormatBtn = document.querySelector("#formatFilters button");
+  const allFormatBtn = Array.from(document.querySelectorAll("#formatFilters button")).find(b => b.dataset.format === "All");
   if(allFormatBtn) allFormatBtn.classList.add("active");
 
+  // re-render tout (counts inclus)
+  renderQuickFilters();
+  renderFormatFilters();
+  renderLocationFilters();
   applyFilters();
 }
 
@@ -664,7 +693,6 @@ function filterLocation() {
   // Appliquer les filtres sur la liste d'articles
   applyFilters();
 }
-
 
 
 
@@ -717,6 +745,12 @@ function renderArticles(data = articles) {
           <div class="info">
             <div>
               <p><strong>Note:</strong> ${article.note}</p>
+
+              ${
+  article.link
+    ? `<p><strong>Link :</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>`
+    : ""
+}
 
               ${
                 article.sources?.length
@@ -833,7 +867,11 @@ function renderLocationFilters() {
   quaSel.value = locQuartier;
 }
 
-
+function filterList() {
+  const v = document.getElementById('searchbox').value || "";
+  searchQuery = v.trim().toLowerCase();
+  applyFilters();
+}
 
 function getAllTags(articles) {
   const set = new Set();
@@ -841,35 +879,96 @@ function getAllTags(articles) {
   return [...set];
 }
 // --- Rendu filtres tags ---
+// --- Helpers pour calculer les counts des tags en fonction du contexte (recherche, formats, localisation) ---
+function getBaseForTagCounts() {
+  let filtered = [...articles];
+
+  // recherche
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a =>
+      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
+        .toLowerCase()
+        .includes(q)
+    );
+  }
+
+  // formats
+  if (!activeFormats.includes("All") && activeFormats.length > 0) {
+    filtered = filtered.filter(a => a.type && a.type.some(t => activeFormats.includes(t)));
+  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
+    filtered = [];
+  }
+
+  // localisation
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+
+  return filtered;
+}
+
+function getCurrentWithTagsForCounts() {
+  // contexte complet (recherche + formats + localisation + tags selon AND/OR)
+  let filtered = getBaseForTagCounts();
+
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    if (andModeQuick) {
+      filtered = filtered.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
+    } else {
+      filtered = filtered.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
+    }
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    filtered = [];
+  }
+
+  return filtered;
+}
+
+// --- Nouveau renderQuickFilters (affiche les counts dynamiques) ---
 function renderQuickFilters() {
   const container = document.getElementById("quickFilters");
   const tags = ["All", ...getAllTags(articles)];
-
-  // Trier les tags (en excluant "All" du tri)
-  const sortedTags = tags.slice(1).sort(); // Trier tout sauf "All"
-
-  // Recomposer la liste avec "All" en premier
+  const sortedTags = tags.slice(1).sort();
   const sortedTagsWithAll = ["All", ...sortedTags];
 
-  container.innerHTML = sortedTagsWithAll
-    .map(tag => `<button onclick="filterTag('${tag}')">${tag}</button>`)
-    .join("");
+  const base = getBaseForTagCounts();       // contexte sans appliquer le filtre "tags"
+  const currentWithTags = getCurrentWithTagsForCounts(); // contexte complet (utile pour AND ou affichage global)
 
-  // Par défaut, "All" est actif
-  container.querySelector("button").classList.add("active");
+  container.innerHTML = sortedTagsWithAll.map(tag => {
+    let n = 0;
+
+    if (tag === "All") {
+      n = base.length;
+    } else {
+      if (!andModeQuick) {
+        // MODE OR : afficher le nombre d'éléments **possédant CE tag** dans le contexte (position + format + recherche)
+        n = base.filter(a => a.tags && a.tags.includes(tag)).length;
+      } else {
+        // MODE AND : comportement prospectif (si on ajoute ce tag aux tags actifs)
+        const activeSelected = activeTags.filter(t => t !== "All");
+        if (activeSelected.length === 0 && !activeTags.includes(tag)) {
+          // aucun tag actif -> compter les éléments du base qui ont ce tag
+          n = base.filter(a => a.tags && a.tags.includes(tag)).length;
+        } else {
+          // si on a déjà des tags -> compter les éléments qui contiennent tous les tags prospectifs (AND)
+          const prospective = activeSelected.includes(tag) ? activeSelected : [...activeSelected, tag];
+          n = base.filter(a => prospective.every(t => a.tags && a.tags.includes(t))).length;
+        }
+      }
+    }
+
+    if (n === 0) return ""; // masque les tags à 0
+return `<button data-tag="${tag}" onclick="filterTag('${tag}')">${tag} (${n})</button>`;
+
+  }).join("");
+
+  // appliquer visuel actif
+  container.querySelectorAll("button").forEach(b => {
+    const t = b.dataset.tag;
+    b.classList.toggle("active", activeTags.includes(t));
+  });
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -890,15 +989,101 @@ function getAllFormats(articles) {
 }
 
 
-// --- Rendu filtres formats ---
+
+
+// --- helper: obtenir la liste d'articles à prendre en compte pour le calcul des counts
+function getFilteredForCounts() {
+  let filtered = [...articles];
+
+  // prendre en compte la recherche si elle contient quelque chose
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a =>
+      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
+        .toLowerCase()
+        .includes(q)
+    );
+  }
+
+  // tags (utiliser la même logique AND/OR que applyFilters)
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    if (andModeQuick) {
+      filtered = filtered.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
+    } else {
+      filtered = filtered.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
+    }
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    // aucun tag sélectionné => aucun article
+    filtered = [];
+  }
+
+  // localisation (position / municipalité / quartier)
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+
+  return filtered;
+}
+
+// --- Rendu filtres formats (avec counts dynamiques) ---
 function renderFormatFilters() {
   const container = document.getElementById("formatFilters");
+  // obtenir tous les formats disponibles dans le dataset complet (pour lister les boutons)
   const formats = ["All", ...getAllFormats(articles)];
-  container.innerHTML = formats
-    .map(f => `<button onclick="filterFormat('${f}')">${f}</button>`)
-    .join("");
 
-  container.querySelector("button").classList.add("active");
+  // calculer les counts sur la base des filtres excluants (tags + localisation + recherche)
+  const filteredForCounts = getFilteredForCounts();
+
+  // compte pour "All" = tous les articles correspondants au contexte filtres
+  const counts = {};
+  counts["All"] = filteredForCounts.length;
+
+  formats.slice(1).forEach(f => {
+    counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length;
+  });
+
+  // construire les boutons avec data-format (utile car on affiche "Label (n)")
+  container.innerHTML = formats.map(f => {
+    const n = counts[f] || 0;
+    // on peut griser / indiquer 0 si on veut; ici on affiche simplement le count
+    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
+  }).join("");
+
+  // appliquer visuel actif selon activeFormats
+  container.querySelectorAll("button").forEach(b => {
+    const fmt = b.dataset.format;
+    b.classList.toggle("active", activeFormats.includes(fmt));
+  });
+}
+// --- Rendu filtres formats (avec counts dynamiques) ---
+function renderFormatFilters() {
+  const container = document.getElementById("formatFilters");
+  // obtenir tous les formats disponibles dans le dataset complet (pour lister les boutons)
+  const formats = ["All", ...getAllFormats(articles)];
+
+  // calculer les counts sur la base des filtres excluants (tags + localisation + recherche)
+  const filteredForCounts = getFilteredForCounts();
+
+  // compte pour "All" = tous les articles correspondants au contexte filtres
+  const counts = {};
+  counts["All"] = filteredForCounts.length;
+
+  formats.slice(1).forEach(f => {
+    counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length;
+  });
+
+  // construire les boutons avec data-format (utile car on affiche "Label (n)")
+  container.innerHTML = formats.map(f => {
+    const n = counts[f] || 0;
+    // on peut griser / indiquer 0 si on veut; ici on affiche simplement le count
+    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
+  }).join("");
+
+  // appliquer visuel actif selon activeFormats
+  container.querySelectorAll("button").forEach(b => {
+    const fmt = b.dataset.format;
+    b.classList.toggle("active", activeFormats.includes(fmt));
+  });
 }
 
 renderQuickFilters();
