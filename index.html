@@ -51,7 +51,7 @@ input[type="checkbox"] { accent-color: black; }
 figure { margin: 0; padding: 0; margin-bottom: 10px; }
 figcaption { font-size: 13px; color: var(--ink-mute); }
 .info{ display:grid; grid-template-columns:1fr 150px; gap:18px; }
-.meta-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.meta-tags{ margin-top:10px; }
 .tag{ padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; cursor:pointer; }
 .tag:hover{ background:var(--ink); color:#fff; }
 #quickFilters button { cursor:pointer; }
@@ -63,6 +63,10 @@ aside { position: sticky; top: 20px; max-height: calc(100vh); }
 .meta h3{ margin-top:0; font-size:14px; letter-spacing:0; }
 .meta button{ padding:6px 10px; border:var(--line); background:#fff; font-size:12px; font-weight:700; }
 .meta button:hover{ background:var(--ink); color:#fff; }
+.tag-line {margin: 0; padding: 0; display: block; }
+.sep { text-decoration: none; }
+.tag-link { text-decoration: underline; }
+
 footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:32px; display:flex; justify-content:space-between; font-size:14px; }
 @media(max-width:980px){
   .no-mobile { display: none; }
@@ -78,6 +82,16 @@ footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:3
 @media(max-width:980px){
   .controls input[type=search]{ width: 100%; }
 }
+
+/* container mobile: invisible sur desktop, visible sur mobile */
+.mobile-filters { display: none; margin: 18px 0; gap: 12px; }
+@media (max-width:980px) {
+  .mobile-filters { display: block; }
+  /* spacing / box look similaire aux .meta */
+  .mobile-filters .meta { border: var(--line); padding: 12px; background: #fff; margin-bottom: 12px; }
+  /* rendre select/buttons plus larges si besoin */
+}
+
   </style>
 </head>
 <body>
@@ -102,6 +116,10 @@ footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:3
 An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1>
         <p>The project aims to create a collaborative online archive documenting subtle, overlooked, or transitional spaces of Athens. It blends urban studies, ethnography, visual culture, and citizen contributions to build a living memory of the city’s informal, contested, or reappropriated places.</p>
       </section>
+
+      <!-- insérer directement après </section> de .hero -->
+      <div id="mobileFilters" class="mobile-filters" aria-hidden="true"></div>
+
 
       <section id="archives" class="archive" aria-labelledby="archives-title">
         <div class="controls">
@@ -148,6 +166,64 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
 
 
 <script src="data/codemap.js"></script>
+
+<script>
+  /* --- Responsive : déplacer les .meta de aside vers #mobileFilters sur mobile --- */
+(function(){
+  const MOBILE_QUERY = '(max-width:980px)';
+  const mql = window.matchMedia(MOBILE_QUERY);
+  const aside = document.querySelector('aside');
+  const mobileContainer = document.getElementById('mobileFilters');
+
+  if (!aside || !mobileContainer) return;
+
+  // capture order initiale (NodeList -> Array)
+  const metas = Array.from(aside.querySelectorAll('.meta'));
+
+  // helper : move elements into container (preserve nodes)
+  function moveToMobile() {
+    if (!metas || metas.length === 0) return;
+    // set aria
+    mobileContainer.setAttribute('aria-hidden','false');
+    metas.forEach(el => {
+      // avoid moving if already moved
+      if (el.parentElement !== mobileContainer) mobileContainer.appendChild(el);
+    });
+  }
+
+  // helper : move elements back to aside (restaure ordre initial)
+  function moveToAside() {
+    if (!metas || metas.length === 0) return;
+    mobileContainer.setAttribute('aria-hidden','true');
+    metas.forEach(el => {
+      // append back to aside (restaure ordre)
+      if (el.parentElement !== aside) aside.appendChild(el);
+    });
+  }
+
+  // initial check
+  function handleMqChange(e) {
+    if (e.matches) moveToMobile();
+    else moveToAside();
+    // ré-render éventuellement les selects / comptes si besoin
+    // (les fonctions existent déjà dans votre script)
+    if (typeof renderLocationFilters === 'function') renderLocationFilters();
+    if (typeof renderFormatFilters === 'function') renderFormatFilters();
+    if (typeof renderQuickFilters === 'function') renderQuickFilters();
+  }
+
+  // run once now
+  handleMqChange(mql);
+
+  // listen for changes (resize)
+  if (mql.addEventListener) {
+    mql.addEventListener('change', handleMqChange);
+  } else if (mql.addListener) { // ancien Safari/IE fallback
+    mql.addListener(handleMqChange);
+  }
+})();
+
+</script>
 
   <script>
 
@@ -506,25 +582,26 @@ function renderArticles(data = articles) {
       `).join("");
     }
 
-    const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
-      let labels = [];
-      if (isCode(codeOrLabel)) labels = codeToLabelChain(codeOrLabel);
-      else labels = String(codeOrLabel).split(',').map(s=>s.trim());
-      function makeNestedList(items, index = 0) {
-        if (index >= items.length) return "";
-        const title = items.join(' → ');
-        const leaf = items[index];
-        return `
-          <ul>
-            <li onclick="filterTag('${escapeForOnClick(leaf)}')" title="${title}">
-              ${items[index]}
-              ${makeNestedList(items, index + 1)}
-            </li>
-          </ul>
-        `;
-      }
-      return makeNestedList(labels);
-    }).join("");
+const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
+  let labels = [];
+  if (isCode(codeOrLabel)) labels = codeToLabelChain(codeOrLabel);
+  else labels = String(codeOrLabel).split(',').map(s=>s.trim());
+
+  const fullTitle = labels.join(" -> ");
+  // crée un lien par élément de la hiérarchie (chaque niveau cliquable)
+  const links = labels.map((lbl, idx) => {
+    const escaped = escapeForOnClick(lbl);
+    return `<a href="#" class="tag-link" onclick="filterTag('${escaped}'); return false;">${lbl}</a>`;
+  }).join('<span class="sep"> -> </span>');
+
+  return `
+    <p class="tag-line" title="${fullTitle}">
+      ${links}
+    </p>
+  `;
+}).join("");
+
+
 
     const html = `
       <details class="item">
@@ -538,14 +615,14 @@ function renderArticles(data = articles) {
           <div class="info">
             <div>
               <p><strong>Note:</strong> ${article.note}</p>
-              ${ article.link ? `<p><strong>Link :</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
+              ${ article.link ? `<p><strong>Link:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
 
               ${ article.sources?.length ? `<p><strong>Sources :</strong></p>
                  <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
 
-              <ul class="meta-tags">
-                ${tagsHtml}
-              </ul>
+              <div class="meta-tags">
+                <strong>Tags:</strong>${tagsHtml}
+              </div>
             </div>
 
             ${ article.localisation ? `
