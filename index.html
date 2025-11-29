@@ -5,15 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Athens Urban Observations Archive — AUOA</title>
   <meta name="description" content="Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural." />
-
-   <meta name="keywords" content="Athens, Urban Observations, Urbanism, Archive, digital archive">
-
+  <meta name="keywords" content="Athens, Urban Observations, Urbanism, Archive, digital archive">
   <meta property="og:image" content="athens-urban-observations-archive.webp" />
-
-
-
   <style>
-
 :root{
   --bg:#fdfdfd;
   --ink:#000;
@@ -23,283 +17,67 @@
   --gap:32px;
   --radius:0;
   --font-sans:"Inter", "Helvetica Neue", Arial, sans-serif;
-  /*--font-serif:"Playfair Display", Georgia, serif;*/
   --font-serif:"Inter", "Helvetica Neue", Arial, sans-serif;
 }
-
-a {
-  color: var(--ink);
-}
-
-/* Reset général */
+a { color: var(--ink); }
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.4;}
 body{padding:40px;}
 *{box-sizing:border-box;letter-spacing:-0.01em;}
-
-/* Layout principal */
-.wrap{
-  max-width:1240px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr 380px;
-  gap:var(--gap);
-}
-
-/* HEADER */
-header{
-  grid-column:1/-1;
-  border-bottom:var(--line);
-  padding-bottom:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-}
-.site-title{
-  font-family:var(--font-serif);
-  font-size:26px;
-  font-weight:700;
-  margin-bottom:4px;
-}
+.wrap{ max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 380px; gap:var(--gap); }
+header{ grid-column:1/-1; border-bottom:var(--line); padding-bottom:16px; display:flex; justify-content:space-between; align-items:flex-end; }
+.site-title{ font-family:var(--font-serif); font-size:26px; font-weight:700; margin-bottom:4px; }
 header small{font-size:12px;color:var(--ink-mute)}
-
 nav{display:flex;gap:18px;}
-nav a{
-  text-decoration:none;
-  color:var(--ink);
-  font-weight:600;
-  padding:6px 0;
-  border-bottom:2px solid transparent;
-}
-nav a:hover{
-  border-bottom:2px solid var(--ink);
-}
-
-/* HERO SECTION */
-.hero{
-  padding:38px 32px;
-  background:var(--panel);
-  border:var(--line);
-  display:flex;flex-direction:column;
-  gap:18px;
-}
-.hero h1{
-  margin:0;
-  font-family:var(--font-serif);
-  font-size:40px;
-  line-height:1.1;
-}
+nav a{ text-decoration:none; color:var(--ink); font-weight:600; padding:6px 0; border-bottom:2px solid transparent; }
+nav a:hover{ border-bottom:2px solid var(--ink); }
+.hero{ padding:38px 32px; background:var(--panel); border:var(--line); display:flex;flex-direction:column; gap:18px; }
+.hero h1{ margin:0; font-family:var(--font-serif); font-size:40px; line-height:1.1; }
 .hero p{margin:0;color:var(--ink-mute);max-width:70%;font-size:15px;}
-.hero .cta{
-  padding:12px 18px;
-  border:var(--line);
-  background:#fff;
-  font-weight:800;
-  text-transform:uppercase;
-}
-.hero .cta:hover{
-  background:var(--ink);
-  color:#fff;
-}
-
-/* ARCHIVES */
-.archive{
-  border:var(--line);
-  padding:20px;
-  background:#fff;
-}
-
-/* Controls */
-.controls{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:20px;
-}
-.controls input[type=search]{
-  flex:1;
-  padding:12px;
-  border:var(--line);
-  font-family:var(--font-sans);
-}
-input[type="checkbox"] {
-  accent-color: black;
-}
-
-.controls button{
-  padding:12px 14px;
-  border:var(--line);
-  background:#fff;
-  font-weight:700;
-  text-transform:uppercase;
-  cursor:pointer;
-}
-.controls button:hover{
-  background:var(--ink);
-  color:#fff;
-}
-
-/* LISTE ARCHIVES */
+.hero .cta{ padding:12px 18px; border:var(--line); background:#fff; font-weight:800; text-transform:uppercase; }
+.hero .cta:hover{ background:var(--ink); color:#fff; }
+.archive{ border:var(--line); padding:20px; background:#fff; }
+.controls{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+.controls input[type=search]{ flex:1; padding:12px; border:var(--line); font-family:var(--font-sans); }
+input[type="checkbox"] { accent-color: black; }
+.controls button{ padding:12px 14px; border:var(--line); background:#fff; font-weight:700; text-transform:uppercase; cursor:pointer; }
+.controls button:hover{ background:var(--ink); color:#fff; }
 .list{display:flex;flex-direction:column;gap:22px;}
-
-.item{
-  border:var(--line);
-  background:#fafafa;
-  padding:0;
-}
-.item summary {
-  cursor: pointer;
-  list-style: none;
-  padding: 16px 18px;
-  border-bottom: var(--line);
-  display: flex;
-  justify-content: space-between;
-  font-weight: 800;
-  font-size: 15px;
-  gap: 20px;
-  transition: background-color 0.4s ease, color 0.4s ease; /* Ajout de transitions pour un effet plus fluide */
-}
-.item summary:hover {
- background: black;
-  color: white;
-}
-
+.item{ border:var(--line); background:#fafafa; padding:0; }
+.item summary { cursor: pointer; list-style: none; padding: 16px 18px; border-bottom: var(--line); display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; gap: 20px; transition: background-color 0.4s ease, color 0.4s ease; }
+.item summary:hover { background: black; color: white; }
 .item summary::-webkit-details-marker{display:none;}
-
-.details-body{
-  padding:20px;
-}
-
-.thumb{
-  width:100%;
-  /*max-height:280px;*/
-  object-fit:cover;
-  border:var(--line);
-}
-/*Figcaption*/
-figure {
-  margin: 0;
-  padding: 0;
-  margin-bottom: 10px;
-}
-figcaption {
-  font-size: 13px;
-  color: var(--ink-mute);
-}
-
-
-/* GRID infos */
-.info{
-  display:grid;
-  grid-template-columns:1fr 150px;
-  gap:18px;
-}
-
-.meta-tags{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-.tag{
-  padding:4px 8px;
-  border:var(--line);
-  background:#fff;
-  font-size:11px;
-  font-weight:700;
-  cursor:pointer;
-}
-.tag:hover{
-  background:var(--ink);
-  color:#fff;
-}
-#quickFilters button {
-  cursor:pointer;
-}
-#quickFilters button.active, #formatFilters button.active {
-  background: black;
-  color: white;
-  border-color: black;
-}
-
-
+.details-body{ padding:20px; }
+.thumb{ width:100%; object-fit:cover; border:var(--line); }
+figure { margin: 0; padding: 0; margin-bottom: 10px; }
+figcaption { font-size: 13px; color: var(--ink-mute); }
+.info{ display:grid; grid-template-columns:1fr 150px; gap:18px; }
+.meta-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.tag{ padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; cursor:pointer; }
+.tag:hover{ background:var(--ink); color:#fff; }
+#quickFilters button { cursor:pointer; }
+#quickFilters button.active, #formatFilters button.active { background: black; color: white; border-color: black; }
 .meta-small{font-size:13px;color:var(--ink-mute);}
-
-/* Sidebar */
-aside {
-  position: sticky;
-  top: 20px;
-  max-height: calc(100vh); /* 32px = marge avant footer */
-}
-.meta{
-  border:var(--line);
-  padding:18px;
-  background:#fff;
-}
-.meta select {
-  width: 100%;
-  padding: 6px 8px;
-  margin-bottom: 8px;
-  border: var(--line);
-  background: #fff;
-  font-size: 13px;
-}
-
-.meta h3{
-  margin-top:0;
-  font-size:14px;
-  letter-spacing:0;
-}
-.meta button{
-  padding:6px 10px;
-  border:var(--line);
-  background:#fff;
-  font-size:12px;
-  font-weight:700;
-}
-.meta button:hover{
-  background:var(--ink);
-  color:#fff;
-}
-
-/* FOOTER */
-footer{
-  grid-column:1/-1;
-  border-top:var(--line);
-  padding-top:16px;
-  margin-top:32px;
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-}
-
-/* Mobile */
+aside { position: sticky; top: 20px; max-height: calc(100vh); }
+.meta{ border:var(--line); padding:18px; background:#fff; }
+.meta select { width: 100%; padding: 6px 8px; margin-bottom: 8px; border: var(--line); background: #fff; font-size: 13px; }
+.meta h3{ margin-top:0; font-size:14px; letter-spacing:0; }
+.meta button{ padding:6px 10px; border:var(--line); background:#fff; font-size:12px; font-weight:700; }
+.meta button:hover{ background:var(--ink); color:#fff; }
+footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:32px; display:flex; justify-content:space-between; font-size:14px; }
 @media(max-width:980px){
-
-
-  .no-mobile {
-    display: none;
-  }
-
+  .no-mobile { display: none; }
   body{padding:20px;}
   .wrap{grid-template-columns:1fr;}
   aside{order:3;margin-top:0px;}
-
-  aside {
-  position: relative;
-}
-
+  aside { position: relative; }
   .archive{order:2;}
   .hero{order:1;}
   .info{grid-template-columns:1fr;}
   .hero p{max-width:100%;}
 }
 @media(max-width:980px){
-  .controls input[type=search]{
-    width: 100%;
-  }
+  .controls input[type=search]{ width: 100%; }
 }
-
-
   </style>
 </head>
 <body>
@@ -326,10 +104,8 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
       </section>
 
       <section id="archives" class="archive" aria-labelledby="archives-title">
-
         <div class="controls">
           <input id="searchbox" type="search" placeholder="Search" oninput="filterList()" />
-          <!--<input id="searchbox" type="search" placeholder="Rechercher (ex: 'centrale', '1969', 'béton')" oninput="filterList()" />-->
           <button onclick="resetFilters()">Reset filters</button>
           <button onclick="sortBy('date')" class="no-mobile">Sort by date</button>
         </div>
@@ -342,33 +118,19 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
       <div class="meta">
         <h3>Quick filters</h3>
         <p style="margin-bottom: 0;">Click on a tag in the list below to filter the results.</p>
-        <label style="display:flex;align-items:center;gap:6px;margin-top:8px;">
-  <input type="checkbox" id="andModeCheckbox" onchange="toggleAndMode()" />
-  Match all tags (AND)
-</label>
         <div id="quickFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
 
       <div style="height:16px"></div>
 
-
-
       <div class="meta">
         <h3>Localisation</h3>
-        <select id="positionFilter" onchange="filterLocation()">
-        </select>
-
-        <select id="municipaliteFilter" onchange="filterLocation()">
-        </select>
-
-        <select id="quartierFilter" onchange="filterLocation()">
-        </select>
+        <select id="positionFilter" onchange="filterLocation()"></select>
+        <select id="municipaliteFilter" onchange="filterLocation()"></select>
+        <select id="quartierFilter" onchange="filterLocation()"></select>
       </div>
 
       <div style="height:16px"></div>
-
-
-
 
       <div class="meta">
         <h3>Format</h3>
@@ -376,361 +138,393 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
       </div>
 
       <div style="height:16px"></div>
-
-      <!--<div class="meta">
-        <h3>About</h3>
-        <p>Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural.</p>
-      </div>-->
     </aside>
 
     <footer>
       <div>© <strong>Athens Urban Observations Archive</strong> — <span id="year"></span></div>
       <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-      <!--<div style="color:var(--muted)">Référence interne • ARC-INDEX</div>-->
     </footer>
   </div>
 
 
-
+<script src="data/codemap.js"></script>
 
   <script>
 
+
+/* utils */
+function isCode(s) { return /^[0-9]+$/.test(String(s)); }
+function labelForCode(code) { return codeMap[String(code)] || String(code); }
+
+/* construire parentMap et childrenMap (pour navigation) */
+const parentMap = {};   // parentMap[code] = parentCode (string) or null
+const childrenMap = {}; // childrenMap[parentCode] = [childCode,...]
+Object.keys(codeMap).sort((a,b)=> a.length - b.length || a.localeCompare(b)).forEach(code=>{
+  if (code.length === 1) {
+    parentMap[code] = null;
+  } else {
+    const parent = code.slice(0, code.length - 1);
+    parentMap[code] = codeMap[parent] ? parent : null;
+  }
+  // ensure childrenMap entry exists
+  const p = parentMap[code] || "ROOT";
+  if (!childrenMap[p]) childrenMap[p] = [];
+  childrenMap[p].push(code);
+});
+
+/* helper : obtenir la chaîne d'étiquettes à partir d'un code (ex "131" -> ["Patrimoine bâti","Remarquable","Maisons remarquables"]) */
+function codeToLabelChain(code) {
+  code = String(code);
+  const parts = [];
+  for (let i=1;i<=code.length;i++){
+    const key = code.slice(0,i);
+    if (codeMap[key]) parts.push(codeMap[key]);
+  }
+  if (parts.length === 0 && codeMap[code]) return [codeMap[code]];
+  return parts;
+}
+
+/* helper : collecter toutes les étiquettes (labels en lowercase) sous un chemin de codes.
+   pathCodes = [] -> tout l'arbre; sinon on part du dernier code et on descend. */
+function getLeavesUnderPath(pathCodes) {
+  const leaves = new Set();
+
+  // determine starting nodes
+  let startCodes = [];
+  if (!pathCodes || pathCodes.length === 0) {
+    startCodes = childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : [];
+  } else {
+    const last = String(pathCodes[pathCodes.length - 1]);
+    if (!codeMap[last]) return []; // path invalide -> none
+    startCodes = [last];
+  }
+
+  function recurse(code) {
+    // ajouter le label du noeud
+    if (codeMap[code]) leaves.add(String(codeMap[code]).toLowerCase());
+    // descendre dans ses enfants
+    const kids = childrenMap[code] || [];
+    kids.forEach(k => recurse(k));
+  }
+
+  startCodes.forEach(c => recurse(c));
+  return Array.from(leaves);
+}
+
+/* label -> code mapping rapide (utile pour migration et recherche) */
+const labelToCodeMap = {};
+Object.entries(codeMap).forEach(([c,l]) => labelToCodeMap[l.toLowerCase()] = c);
+
+/* tentative de correspondance souple pour anciennes chaînes (ex "Mobilier urbain, Fonctionnel") */
+function migrateRangementArray(oldArr) {
+  if (!Array.isArray(oldArr)) return oldArr;
+  const out = [];
+  oldArr.forEach(entry=>{
+    if (!entry) return;
+    if (isCode(entry)) { out.push(entry); return; }
+    // split possible "Parent, Child"
+    const parts = String(entry).split(',').map(s=>s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const childLabel = parts[1].toLowerCase();
+      if (labelToCodeMap[childLabel]) { out.push(labelToCodeMap[childLabel]); return; }
+      const parentLabel = parts[0].toLowerCase();
+      if (labelToCodeMap[parentLabel]) { out.push(labelToCodeMap[parentLabel]); return; }
+    }
+    // exact match full string
+    const full = String(entry).toLowerCase();
+    if (labelToCodeMap[full]) { out.push(labelToCodeMap[full]); return; }
+    // fallback : keep original token (so nothing lost)
+    out.push(entry);
+  });
+  return out;
+}
+
+/* escape pour onclick inline */
+function escapeForOnClick(s) { return String(s).replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+
+/* ---------------- articles (exemples) ---------------- */
 const articles = [
-    {
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Eglise Orthodoxe",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0661.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["111"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Tag anarchiste",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0642.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["42"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Stationnements Vélos",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0737.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["21", "32"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Bouche à incendie",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0717.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["22"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Evangelismos Oeuvre",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0739.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["411"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Cabine téléphonique",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0639.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "",
+    rangement: ["21"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
     id: 1,
     annee: 2025,
     titre: "Koulouri stands",
     type: ["Picture"],
-    images: [
-      { url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" },
-    ],
-    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",
-    tags: ["shops", "cultural", "food"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Athina"
-    },    
+    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "Koulouri stands (or “koulouri”) are an iconic feature ...",
+    rangement: ["6","21"],
+    localisation: { position: "Athens", municipalite: "Athina" }
   },
-    {
-    id: 1,
+  {
+    id: 2,
     annee: 2025,
-    titre: "Nerantzies",
+    titre: "Yellow Taxis",
     type: ["Picture"],
-    images: [
-      { url: "data/images/DSCF0628.webp", alt: "Koulouri stand at Panepistimio" },
-    ],
-    note: "This is a species of orange tree that is used in urban settings and is for decorative purposes only",
-    tags: ["three", "natural", "vegetation"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Athina"
-    },    
-    sources : [
-      {title:"Seven Surprising Things About Athens, Greece", url:"https://www.brentandmichaelaregoingplaces.com/p/seven-things-that-surprised-me-about"}
-    ]
+    images: [{ url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" }],
+    note: "While Athens uses yellow ...",
+    tags: ["taxi","moblity","cars"],
+    rangement: ["311"],
+    localisation: { position: "Athens" }
   },
   {
-    id: 1,
+    id: 3,
     annee: 2025,
-    titre: "Film NOUS N'AVONS PAS PEUR DES RUINES (Grèce, 2024)",
-    type: ["Film"],
-    note: "Que se passe-t-il en Grèce ? Voici un film qui offre un autre regard que celui proposé par les médias dominants. Un regard depuis l'intérieur du mouvement social à Athènes, en Crète et jusqu'à Paros. Un voyage en musique au sein de collectifs grecs en lutte pour une société plus juste et plus solidaire.",
-    tags: ["Yannis Youlountas", "protest", "anarchism", "activism", "politic"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Athina",
-      quartier: "Exárcheia"
-    },    
-    link : "https://www.youtube.com/watch?v=W1IcUvKz-dE"
+    titre: "Mailboxes",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0637.webp", alt: "Mailboxe" }],
+    note: "The mailboxes of Athens ...",
+    tags: ["graffiti","activism","politic","anarchism"],
+    rangement: ["214"],
+    localisation: { position: "Athens" }
   },
   {
-    id: 1,
+    id: 4,
     annee: 2025,
     titre: "Map of abandoned building of Athens",
     type: ["Map"],
     note: "Map of abandoned building of Athens",
     tags: ["building"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Athina"
-    },
-    sources : [
-      {title:"Map of abandoned building of Athens", url:""}
-    ]
+    localisation: { position: "Athens", municipalite: "Athina" },
+    rangement: ["142"],
+    link: "lien"
   },
   {
-    id: 1,
+    id: 5,
     annee: 2025,
-    titre: "Yellow Taxis",
-    type: ["Picture"],
-    images: [
-      { url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" },
-    ],
-    note: "While Athens uses yellow, other cities in Greece may use different colors for their taxis",
-    tags: ["taxi", "moblity", "cars"],
-    localisation: {
-      position: "Athens"
-    }
-  },
-      {
-    id: 1,
-    annee: 2025,
-    titre: "Mailboxes",
-    type: ["Picture"],
-    images: [
-      { url: "data/images/DSCF0637.webp", alt: "Mailboxe" },
-    ],
-    note: "The mailboxes of Athens, primarily managed by the national postal service ELTA, are a subtle yet essential element of the urban landscape. Recognizable by their distinctive yellow color, they are often covered in graffiti or stickers, many of which have political connotations, including the anarchist symbol.",
-    tags: ["graffiti", "activism", "politic", "anarchism"],
-    localisation: {
-      position: "Athens"
-    }
-    }/*,
-    {
-    id: 1,
-    annee: 1940,
-    titre: "Entrée 3",
-    type: ["Text"],
-    note: "Photographie d'un vendeur",
-    tags: ["béton", "industriel", "1969"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Athina",
-      quartier: "Plaka"
-    },
-    sources: [
-      { title: "Journal local – édition 1950", url: "https://example.com/journal1950" },
-      { title: "Archives départementales B13-502", url: "" }
-    ]
-  },
-  {
-    id: 2,
-    annee: 1969,
-    titre: "Entrée 2",
+    titre: "Carte des friches naturelles",
     type: ["Map"],
-    note: "Photographie d'un vendeur de koulou",
-    tags: ["béton", "test", "1969"],
-    localisation: {
-      position: "Athens",
-      municipalite: "Piraeus"
-    }
-  }*/
+    note: "Carte des friches naturelles",
+    tags: ["building"],
+    localisation: { position: "Athens", municipalite: "Athina" },
+    rangement: ["15"],
+    link: "lien"
+  }
 ];
 
-
-let andModeQuick = true;
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("andModeCheckbox").checked = true;
-});
-
-
-function toggleAndMode() {
-  andModeQuick = document.getElementById("andModeCheckbox").checked;
-  applyFilters();
+/* --------- extraction de tags (compatible codes ou anciennes chaînes) --------- */
+function getArticleTags(article) {
+  if (!article || !Array.isArray(article.rangement) || article.rangement.length === 0) return [];
+  const set = new Set();
+  article.rangement.forEach(item => {
+    if (isCode(item)) {
+      const chain = codeToLabelChain(item);
+      chain.forEach(c => set.add(String(c).toLowerCase()));
+    } else {
+      // ancienne logique: "Mobilier urbain, Fonctionnel"
+      const chain = String(item).split(',').map(s=>s.trim()).filter(Boolean);
+      chain.forEach(c => set.add(String(c).toLowerCase()));
+    }
+  });
+  return Array.from(set);
 }
 
+/* ---------- filtrage / counts / rendu ---------- */
+let activeTags = ["All"];
+let activeFormats = ["All"];
+let searchQuery = "";
+let locPosition = "";
+let locMunicipalite = "";
+let locQuartier = "";
+let currentLayerPath = []; // maintenant tableau de codes (ex ["1"] ou ["1","13"])
 
-// --- Fonction principale de filtrage ---
-// --- Fonction principale de filtrage (mise à jour pour rafraîchir les counts) ---
+function getBaseForTagCounts() {
+  let filtered = [...articles];
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(q));
+  }
+  if (!activeFormats.includes("All") && activeFormats.length > 0) {
+    filtered = filtered.filter(a => a.type && a.type.some(t => activeFormats.includes(t)));
+  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
+    filtered = [];
+  }
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+  return filtered;
+}
+
+function countArticlesForLeaves(leaves) {
+  if (!leaves || leaves.length === 0) return 0;
+  const base = getBaseForTagCounts();
+  return base.filter(a => {
+    const at = getArticleTags(a);
+    return at && at.some(t => leaves.includes(String(t).toLowerCase()));
+  }).length;
+}
+
 function applyFilters() {
-  // Avant tout, mettre à jour l'affichage des counts de formats
   renderQuickFilters();
   renderFormatFilters();
-
   let result = [...articles];
-
-  // filtre texte
   if (searchQuery.trim() !== "") {
-    result = result.filter(a =>
-      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
-        .toLowerCase()
-        .includes(searchQuery)
-    );
+    result = result.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(searchQuery));
   }
-
-  // filtre tags cumulatif avec AND / OR
   if (!activeTags.includes("All") && activeTags.length > 0) {
-    if (andModeQuick) {
-      // AND → l'article doit contenir tous les tags sélectionnés
-      result = result.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
-    } else {
-      // OR → l'article contient au moins un des tags sélectionnés
-      result = result.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
-    }
+    result = result.filter(a => {
+      const atags = getArticleTags(a);
+      return atags && atags.some(tag => activeTags.includes(tag));
+    });
   } else if (!activeTags.includes("All") && activeTags.length === 0) {
     result = []; // aucun tag sélectionné → rien n'affiche
   }
-
-  // filtre formats cumulatif (ici on applique la sélection des formats pour filtrer la liste)
   if (!activeFormats.includes("All") && activeFormats.length > 0) {
     result = result.filter(a => a.type && a.type.some(type => activeFormats.includes(type)));
   } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
-    result = []; // aucun format sélectionné → rien n'affiche
+    result = [];
   }
-
-  // filtre localisation
   if (locPosition) result = result.filter(a => a.localisation?.position === locPosition);
   if (locMunicipalite) result = result.filter(a => a.localisation?.municipalite === locMunicipalite);
   if (locQuartier) result = result.filter(a => a.localisation?.quartier === locQuartier);
-
   renderArticles(result);
 }
 
-
-// --- Filtrage tags cumulatif ---
-function filterTag(tag) {
-  const buttons = document.querySelectorAll("#quickFilters button");
-
-  if (tag === "All") {
-    activeTags = ["All"];
-  } else {
-    // retirer All si un autre tag est sélectionné
-    activeTags = activeTags.filter(t => t !== "All");
-
-    if (activeTags.includes(tag)) {
-      activeTags = activeTags.filter(t => t !== tag);
-    } else {
-      activeTags.push(tag);
-    }
-
-    // si aucun tag n'est sélectionné → All est désactivé mais on affiche rien
-  }
-
-  buttons.forEach(b => b.classList.toggle("active", activeTags.includes(b.innerText)));
-  applyFilters();
+/* format filters */
+function getAllFormats(articles) {
+  const set = new Set();
+  articles.forEach(a => a.type.forEach(f => set.add(f)));
+  return [...set];
 }
-
-// --- Filtrage formats cumulatif (mise à jour pour utiliser data-format proprement) ---
+function getFilteredForCounts() {
+  let filtered = [...articles];
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(q));
+  }
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    filtered = filtered.filter(a => {
+      const at = getArticleTags(a);
+      return at && at.some(tag => activeTags.includes(tag));
+    });
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    filtered = [];
+  }
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+  return filtered;
+}
 function filterFormat(format) {
   const buttons = document.querySelectorAll("#formatFilters button");
-
   if (format === "All") {
     activeFormats = ["All"];
   } else {
-    // retirer All si un autre format est sélectionné
     activeFormats = activeFormats.filter(f => f !== "All");
-
-    if (activeFormats.includes(format)) {
-      activeFormats = activeFormats.filter(f => f !== format);
-    } else {
-      activeFormats.push(format);
-    }
-
-    // si on a désélectionné tout -> comportement: aucune sélection -> vide (comme avant)
+    if (activeFormats.includes(format)) activeFormats = activeFormats.filter(f => f !== format);
+    else activeFormats.push(format);
   }
-
-  // Mettre à jour le visuel en comparant data-format
-  buttons.forEach(b => {
-    const fmt = b.dataset.format;
-    b.classList.toggle("active", activeFormats.includes(fmt));
+  buttons.forEach(b => { const fmt = b.dataset.format; b.classList.toggle("active", activeFormats.includes(fmt)); });
+  applyFilters();
+}
+function renderFormatFilters() {
+  const container = document.getElementById("formatFilters");
+  const formats = ["All", ...getAllFormats(articles)];
+  const filteredForCounts = getFilteredForCounts();
+  const counts = {};
+  counts["All"] = filteredForCounts.length;
+  formats.slice(1).forEach(f => counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length);
+  container.innerHTML = formats.map(f => {
+    const n = counts[f] || 0;
+    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
+  }).join("");
+  container.querySelectorAll("button").forEach(b => {
+    const fmt = b.dataset.format; b.classList.toggle("active", activeFormats.includes(fmt));
   });
-
-  // Recalculer la liste et aussi rafraîchir les counts de formats
-  applyFilters();
 }
 
-
-
-// --- Reset filters (assure la mise à jour des counts et des états visuels) ---
-function resetFilters() {
-  // reset localisation
-  locPosition = "";
-  locMunicipalite = "";
-  locQuartier = "";
-
-  // réinitialisation des selects si présents
-  if (document.getElementById("positionFilter"))
-    document.getElementById("positionFilter").value = "";
-
-  if (document.getElementById("municipaliteFilter"))
-    document.getElementById("municipaliteFilter").value = "";
-
-  if (document.getElementById("quartierFilter"))
-    document.getElementById("quartierFilter").value = "";
-
-  // reset le champ de recherche
-  document.getElementById('searchbox').value = "";
-
-  // reset les Filtres (mots clefs et formats)
-  document.querySelectorAll("#quickFilters button").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll("#formatFilters button").forEach(b => b.classList.remove("active"));
-
-  activeTags = ["All"];
-  activeFormats = ["All"];
-
-  // remettre "All" en actif visuellement pour les deux groupes
-  const firstTagBtn = document.querySelector("#quickFilters button[data-format]"); // fallback
-  // mieux : activer le bouton All dans quickFilters et formatFilters
-  const allTagBtn = Array.from(document.querySelectorAll("#quickFilters button")).find(b => b.innerText.startsWith("All"));
-  if(allTagBtn) allTagBtn.classList.add("active");
-  const allFormatBtn = Array.from(document.querySelectorAll("#formatFilters button")).find(b => b.dataset.format === "All");
-  if(allFormatBtn) allFormatBtn.classList.add("active");
-
-  // re-render tout (counts inclus)
-  renderQuickFilters();
-  renderFormatFilters();
-  renderLocationFilters();
-  applyFilters();
-}
-
-let activeTags = ["All"];      // Tags sélectionnés, "All" par défaut
-let activeFormats = ["All"];   // Formats sélectionnés, "All" par défaut
-  let searchQuery = "";
-
-    let locPosition = "";
-let locMunicipalite = "";
-let locQuartier = "";
-
-function filterLocation() {
-  // Lire les valeurs actuelles
-  locPosition = document.getElementById("positionFilter").value;
-  locMunicipalite = document.getElementById("municipaliteFilter").value;
-  locQuartier = document.getElementById("quartierFilter").value;
-
-  // Mettre à jour dynamiquement les options et réinitialiser les filtres invalides
-  renderLocationFilters();
-
-  // Appliquer les filtres sur la liste d'articles
-  applyFilters();
-}
-
-
-
-
-
-    function sortBy(mode){
-      const list = document.getElementById('list');
-      const items = Array.from(list.querySelectorAll('.item'));
-      if(mode === 'date'){
-        // crude date sorter based on numbers in text
-        items.sort((a,b)=>{
-          const da = (a.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
-          const db = (b.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
-          return parseInt(db) - parseInt(da);
-        });
-      }
-      items.forEach(i=>list.appendChild(i));
-    }
-
-
+/* --------- render articles ---------- */
 function renderArticles(data = articles) {
   const list = document.getElementById("list");
   list.innerHTML = "";
-
   data.forEach(article => {
-
-    // Génération des images
     let imagesHTML = "";
     if (article.images && article.images.length) {
-      imagesHTML = article.images
-        .map(img => `
-          <figure>
-            <img class="thumb" src="${img.url}" alt="${img.alt}">
-            <figcaption>${img.alt}</figcaption>
-          </figure>
-        `)
-        .join("");
+      imagesHTML = article.images.map(img => `
+        <figure>
+          <img class="thumb" src="${img.url}" alt="${img.alt}">
+          <figcaption>${img.alt}</figcaption>
+        </figure>
+      `).join("");
     }
+
+    const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
+      let labels = [];
+      if (isCode(codeOrLabel)) labels = codeToLabelChain(codeOrLabel);
+      else labels = String(codeOrLabel).split(',').map(s=>s.trim());
+      function makeNestedList(items, index = 0) {
+        if (index >= items.length) return "";
+        const title = items.join(' → ');
+        const leaf = items[index];
+        return `
+          <ul>
+            <li onclick="filterTag('${escapeForOnClick(leaf)}')" title="${title}">
+              ${items[index]}
+              ${makeNestedList(items, index + 1)}
+            </li>
+          </ul>
+        `;
+      }
+      return makeNestedList(labels);
+    }).join("");
 
     const html = `
       <details class="item">
@@ -741,68 +535,151 @@ function renderArticles(data = articles) {
 
         <div class="details-body">
           ${imagesHTML}
-
           <div class="info">
             <div>
               <p><strong>Note:</strong> ${article.note}</p>
+              ${ article.link ? `<p><strong>Link :</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
 
-              ${
-  article.link
-    ? `<p><strong>Link :</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>`
-    : ""
-}
+              ${ article.sources?.length ? `<p><strong>Sources :</strong></p>
+                 <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
 
-              ${
-                article.sources?.length
-                ? `<p><strong>Sources :</strong></p>
-                   <ul>${article.sources.map(src =>
-                       src.url
-                         ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>`
-                         : `<li>${src.title}</li>`
-                   ).join("")}</ul>`
-                : ""
-              }
+              <ul class="meta-tags">
+                ${tagsHtml}
+              </ul>
+            </div>
 
-              <div class="meta-tags">
-                ${article.tags.map(t =>
-                  `<span class="tag" onclick="filterTag('${t}')">${t}</span>`
-                ).join("")}
+            ${ article.localisation ? `
+              <div class="meta-small">
+                <strong>Localisation :</strong><br>
+                ${[ article.localisation.position, article.localisation.municipalite, article.localisation.quartier ].filter(Boolean).join(", ")}
               </div>
-            </div>
-
-             ${
-                article.localisation
-                  ? `
-                    <div class="meta-small">
-                      <strong>Localisation :</strong><br>
-                      ${[
-                        article.localisation.position,
-                        article.localisation.municipalite,
-                        article.localisation.quartier
-                      ].filter(Boolean).join(", ")}
-                    </div>
-                  `
-                  : ""
-              }
-            </div>
+            ` : "" }
+          </div>
         </div>
       </details>
     `;
-
     list.insertAdjacentHTML("beforeend", html);
   });
 }
 
+/* ---------- Quick Filters (drilldown) ---------- */
+function enterLayer(code) {
+  // code attendu : string code (ex "1" ou "13")
+  if (!codeMap[code]) return;
+  currentLayerPath.push(code);
+  const leaves = getLeavesUnderPath(currentLayerPath);
+  if (leaves.length) activeTags = [...leaves];
+  else activeTags = activeTags.filter(t => t !== "All");
+  applyFilters();
+  renderQuickFilters();
+}
+function goUpLayer() {
+  currentLayerPath.pop();
+  if (currentLayerPath.length === 0) activeTags = ["All"];
+  else {
+    activeTags = getLeavesUnderPath(currentLayerPath);
+    if (activeTags.length === 0) activeTags = ["All"];
+  }
+  applyFilters();
+  renderQuickFilters();
+}
+function resetLayer() {
+  currentLayerPath = [];
+  activeTags = ["All"];
+  applyFilters();
+  renderQuickFilters();
+}
+function toggleLeafTag(leaf) {
+  const tag = String(leaf).toLowerCase();
+  activeTags = activeTags.filter(t => t !== "All");
+  if (activeTags.includes(tag)) activeTags = activeTags.filter(t => t !== tag);
+  else activeTags.push(tag);
+  applyFilters();
+  renderQuickFilters();
+}
 
+/* build root codes array */
+const rootCodes = childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : [];
 
+function renderQuickFilters() {
+  const container = document.getElementById("quickFilters");
+  if (!container) return;
+  const baseForCounts = getBaseForTagCounts();
+  const allCount = baseForCounts.length;
+  let html = `<button data-tag="All" onclick="resetLayer()">All (${allCount})</button>`;
 
+  if (currentLayerPath.length === 0) {
+    html += "<div style='width:100%;height:6px'></div>";
+    rootCodes.forEach(rootCode => {
+      const leaves = getLeavesUnderPath([rootCode]);
+      const n = countArticlesForLeaves(leaves);
+      if (n === 0) return;
+      html += `<button data-parent="${escapeForOnClick(rootCode)}" onclick="enterLayer('${escapeForOnClick(rootCode)}')">${labelForCode(rootCode)} (${n})</button>`;
+    });
+  } else {
+    // chemin courant + bouton retour
+    const chainLabels = currentLayerPath.map(c=>labelForCode(c)).join(' -> ');
+    html += `<button onclick="goUpLayer()" class="active">${chainLabels}</button>`;
+    const nodeCode = currentLayerPath[currentLayerPath.length - 1];
+    const children = childrenMap[nodeCode] || [];
+    children.forEach(childCode => {
+      const leaves = getLeavesUnderPath([...currentLayerPath, childCode]);
+      const n = countArticlesForLeaves(leaves);
+      if (n === 0) return;
+      html += `<button data-child="${escapeForOnClick(childCode)}" onclick="enterLayer('${escapeForOnClick(childCode)}')">${labelForCode(childCode)} (${n})</button>`;
+    });
+  }
 
+  container.innerHTML = html;
 
+  // mark active parent button if at first level
+  if (currentLayerPath.length === 1) {
+    container.querySelectorAll("button[data-parent]").forEach(b => {
+      b.classList.toggle("active", b.getAttribute("data-parent") === currentLayerPath[0]);
+    });
+  }
+}
+
+/* --------- filterTag: gère labels et codes ---------- */
+function findCodeByLabel(label) {
+  if (!label) return null;
+  const lower = String(label).toLowerCase();
+  // 1) quick map
+  if (labelToCodeMap[lower]) return labelToCodeMap[lower];
+  // 2) exact match among codeMap values
+  for (const [c,l] of Object.entries(codeMap)) {
+    if (String(l).toLowerCase() === lower) return c;
+  }
+  return null;
+}
+
+function filterTag(tag) {
+  const lower = String(tag).toLowerCase();
+
+  // 1) si tag correspond exactement à un label connu -> bascule code / entrée dans layer
+  const code = findCodeByLabel(tag);
+  if (code) {
+    // si code est une racine ou un parent: entrer dans sa couche
+    enterLayer(code);
+    return;
+  }
+
+  // 2) si tag apparaît dans les feuilles connues -> toggle
+  const allLeaves = getLeavesUnderPath([]);
+  if (allLeaves.includes(lower)) {
+    toggleLeafTag(lower);
+    return;
+  }
+
+  // 3) fallback : toggle simple (conserver ancien comportement)
+  toggleLeafTag(lower);
+}
+
+/* ---------- location helpers ---------- */
 function getAllLocations(articles) {
   const positions = new Set();
   const municipalites = new Set();
   const quartiers = new Set();
-
   articles.forEach(a => {
     if (a.localisation) {
       if (a.localisation.position) positions.add(a.localisation.position);
@@ -810,282 +687,75 @@ function getAllLocations(articles) {
       if (a.localisation.quartier) quartiers.add(a.localisation.quartier);
     }
   });
-
-  return {
-    positions: [...positions],
-    municipalites: [...municipalites],
-    quartiers: [...quartiers]
-  };
+  return { positions: [...positions], municipalites: [...municipalites], quartiers: [...quartiers] };
 }
 function renderLocationFilters() {
   const posSel = document.getElementById("positionFilter");
   const munSel = document.getElementById("municipaliteFilter");
   const quaSel = document.getElementById("quartierFilter");
-
-  // Reset options
   posSel.innerHTML = `<option value="">Position</option>`;
   munSel.innerHTML = `<option value="">Municipality</option>`;
   quaSel.innerHTML = `<option value="">Neighborhood</option>`;
-
-  // --- Positions (toujours toutes les positions) ---
   const allPositions = new Set();
-  articles.forEach(a => {
-    if (a.localisation?.position) allPositions.add(a.localisation.position);
-  });
+  articles.forEach(a => { if (a.localisation?.position) allPositions.add(a.localisation.position); });
   allPositions.forEach(p => posSel.insertAdjacentHTML("beforeend", `<option value="${p}">${p}</option>`));
-
-  // --- Municipalités filtrées par position seulement ---
   let filteredByPosition = articles;
-  if (locPosition) {
-    filteredByPosition = filteredByPosition.filter(a => a.localisation?.position === locPosition);
-  }
+  if (locPosition) filteredByPosition = filteredByPosition.filter(a => a.localisation?.position === locPosition);
   const municipalites = new Set();
-  filteredByPosition.forEach(a => {
-    if (a.localisation?.municipalite) municipalites.add(a.localisation.municipalite);
-  });
+  filteredByPosition.forEach(a => { if (a.localisation?.municipalite) municipalites.add(a.localisation.municipalite); });
   municipalites.forEach(m => munSel.insertAdjacentHTML("beforeend", `<option value="${m}">${m}</option>`));
-
-  // --- Quartiers filtrés par position + municipalité ---
   let filteredByPosAndMun = filteredByPosition;
-  if (locMunicipalite) {
-    filteredByPosAndMun = filteredByPosAndMun.filter(a => a.localisation?.municipalite === locMunicipalite);
-  }
+  if (locMunicipalite) filteredByPosAndMun = filteredByPosAndMun.filter(a => a.localisation?.municipalite === locMunicipalite);
   const quartiers = new Set();
-  filteredByPosAndMun.forEach(a => {
-    if (a.localisation?.quartier) quartiers.add(a.localisation.quartier);
-  });
+  filteredByPosAndMun.forEach(a => { if (a.localisation?.quartier) quartiers.add(a.localisation.quartier); });
   quartiers.forEach(q => quaSel.insertAdjacentHTML("beforeend", `<option value="${q}">${q}</option>`));
-
-  // --- Réinitialiser les valeurs invalides ---
   if (!allPositions.has(locPosition)) locPosition = "";
   if (!municipalites.has(locMunicipalite)) locMunicipalite = "";
   if (!quartiers.has(locQuartier)) locQuartier = "";
-
-  // --- Réappliquer les valeurs restantes ---
   posSel.value = locPosition;
   munSel.value = locMunicipalite;
   quaSel.value = locQuartier;
 }
-
+function filterLocation() {
+  locPosition = document.getElementById("positionFilter").value;
+  locMunicipalite = document.getElementById("municipaliteFilter").value;
+  locQuartier = document.getElementById("quartierFilter").value;
+  renderLocationFilters();
+  applyFilters();
+}
 function filterList() {
   const v = document.getElementById('searchbox').value || "";
   searchQuery = v.trim().toLowerCase();
   applyFilters();
 }
-
-function getAllTags(articles) {
-  const set = new Set();
-  articles.forEach(a => a.tags.forEach(t => set.add(t)));
-  return [...set];
+function resetFilters() {
+  locPosition = ""; locMunicipalite = ""; locQuartier = "";
+  ['positionFilter','municipaliteFilter','quartierFilter'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+  const sb = document.getElementById('searchbox'); if (sb) sb.value = "";
+  searchQuery = "";
+  activeFormats = ["All"];
+  document.querySelectorAll('#list details[open]').forEach(d => d.removeAttribute('open'));
+  resetLayer();
+  renderFormatFilters();
+  renderLocationFilters();
+  applyFilters();
 }
-// --- Rendu filtres tags ---
-// --- Helpers pour calculer les counts des tags en fonction du contexte (recherche, formats, localisation) ---
-function getBaseForTagCounts() {
-  let filtered = [...articles];
 
-  // recherche
-  if (searchQuery && searchQuery.trim() !== "") {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(a =>
-      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
-        .toLowerCase()
-        .includes(q)
-    );
+/* sort */
+function sortBy(mode){
+  const list = document.getElementById('list');
+  const items = Array.from(list.querySelectorAll('.item'));
+  if(mode === 'date'){
+    items.sort((a,b)=>{
+      const da = (a.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+      const db = (b.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+      return parseInt(db) - parseInt(da);
+    });
   }
-
-  // formats
-  if (!activeFormats.includes("All") && activeFormats.length > 0) {
-    filtered = filtered.filter(a => a.type && a.type.some(t => activeFormats.includes(t)));
-  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
-    filtered = [];
-  }
-
-  // localisation
-  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
-  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
-  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
-
-  return filtered;
+  items.forEach(i=>list.appendChild(i));
 }
 
-function getCurrentWithTagsForCounts() {
-  // contexte complet (recherche + formats + localisation + tags selon AND/OR)
-  let filtered = getBaseForTagCounts();
-
-  if (!activeTags.includes("All") && activeTags.length > 0) {
-    if (andModeQuick) {
-      filtered = filtered.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
-    } else {
-      filtered = filtered.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
-    }
-  } else if (!activeTags.includes("All") && activeTags.length === 0) {
-    filtered = [];
-  }
-
-  return filtered;
-}
-
-// --- Nouveau renderQuickFilters (affiche les counts dynamiques) ---
-function renderQuickFilters() {
-  const container = document.getElementById("quickFilters");
-  const tags = ["All", ...getAllTags(articles)];
-  const sortedTags = tags.slice(1).sort();
-  const sortedTagsWithAll = ["All", ...sortedTags];
-
-  const base = getBaseForTagCounts();       // contexte sans appliquer le filtre "tags"
-  const currentWithTags = getCurrentWithTagsForCounts(); // contexte complet (utile pour AND ou affichage global)
-
-  container.innerHTML = sortedTagsWithAll.map(tag => {
-    let n = 0;
-
-    if (tag === "All") {
-      n = base.length;
-    } else {
-      if (!andModeQuick) {
-        // MODE OR : afficher le nombre d'éléments **possédant CE tag** dans le contexte (position + format + recherche)
-        n = base.filter(a => a.tags && a.tags.includes(tag)).length;
-      } else {
-        // MODE AND : comportement prospectif (si on ajoute ce tag aux tags actifs)
-        const activeSelected = activeTags.filter(t => t !== "All");
-        if (activeSelected.length === 0 && !activeTags.includes(tag)) {
-          // aucun tag actif -> compter les éléments du base qui ont ce tag
-          n = base.filter(a => a.tags && a.tags.includes(tag)).length;
-        } else {
-          // si on a déjà des tags -> compter les éléments qui contiennent tous les tags prospectifs (AND)
-          const prospective = activeSelected.includes(tag) ? activeSelected : [...activeSelected, tag];
-          n = base.filter(a => prospective.every(t => a.tags && a.tags.includes(t))).length;
-        }
-      }
-    }
-
-    if (n === 0) return ""; // masque les tags à 0
-return `<button data-tag="${tag}" onclick="filterTag('${tag}')">${tag} (${n})</button>`;
-
-  }).join("");
-
-  // appliquer visuel actif
-  container.querySelectorAll("button").forEach(b => {
-    const t = b.dataset.tag;
-    b.classList.toggle("active", activeTags.includes(t));
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getAllFormats(articles) {
-  const set = new Set();
-  articles.forEach(a => a.type.forEach(f => set.add(f)));
-  return [...set];
-}
-
-
-
-
-// --- helper: obtenir la liste d'articles à prendre en compte pour le calcul des counts
-function getFilteredForCounts() {
-  let filtered = [...articles];
-
-  // prendre en compte la recherche si elle contient quelque chose
-  if (searchQuery && searchQuery.trim() !== "") {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(a =>
-      (a.titre + " " + (a.note||"") + " " + (a.tags||[]).join(" "))
-        .toLowerCase()
-        .includes(q)
-    );
-  }
-
-  // tags (utiliser la même logique AND/OR que applyFilters)
-  if (!activeTags.includes("All") && activeTags.length > 0) {
-    if (andModeQuick) {
-      filtered = filtered.filter(a => activeTags.every(tag => a.tags && a.tags.includes(tag)));
-    } else {
-      filtered = filtered.filter(a => a.tags && a.tags.some(tag => activeTags.includes(tag)));
-    }
-  } else if (!activeTags.includes("All") && activeTags.length === 0) {
-    // aucun tag sélectionné => aucun article
-    filtered = [];
-  }
-
-  // localisation (position / municipalité / quartier)
-  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
-  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
-  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
-
-  return filtered;
-}
-
-// --- Rendu filtres formats (avec counts dynamiques) ---
-function renderFormatFilters() {
-  const container = document.getElementById("formatFilters");
-  // obtenir tous les formats disponibles dans le dataset complet (pour lister les boutons)
-  const formats = ["All", ...getAllFormats(articles)];
-
-  // calculer les counts sur la base des filtres excluants (tags + localisation + recherche)
-  const filteredForCounts = getFilteredForCounts();
-
-  // compte pour "All" = tous les articles correspondants au contexte filtres
-  const counts = {};
-  counts["All"] = filteredForCounts.length;
-
-  formats.slice(1).forEach(f => {
-    counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length;
-  });
-
-  // construire les boutons avec data-format (utile car on affiche "Label (n)")
-  container.innerHTML = formats.map(f => {
-    const n = counts[f] || 0;
-    // on peut griser / indiquer 0 si on veut; ici on affiche simplement le count
-    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
-  }).join("");
-
-  // appliquer visuel actif selon activeFormats
-  container.querySelectorAll("button").forEach(b => {
-    const fmt = b.dataset.format;
-    b.classList.toggle("active", activeFormats.includes(fmt));
-  });
-}
-// --- Rendu filtres formats (avec counts dynamiques) ---
-function renderFormatFilters() {
-  const container = document.getElementById("formatFilters");
-  // obtenir tous les formats disponibles dans le dataset complet (pour lister les boutons)
-  const formats = ["All", ...getAllFormats(articles)];
-
-  // calculer les counts sur la base des filtres excluants (tags + localisation + recherche)
-  const filteredForCounts = getFilteredForCounts();
-
-  // compte pour "All" = tous les articles correspondants au contexte filtres
-  const counts = {};
-  counts["All"] = filteredForCounts.length;
-
-  formats.slice(1).forEach(f => {
-    counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length;
-  });
-
-  // construire les boutons avec data-format (utile car on affiche "Label (n)")
-  container.innerHTML = formats.map(f => {
-    const n = counts[f] || 0;
-    // on peut griser / indiquer 0 si on veut; ici on affiche simplement le count
-    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
-  }).join("");
-
-  // appliquer visuel actif selon activeFormats
-  container.querySelectorAll("button").forEach(b => {
-    const fmt = b.dataset.format;
-    b.classList.toggle("active", activeFormats.includes(fmt));
-  });
-}
-
+/* initial render */
 renderQuickFilters();
 renderFormatFilters();
 renderLocationFilters();
@@ -1094,18 +764,3 @@ renderArticles();
   </script>
 </body>
 </html>
-
-
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth < 980) {
-    const hero = document.querySelector(".hero");
-    const aside = document.querySelector("aside");
-    hero.insertAdjacentElement("afterend", aside);
-  }
-});
-</script>
-
-<script src="js/smooth-scroll-local.js"></script>

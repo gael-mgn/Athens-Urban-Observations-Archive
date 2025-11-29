@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Recherche de Codes – Index Urbain</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        background: #f4f4f4;
+    }
+    h1 {
+        text-align: center;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 600px;
+        max-width: 95%;
+        margin: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 20px;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    #result {
+        margin-top: 25px;
+        padding: 15px;
+        background: #fffdfa;
+        border-left: 4px solid #4CAF50;
+        display: none;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+    .hierarchy {
+        margin-bottom: 10px;
+    }
+    .children {
+        margin-top: 10px;
+    }
+    ul.desc {
+        margin: 6px 0 12px 18px;
+        padding-left: 8px;
+    }
+    a.child-link {
+        text-decoration: none;
+        color: #0b5ed7;
+        cursor: pointer;
+    }
+    a.child-link:hover {
+        text-decoration: underline;
+    }
+    .note {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 8px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Recherche de code dans l’index</h1>
+
+<div class="container">
+
+    <label for="codeInput">Entrer un code (ex : 141, 321, 512…)</label>
+    <input id="codeInput" type="text" placeholder="Tapez un code..." />
+
+    <label for="keywordInput">Recherche par mot-clé</label>
+    <input id="keywordInput" type="text" placeholder="Ex : vélo, ruines, graffiti, mobilité…" />
+
+    <label for="dropdown">Ou choisir un code dans la liste</label>
+    <select id="dropdown">
+        <option value="">-- Sélectionner un code --</option>
+    </select>
+
+    <div id="result" aria-live="polite"></div>
+</div>
+
+
+<script src="data/codemap.js"></script>
+
+
+<script>
+
+// --- Remplir la liste déroulante (tri numérique) ---
+const dropdown = document.getElementById("dropdown");
+Object.keys(codeMap)
+  .sort((a,b) => parseInt(a,10) - parseInt(b,10))
+  .forEach(code => {
+    dropdown.innerHTML += `<option value="${code}">${code} — ${codeMap[code]}</option>`;
+});
+
+// --- Zone de résultat ---
+const result = document.getElementById("result");
+
+// --- Helpers ---
+// Retourne la hiérarchie complète depuis la racine jusqu'au code (array d'obj {code,label})
+function buildHierarchyArray(code) {
+    let cur = code;
+    const arr = [];
+    while (cur) {
+        arr.push({ code: cur, label: codeMap[cur] || "(catégorie inconnue)" });
+        cur = cur.slice(0, -1);
+    }
+    arr.reverse();
+    return arr;
+}
+
+// Retourne les enfants directs (longueur = parent.length + 1)
+function getDirectChildren(parent) {
+    return Object.keys(codeMap)
+        .filter(k => k.startsWith(parent) && k.length === parent.length + 1)
+        .sort((a,b) => parseInt(a,10) - parseInt(b,10));
+}
+
+// Rend une structure HTML imbriquée des descendants (récursif)
+function renderDescendants(parent) {
+    const children = getDirectChildren(parent);
+    if (children.length === 0) return '';
+    let html = '<ul class="desc">';
+    children.forEach(child => {
+        html += `<li><a href="#" class="child-link" data-code="${child}">${child} — ${codeMap[child] || '(catégorie inconnue)'}</a>`;
+        // récursivité : afficher les descendants du child
+        html += renderDescendants(child);
+        html += `</li>`;
+    });
+    html += '</ul>';
+    return html;
+}
+
+// Transforme la hiérarchie en HTML (avec <b>code</b> : label)
+function hierarchyToHtml(code) {
+    const arr = buildHierarchyArray(code);
+    return arr.map(item => `<b>${item.code}</b> : ${item.label}`).join('<br>');
+}
+
+// Affiche la hiérarchie + suites possibles pour un code donné
+function displayCodeWithChildren(code) {
+    const hHtml = hierarchyToHtml(code);
+    const childrenHtml = renderDescendants(code);
+    let out = `<div class="hierarchy">${hHtml}</div>`;
+    if (childrenHtml) {
+        out += `<div class="children"><div class="note">Suites possibles (cliquez pour choisir la précision souhaitée) :</div>${childrenHtml}</div>`;
+    } else {
+        out += `<div class="children"><div class="note">Aucune suite disponible (c'est le niveau le plus précis dans la carte).</div></div>`;
+    }
+    showResult(out);
+}
+
+// Affichage dans la zone résultat
+function showResult(html) {
+    result.style.display = 'block';
+    result.innerHTML = html;
+    // ajouter gestion des clics sur les liens enfants (délégué)
+}
+
+// --- Gestion des événements ---
+// clics délégués sur les descendants (pour naviguer vers un code précis)
+result.addEventListener('click', function(e) {
+    const a = e.target.closest('a.child-link');
+    if (!a) return;
+    e.preventDefault();
+    const code = a.dataset.code;
+    // remplir le champ codeInput pour information + afficher sa hiérarchie/descendants
+    document.getElementById('codeInput').value = code;
+    displayCodeWithChildren(code);
+});
+
+// Recherche par code (champ codeInput)
+document.getElementById("codeInput").addEventListener("input", function() {
+    const code = this.value.trim();
+    if (!code) {
+        result.style.display = "none";
+        return;
+    }
+    if (codeMap[code]) {
+        displayCodeWithChildren(code);
+    } else {
+        // tenter de trouver la catégorie par troncation (ex: 3110 -> 311)
+        let probe = code;
+        let found = false;
+        while (probe.length > 0 && !found) {
+            probe = probe.slice(0, -1);
+            if (codeMap[probe]) {
+                showResult(`<i>Code exact non trouvé. Affichage à partir de la catégorie la plus proche :</i><br>` + displayAndReturn(probe));
+                found = true;
+            }
+        }
+        if (!found) {
+            showResult("Aucun code trouvé.");
+        }
+    }
+});
+
+// helper pour retourner html + permet réutilisation
+function displayAndReturn(code) {
+    const hHtml = hierarchyToHtml(code);
+    const childrenHtml = renderDescendants(code);
+    let out = `<div class="hierarchy">${hHtml}</div>`;
+    if (childrenHtml) {
+        out += `<div class="children"><div class="note">Suites possibles (cliquez pour choisir la précision souhaitée) :</div>${childrenHtml}</div>`;
+    } else {
+        out += `<div class="children"><div class="note">Aucune suite disponible (c'est le niveau le plus précis dans la carte).</div></div>`;
+    }
+    return out;
+}
+
+// Sélection dans le menu déroulant
+dropdown.addEventListener("change", function() {
+    const code = this.value;
+    if (code) {
+        displayCodeWithChildren(code);
+        document.getElementById('codeInput').value = code;
+    } else {
+        result.style.display = "none";
+    }
+});
+
+// Recherche par mot-clé : on affiche chaque résultat + ses suites possibles
+document.getElementById("keywordInput").addEventListener("input", function() {
+    const keyword = this.value.toLowerCase().trim();
+    if (!keyword) {
+        result.style.display = "none";
+        return;
+    }
+
+    // On cherche dans labels
+    const results = Object.entries(codeMap)
+        .filter(([code, label]) => label.toLowerCase().includes(keyword))
+        .sort((a,b) => parseInt(a[0],10) - parseInt(b[0],10));
+
+    if (results.length > 0) {
+        // Pour chaque match, afficher hiérarchie + suites.
+        // Éviter doublons quand différents niveaux partagent la même hiérarchie.
+        const seen = new Set();
+        let output = '';
+        results.forEach(([code, label]) => {
+            const summaryKey = buildHierarchyArray(code).map(i => i.code).join('/');
+            if (seen.has(summaryKey)) return;
+            seen.add(summaryKey);
+            output += `<div class="match-block">${displayAndReturn(code)}</div><hr/>`;
+        });
+        showResult(output);
+    } else {
+        // si aucun label trouvé, on tente d'interpréter la saisie comme un code partiel (ex: "31")
+        const possibleCodes = Object.keys(codeMap).filter(k => k.includes(keyword) || k.startsWith(keyword));
+        if (possibleCodes.length > 0) {
+            let out = '<div class="note">Résultats trouvés par concordance partielle :</div>';
+            possibleCodes.sort((a,b) => parseInt(a,10) - parseInt(b,10)).forEach(c => {
+                out += displayAndReturn(c) + '<hr/>';
+            });
+            showResult(out);
+        } else {
+            showResult("Aucun résultat trouvé.");
+        }
+    }
+});
+</script>
+
+</body>
+</html>
