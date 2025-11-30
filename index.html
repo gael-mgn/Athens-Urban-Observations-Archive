@@ -59,6 +59,11 @@ input[type="checkbox"] { accent-color: black; }
 figure { margin: 0; padding: 0; margin-bottom: 10px; }
 figcaption { font-size: 13px; color: var(--ink-mute); }
 .info{ display:grid; grid-template-columns:1fr 150px; gap:18px; }
+.info a {
+  word-break: break-all; /* Permet de couper le texte en plein mot si nécessaire */
+    overflow-wrap: break-word; /* Gère les retours à la ligne si le texte est trop long */
+    max-width: 100%; 
+}
 .meta-tags{ margin-top:10px; }
 .tag{ padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; cursor:pointer; }
 .tag:hover{ background:var(--ink); color:#fff; }
