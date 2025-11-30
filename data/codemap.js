@@ -50,11 +50,11 @@ function resetAxis() {
   // codeMap.js (inchangé)
 const thesaurus = {
   "A": { 
-    label: "Thématiques urbaines", 
-    description: "Axe regroupant les catégories thématiques d’observation urbaine. (matérialiste)" 
+    label: "Matérialité urbaine", 
+    description: "composantes physiques et tangibles de l’espace urbain" 
   },
   "C": { 
-    label: "Architecture et matérialité urbaine",
+    label: "Architecture",
     description: "Axe regroupant les typologies, époques, styles et éléments architecturaux." 
   },
   "P": { 
@@ -179,7 +179,7 @@ const thesaurus = {
 
 
 
-"C.3":  { label: "Matériaux et techniques", description: "Substances et procédés utilisés pour la construction et la structure des bâtiments." },
+"C.3":  { label: "Matériaux", description: "Substances et procédés utilisés pour la construction et la structure des bâtiments." },
 
 "C.3.1": { label: "Pierre", description: "Matériau traditionnel utilisé pour la construction monumentale ou vernaculaire." },
 "C.3.2": { label: "Béton armé", description: "Matériau moderne composé de béton renforcé par une armature métallique." },
