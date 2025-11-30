@@ -1,273 +1,515 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Recherche de Codes – Index Urbain</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        padding: 30px;
-        background: #f4f4f4;
-    }
-    h1 {
-        text-align: center;
-        margin: auto;
-        margin-bottom: 20px;
-    }
-    .container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        width: 600px;
-        max-width: 95%;
-        margin: auto;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    label {
-        font-weight: bold;
-        display: block;
-        margin-top: 20px;
-    }
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-    }
-    #result {
-        margin-top: 25px;
-        padding: 15px;
-        background: #fffdfa;
-        border-left: 4px solid #4CAF50;
-        display: none;
-        max-height: 50vh;
-        overflow-y: auto;
-    }
-    .hierarchy {
-        margin-bottom: 10px;
-    }
-    .children {
-        margin-top: 10px;
-    }
-    ul.desc {
-        margin: 6px 0 12px 18px;
-        padding-left: 8px;
-    }
-    a.child-link {
-        text-decoration: none;
-        color: #0b5ed7;
-        cursor: pointer;
-    }
-    a.child-link:hover {
-        text-decoration: underline;
-    }
-    .note {
-        font-style: italic;
-        color: #666;
-        margin-bottom: 8px;
-    }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recherche de Codes – Index Urbain</title>
+  <meta name="description" content="Outil de recherche et exploration de l'index de codes (hiérarchie et descendants)." />
+  <style>
+:root{
+  --bg:#fdfdfd;
+  --ink:#000;
+  --ink-mute:#777;
+  --panel:#f4f4f4;
+  --line:2px solid #000;
+  --gap:32px;
+  --radius:0;
+  --font-sans:"Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-serif:"Inter", "Helvetica Neue", Arial, sans-serif;
+}
+a { text-decoration:none;color:var(--ink); }
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.45}
+body{padding:40px}
+*{box-sizing:border-box}
+.wrap{ max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 340px; gap:var(--gap); }
+header{ grid-column:1/-1; border-bottom:var(--line); padding-bottom:18px; display:flex; justify-content:space-between; align-items:flex-end }
+.site-title{ font-family:var(--font-serif); font-size:22px; font-weight:800; }
+header small{ font-size:12px; color:var(--ink-mute) }
+nav{ display:flex; gap:14px }
+nav a{ text-decoration:none; color:var(--ink); font-weight:700; padding:6px 0; border-bottom:2px solid transparent }
+nav a:hover{ border-bottom:2px solid var(--ink) }
+.main-card{ padding:28px; background:var(--panel); border:var(--line); }
+h1.hero-title{ margin:0 0 8px 0; font-family:var(--font-serif); font-size:20px }
+p.lead{ margin:0 0 18px 0; color:var(--ink-mute); max-width:95% }
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px }
+.form-row-full{ margin-top:14px }
+label{ display:block; font-weight:700; margin-bottom:6px; font-size:13px }
+input[type=text], select { width:100%; padding:12px; border:var(--line); background:#fff; font-size:15px }
+select { appearance: none }
+.result{ margin-top:22px; padding:18px; background:#fff; border:var(--line); display:none; overflow:auto }
+.hierarchy{ margin-bottom:12px }
+.children .note{ font-style:italic; color:var(--ink-mute); margin-bottom:8px }
+.desc{ margin:8px 0 12px 18px; padding-left:8px }
+.child-link{ text-decoration:none; color:var(--ink); font-weight:700 }
+.child-link:hover{ text-decoration:underline }
+.meta{ border:var(--line); padding:18px; background:#fff }
+.meta h3{ margin-top:0; font-size:14px }
+.small-note{ font-size:13px; color:var(--ink-mute) }
+.footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:24px; display:flex; justify-content:space-between }
+
+mark.hl{
+  background: yellow;
+  font-weight:700;
+}
+
+/* Section du thésaurus complet (full tree) */
+.full-thesaurus {
+  grid-column:1/-1;
+  padding:18px;
+  border:var(--line);
+  background:#fff;
+  margin-top:18px;
+}
+.full-thesaurus .controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+.btn { padding:8px 12px; border:1px solid #ddd; background:#fafafa; cursor:pointer; border-radius:4px; }
+.btn:active { transform:translateY(1px); }
+.tree { padding-left:8px; overflow:auto; border-top:1px dashed #eee; padding-top:12px; }
+.node { margin:6px 0; padding:8px; border-radius:6px; border:1px solid #eee; background:#fbfbff; display:flex; gap:12px; align-items:flex-start; }
+.node .meta { min-width:110px; font-weight:700; color:#1f2937; }
+.node .content { flex:1; }
+.node .description { font-style:italic; color:#555; margin-top:4px; font-size:0.95em; }
+.children-list { list-style:none; margin:8px 0 8px 18px; padding:0; border-left:1px dashed rgba(0,0,0,0.04); }
+.toggle { cursor:pointer; user-select:none; width:20px; display:inline-grid; place-items:center; border-radius:4px; border:1px solid transparent; margin-right:6px; }
+.toggle:hover { border-color:#ddd; }
+.hidden { display:none; }
+
+@media(max-width:980px){
+  .wrap{ grid-template-columns:1fr; }
+  body{padding:20px}
+}
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <a href="index.html">
+          <div class="site-title" style="font-weight: bold;">Athens Urban Observations Archive</div>
+          <div style="font-size:12px;color:var(--muted)">An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</div>
+        </a>
+      </div>
+    </header>
 
-<h1>Recherche de code dans l’index</h1>
+    <main>
+      <section class="main-card" aria-labelledby="hero-title">
+        <h1 id="hero-title" class="hero-title">Recherche de code dans l’index</h1>
+        <p class="lead">Entrez un code, un mot-clé ou sélectionnez un code dans la liste pour afficher sa hiérarchie et ses descendants.</p>
 
-<div class="container">
+        <div class="form-row-full">
+            <label for="keywordInput">Recherche par mot-clé</label>
+            <input id="keywordInput" type="text" placeholder="Ex : vélo, ruines, graffiti, mobilité..." />
+        </div>
 
-    <label for="codeInput">Entrer un code (ex : 141, 321, 512…)</label>
-    <input id="codeInput" type="text" placeholder="Tapez un code..." />
+        <div class="form-row">
+          <div>
+            <label for="codeInput">Entrer un code (ex : 141, 321, 512…)</label>
+            <input id="codeInput" type="text" placeholder="Tapez un code..." />
+          </div>
+          <div>
+            <label for="dropdown">Ou choisir un code dans la liste</label>
+            <select id="dropdown"><option value="">-- Sélectionner un code --</option></select>
+          </div>
+        </div>
 
-    <label for="keywordInput">Recherche par mot-clé</label>
-    <input id="keywordInput" type="text" placeholder="Ex : vélo, ruines, graffiti, mobilité…" />
+        <div id="result" class="result" aria-live="polite"></div>
+      </section>
 
-    <label for="dropdown">Ou choisir un code dans la liste</label>
-    <select id="dropdown">
-        <option value="">-- Sélectionner un code --</option>
-    </select>
+      <!-- Section ajoutée : thésaurus complet -->
+      <section class="full-thesaurus" id="fullThesaurusSection" aria-labelledby="full-title">
+        <h2 id="full-title" style="margin:0 0 8px 0">Thésaurus complet</h2>
+        <div class="controls">
+          <button id="toggleFull" class="btn">Afficher le thésaurus complet</button>
+          <button id="expandAll" class="btn">Développer tout</button>
+          <button id="collapseAll" class="btn">Réduire tout</button>
+          <div style="flex:1"></div>
+          <label style="font-weight:700;font-size:13px;margin:0 6px 0 0">Filtrer :</label>
+          <input id="filterFull" type="text" placeholder="Filtre par mot-clé (ici)..." style="padding:8px;border:1px solid #ddd" />
+        </div>
+        <div id="fullThesaurus" class="tree hidden" role="tree" aria-label="Arbre complet du thésaurus"></div>
+      </section>
 
-    <div id="result" aria-live="polite"></div>
-</div>
+    </main>
 
+    <aside>
+      <div class="meta">
+        <h3>Utilisation rapide</h3>
+        <p class="small-note">Vous pouvez :<br>• saisir un code exact ;<br>• taper un mot-clé pour rechercher dans les libellés ;<br>• cliquer sur un descendant pour naviguer plus profondément.</p>
+        <div style="height:12px"></div>
+        <h3>Astuce</h3>
+        <p class="small-note">Si un code exact n'existe pas, l'outil propose la catégorie parente la plus proche.</p>
+      </div>
+    </aside>
 
+    <footer class="footer">
+      <div>© <strong>Index Urbain</strong> — <span id="year"></span></div>
+      <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    </footer>
+  </div>
+
+<!-- charge ton jeu de données -->
 <script src="data/codemap.js"></script>
 
-
 <script>
+/* ---------------------------------------------------------------------
+  Script unique : recherche + affichage du thésaurus complet
+  - suppose que data/codemap.js définit une variable globale `thesaurus`
+    de la forme { "1": {label: "...", description: "..."}, "1211": {...}, "2.1": {...}, ... }
+  - gère clés avec points ("1.2.10") ou sans ("1211") en découpant les segments
+------------------------------------------------------------------------ */
 
-// --- Remplir la liste déroulante (tri numérique) ---
-const dropdown = document.getElementById("dropdown");
-Object.keys(codeMap)
-  .sort((a,b) => parseInt(a,10) - parseInt(b,10))
-  .forEach(code => {
-    dropdown.innerHTML += `<option value="${code}">${code} — ${codeMap[code]}</option>`;
-});
+// DOM refs
+const dropdown = document.getElementById('dropdown');
+const result = document.getElementById('result');
+const toggleFullBtn = document.getElementById('toggleFull');
+const fullThesaurusEl = document.getElementById('fullThesaurus');
+const expandAllBtn = document.getElementById('expandAll');
+const collapseAllBtn = document.getElementById('collapseAll');
+const filterFullInput = document.getElementById('filterFull');
 
-// --- Zone de résultat ---
-const result = document.getElementById("result");
+let lastKeyword = '';
 
-// --- Helpers ---
-// Retourne la hiérarchie complète depuis la racine jusqu'au code (array d'obj {code,label})
-function buildHierarchyArray(code) {
-    let cur = code;
-    const arr = [];
-    while (cur) {
-        arr.push({ code: cur, label: codeMap[cur] || "(catégorie inconnue)" });
-        cur = cur.slice(0, -1);
-    }
-    arr.reverse();
-    return arr;
+// ---- Utilitaires de parsing et tri ----
+function parseKeySegments(key){
+  if(key.includes('.')) return key.split('.').filter(Boolean);
+  // sinon on découpe caractère par caractère (1 2 1 1 -> "1.2.1.1")
+  return key.split('').map(ch=>ch);
+}
+function compareSegments(aSegs, bSegs){
+  const n = Math.max(aSegs.length, bSegs.length);
+  for(let i=0;i<n;i++){
+    const a = aSegs[i] === undefined ? null : aSegs[i];
+    const b = bSegs[i] === undefined ? null : bSegs[i];
+    if(a === null && b !== null) return -1;
+    if(a !== null && b === null) return 1;
+    if(a === b) continue;
+    const aNum = Number(a), bNum = Number(b);
+    if(!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
+    return a > b ? 1 : -1;
+  }
+  return 0;
 }
 
-// Retourne les enfants directs (longueur = parent.length + 1)
-function getDirectChildren(parent) {
-    return Object.keys(codeMap)
-        .filter(k => k.startsWith(parent) && k.length === parent.length + 1)
-        .sort((a,b) => parseInt(a,10) - parseInt(b,10));
+// Build keys, segs map and sorted key list
+function prepareKeyStructures(){
+  const keys = Object.keys(thesaurus || {});
+  const keyToSegs = {};
+  keys.forEach(k => keyToSegs[k] = parseKeySegments(k));
+  keys.sort((a,b) => compareSegments(keyToSegs[a], keyToSegs[b]));
+  return { keys, keyToSegs };
 }
 
-// Rend une structure HTML imbriquée des descendants (récursif)
-function renderDescendants(parent) {
-    const children = getDirectChildren(parent);
-    if (children.length === 0) return '';
-    let html = '<ul class="desc">';
-    children.forEach(child => {
-        html += `<li><a href="#" class="child-link" data-code="${child}">${child} — ${codeMap[child] || '(catégorie inconnue)'}</a>`;
-        // récursivité : afficher les descendants du child
-        html += renderDescendants(child);
-        html += `</li>`;
+const ks = prepareKeyStructures();
+const keys = ks.keys;
+const keyToSegs = ks.keyToSegs;
+
+// safe escaping + highlighting
+function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function escapeHtml(str){
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function highlightMatch(text, keyword){
+  if(!text) return '';
+  if(!keyword) return escapeHtml(text);
+  const k = keyword.trim();
+  if(!k) return escapeHtml(text);
+  const re = new RegExp(escapeRegExp(k), 'gi');
+  let res = '', last=0, m;
+  while((m = re.exec(text)) !== null){
+    res += escapeHtml(text.slice(last, m.index));
+    res += '<mark class="hl">' + escapeHtml(m[0]) + '</mark>';
+    last = m.index + m[0].length;
+    if(re.lastIndex === m.index) re.lastIndex++;
+  }
+  res += escapeHtml(text.slice(last));
+  return res;
+}
+
+// helpers hiérarchie
+function buildHierarchyArray(code){
+  let cur = code;
+  const arr = [];
+  while(cur && cur.length>0){
+    const entry = thesaurus[cur];
+    arr.push({
+      code: cur,
+      label: entry?.label || '(catégorie inconnue)',
+      description: entry?.description || ''
     });
-    html += '</ul>';
-    return html;
+    cur = cur.slice(0,-1);
+  }
+  arr.reverse();
+  return arr;
 }
 
-// Transforme la hiérarchie en HTML (avec <b>code</b> : label)
-function hierarchyToHtml(code) {
-    const arr = buildHierarchyArray(code);
-    return arr.map(item => `<b>${item.code}</b> : ${item.label}`).join('<br>');
+// enfants directs : on utilise keyToSegs pour compter segments (parent length + 1)
+function getDirectChildren(parent){
+  const parentSegs = keyToSegs[parent];
+  if(!parentSegs) return [];
+  return keys.filter(k=>{
+    if(k === parent) return false;
+    const segs = keyToSegs[k];
+    if(!segs) return false;
+    if(segs.length !== parentSegs.length + 1) return false;
+    for(let i=0;i<parentSegs.length;i++) if(segs[i] !== parentSegs[i]) return false;
+    return true;
+  }).sort((a,b)=> compareSegments(keyToSegs[a], keyToSegs[b]));
 }
 
-// Affiche la hiérarchie + suites possibles pour un code donné
-function displayCodeWithChildren(code) {
-    const hHtml = hierarchyToHtml(code);
-    const childrenHtml = renderDescendants(code);
-    let out = `<div class="hierarchy">${hHtml}</div>`;
-    if (childrenHtml) {
-        out += `<div class="children"><div class="note">Suites possibles (cliquez pour choisir la précision souhaitée) :</div>${childrenHtml}</div>`;
-    } else {
-        out += `<div class="children"><div class="note">Aucune suite disponible (c'est le niveau le plus précis dans la carte).</div></div>`;
+// rendu descendants (utilisé pour panneau résultat)
+function renderDescendants(parent){
+  const children = getDirectChildren(parent);
+  if(children.length===0) return '';
+  let html = '<ul class="desc">';
+  children.forEach(child=>{
+    const entry = thesaurus[child] || {};
+    const labelHtml = highlightMatch(entry.label || '(catégorie inconnue)', lastKeyword);
+    const descHtml = highlightMatch(entry.description || '', lastKeyword);
+    html += `<li>
+      <a href="#" class="child-link" data-code="${child}">${child} — ${labelHtml}</a>`;
+    if(descHtml) html += `<div style="font-size:12px;color:#777;margin-left:6px">${descHtml}</div>`;
+    html += renderDescendants(child);
+    html += `</li>`;
+  });
+  html += '</ul>';
+  return html;
+}
+
+function hierarchyToHtml(code){
+  const arr = buildHierarchyArray(code);
+  return arr.map(item => `
+    <div style="margin-bottom:6px">
+      <b>${item.code}</b> — ${highlightMatch(item.label, lastKeyword)}
+      <div style="font-size:13px;color:#555;margin-left:12px;">
+        ${highlightMatch(item.description || "", lastKeyword)}
+      </div>
+    </div>
+  `).join('');
+}
+
+function displayAndReturn(code){
+  const hHtml = hierarchyToHtml(code);
+  const childrenHtml = renderDescendants(code);
+  let out = `<div class="hierarchy">${hHtml}</div>`;
+  if(childrenHtml){
+    out += `<div class="children"><div class="note">Suites possibles (cliquez pour choisir la précision souhaitée) :</div>${childrenHtml}</div>`;
+  } else {
+    out += `<div class="children"><div class="note">Aucune suite disponible (c'est le niveau le plus précis dans la carte).</div></div>`;
+  }
+  return out;
+}
+
+function showResult(html){
+  result.style.display = 'block';
+  result.innerHTML = html;
+}
+
+function displayCodeWithChildren(code){
+  showResult(displayAndReturn(code));
+}
+
+// events
+document.addEventListener('click', function(e){
+  const a = e.target.closest('a.child-link');
+  if(!a) return;
+  e.preventDefault();
+  const code = a.dataset.code;
+  document.getElementById('codeInput').value = code;
+  displayCodeWithChildren(code);
+});
+
+// code input logic
+document.getElementById('codeInput').addEventListener('input', function(){
+  const code = this.value.trim();
+  if(!code){ result.style.display = 'none'; return; }
+  if(thesaurus[code]?.label){ displayCodeWithChildren(code); return; }
+  // recherche par troncature ascendante
+  let probe = code;
+  let found = false;
+  while(probe.length>0 && !found){
+    probe = probe.slice(0,-1);
+    if(thesaurus[probe]){
+      showResult(`<i>Code exact non trouvé. Affichage à partir de la catégorie la plus proche :</i><br>` + displayAndReturn(probe));
+      found = true;
     }
+  }
+  if(!found) showResult('Aucun code trouvé.');
+});
+
+// dropdown population : tri via compareSegments (gère dots & no-dots)
+(function populateDropdown(){
+  keys.forEach(code=>{
+    const opt = document.createElement('option');
+    opt.value = code;
+    const label = thesaurus[code]?.label || '';
+    opt.textContent = `${code} — ${label}`;
+    dropdown.appendChild(opt);
+  });
+})();
+dropdown.addEventListener('change', function(){
+  const code = this.value;
+  if(code){ displayCodeWithChildren(code); document.getElementById('codeInput').value = code; }
+  else result.style.display = 'none';
+});
+
+// keyword search
+document.getElementById('keywordInput').addEventListener('input', function(){
+  const keyword = this.value.toLowerCase().trim();
+  lastKeyword = keyword;
+  if(!keyword){ result.style.display = 'none'; return; }
+
+  // recherche sur label + description
+  const results = Object.entries(thesaurus).filter(([c,entry])=>{
+    const hay = ((entry.label||'') + ' ' + (entry.description||'')).toLowerCase();
+    return hay.includes(keyword);
+  }).sort((a,b)=> compareSegments(keyToSegs[a[0]], keyToSegs[b[0]]));
+
+  if(results.length>0){
+    const seen = new Set();
+    let output = '';
+    results.forEach(([code,entry])=>{
+      const summaryKey = buildHierarchyArray(code).map(i=>i.code).join('/');
+      if(seen.has(summaryKey)) return; seen.add(summaryKey);
+      output += `<div class="match-block">${displayAndReturn(code)}</div><hr/>`;
+    });
+    showResult(output);
+    return;
+  }
+
+  // fallback partial matches by key
+  const possibleCodes = Object.keys(thesaurus).filter(k => k.includes(keyword) || k.startsWith(keyword));
+  if(possibleCodes.length>0){
+    let out = '<div class="note">Résultats trouvés par concordance partielle :</div>';
+    possibleCodes.sort((a,b)=> compareSegments(keyToSegs[a], keyToSegs[b])).forEach(c=>{ out += displayAndReturn(c) + '<hr/>'; });
     showResult(out);
-}
-
-// Affichage dans la zone résultat
-function showResult(html) {
-    result.style.display = 'block';
-    result.innerHTML = html;
-    // ajouter gestion des clics sur les liens enfants (délégué)
-}
-
-// --- Gestion des événements ---
-// clics délégués sur les descendants (pour naviguer vers un code précis)
-result.addEventListener('click', function(e) {
-    const a = e.target.closest('a.child-link');
-    if (!a) return;
-    e.preventDefault();
-    const code = a.dataset.code;
-    // remplir le champ codeInput pour information + afficher sa hiérarchie/descendants
-    document.getElementById('codeInput').value = code;
-    displayCodeWithChildren(code);
+  } else {
+    showResult('Aucun résultat trouvé.');
+  }
 });
 
-// Recherche par code (champ codeInput)
-document.getElementById("codeInput").addEventListener("input", function() {
-    const code = this.value.trim();
-    if (!code) {
-        result.style.display = "none";
-        return;
-    }
-    if (codeMap[code]) {
-        displayCodeWithChildren(code);
-    } else {
-        // tenter de trouver la catégorie par troncation (ex: 3110 -> 311)
-        let probe = code;
-        let found = false;
-        while (probe.length > 0 && !found) {
-            probe = probe.slice(0, -1);
-            if (codeMap[probe]) {
-                showResult(`<i>Code exact non trouvé. Affichage à partir de la catégorie la plus proche :</i><br>` + displayAndReturn(probe));
-                found = true;
-            }
-        }
-        if (!found) {
-            showResult("Aucun code trouvé.");
-        }
-    }
-});
-
-// helper pour retourner html + permet réutilisation
-function displayAndReturn(code) {
-    const hHtml = hierarchyToHtml(code);
-    const childrenHtml = renderDescendants(code);
-    let out = `<div class="hierarchy">${hHtml}</div>`;
-    if (childrenHtml) {
-        out += `<div class="children"><div class="note">Suites possibles (cliquez pour choisir la précision souhaitée) :</div>${childrenHtml}</div>`;
-    } else {
-        out += `<div class="children"><div class="note">Aucune suite disponible (c'est le niveau le plus précis dans la carte).</div></div>`;
-    }
-    return out;
+/* ---------------------------------------------------------------------
+  RENDU DU THESAURUS COMPLET (DOM)
+------------------------------------------------------------------------ */
+function numberFromKey(key){
+  const segs = keyToSegs[key] || parseKeySegments(key);
+  return segs.join('.');
 }
 
-// Sélection dans le menu déroulant
-dropdown.addEventListener("change", function() {
-    const code = this.value;
-    if (code) {
-        displayCodeWithChildren(code);
-        document.getElementById('codeInput').value = code;
-    } else {
-        result.style.display = "none";
-    }
+// création récursive d'un noeud DOM
+function createNodeElement(key, filterKeyword){
+  const entry = thesaurus[key] || { label: '(sans titre)', description: '' };
+  const wrapper = document.createElement('div');
+  wrapper.className = 'node';
+  wrapper.setAttribute('role','treeitem');
+  wrapper.setAttribute('data-code', key);
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+
+  // toggle si enfants
+  const children = getDirectChildren(key);
+  const toggle = document.createElement('span');
+  toggle.className = 'toggle';
+  toggle.textContent = children.length > 0 ? '▾' : '';
+  if(children.length === 0) toggle.style.visibility = 'hidden';
+  toggle.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const list = wrapper.querySelector('ul.children-list');
+    if(!list) return;
+    list.classList.toggle('hidden');
+    toggle.textContent = list.classList.contains('hidden') ? '▸' : '▾';
+  });
+
+  meta.appendChild(toggle);
+  const num = document.createElement('div');
+  num.textContent = numberFromKey(key);
+  meta.appendChild(num);
+
+  const content = document.createElement('div');
+  content.className = 'content';
+  const title = document.createElement('div');
+  title.innerHTML = `<strong>${highlightMatch(entry.label || '(sans titre)', filterKeyword || '')}</strong>`;
+  content.appendChild(title);
+  if(entry.description){
+    const desc = document.createElement('div');
+    desc.className = 'description';
+    desc.innerHTML = highlightMatch(entry.description, filterKeyword || '');
+    content.appendChild(desc);
+  }
+
+  // clic sur le noeud : met le code dans l'input et affiche ses descendants
+  wrapper.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    document.getElementById('codeInput').value = key;
+    displayCodeWithChildren(key);
+  });
+
+  wrapper.appendChild(meta);
+  wrapper.appendChild(content);
+
+  if(children.length > 0){
+    const ul = document.createElement('ul');
+    ul.className = 'children-list';
+    children.forEach(childKey=>{
+      const li = document.createElement('li');
+      li.appendChild(createNodeElement(childKey, filterKeyword));
+      ul.appendChild(li);
+    });
+    wrapper.appendChild(ul);
+  }
+  return wrapper;
+}
+
+// créer tout le tree pour les racines
+function renderFullThesaurus(filterKeyword){
+  fullThesaurusEl.innerHTML = '';
+  const rootKeys = keys.filter(k => keyToSegs[k].length === 1);
+  rootKeys.forEach(root=>{
+    const nodeEl = createNodeElement(root, filterKeyword);
+    fullThesaurusEl.appendChild(nodeEl);
+  });
+}
+
+// toggle affichage panel
+toggleFullBtn.addEventListener('click', () => {
+  fullThesaurusEl.classList.toggle('hidden');
+  toggleFullBtn.textContent = fullThesaurusEl.classList.contains('hidden') ? 'Afficher le thésaurus complet' : 'Cacher le thésaurus complet';
 });
 
-// Recherche par mot-clé : on affiche chaque résultat + ses suites possibles
-document.getElementById("keywordInput").addEventListener("input", function() {
-    const keyword = this.value.toLowerCase().trim();
-    if (!keyword) {
-        result.style.display = "none";
-        return;
-    }
+// expand / collapse global (parcours DOM)
+expandAllBtn.addEventListener('click', () => {
+  fullThesaurusEl.querySelectorAll('ul.children-list').forEach(u => u.classList.remove('hidden'));
+  fullThesaurusEl.querySelectorAll('.toggle').forEach(t => { if(t.textContent) t.textContent = '▾'; });
+});
+collapseAllBtn.addEventListener('click', () => {
+  fullThesaurusEl.querySelectorAll('ul.children-list').forEach(u => u.classList.add('hidden'));
+  fullThesaurusEl.querySelectorAll('.toggle').forEach(t => { if(t.textContent) t.textContent = '▸'; });
+});
 
-    // On cherche dans labels
-    const results = Object.entries(codeMap)
-        .filter(([code, label]) => label.toLowerCase().includes(keyword))
-        .sort((a,b) => parseInt(a[0],10) - parseInt(b[0],10));
+// filtre du thésaurus complet (surlignage + affichage partiel)
+// On recalcul simplement l'arbre et laisse la fonction highlight s'occuper du marquage.
+filterFullInput.addEventListener('input', () => {
+  const kw = filterFullInput.value.trim().toLowerCase();
+  renderFullThesaurus(kw);
+  // si trouve des matches, on déroule les noeuds parents pour mise en contexte
+  if(kw){
+    // simple heuristique : ouvrir tous les nœuds contenant le mot dans leur label/description
+    fullThesaurusEl.querySelectorAll('.node').forEach(node=>{
+      const html = node.innerText.toLowerCase();
+      const ul = node.querySelector('ul.children-list');
+      if(html.includes(kw)){
+        if(ul) ul.classList.remove('hidden');
+        const t = node.querySelector('.toggle');
+        if(t) t.textContent = (ul && !ul.classList.contains('hidden')) ? '▾' : (ul? '▸' : '');
+      }
+    });
+  }
+});
 
-    if (results.length > 0) {
-        // Pour chaque match, afficher hiérarchie + suites.
-        // Éviter doublons quand différents niveaux partagent la même hiérarchie.
-        const seen = new Set();
-        let output = '';
-        results.forEach(([code, label]) => {
-            const summaryKey = buildHierarchyArray(code).map(i => i.code).join('/');
-            if (seen.has(summaryKey)) return;
-            seen.add(summaryKey);
-            output += `<div class="match-block">${displayAndReturn(code)}</div><hr/>`;
-        });
-        showResult(output);
-    } else {
-        // si aucun label trouvé, on tente d'interpréter la saisie comme un code partiel (ex: "31")
-        const possibleCodes = Object.keys(codeMap).filter(k => k.includes(keyword) || k.startsWith(keyword));
-        if (possibleCodes.length > 0) {
-            let out = '<div class="note">Résultats trouvés par concordance partielle :</div>';
-            possibleCodes.sort((a,b) => parseInt(a,10) - parseInt(b,10)).forEach(c => {
-                out += displayAndReturn(c) + '<hr/>';
-            });
-            showResult(out);
-        } else {
-            showResult("Aucun résultat trouvé.");
-        }
-    }
+// init render (ne pas afficher par défaut, mais préparer)
+document.addEventListener('DOMContentLoaded', () => {
+  renderFullThesaurus('');
 });
 </script>
 

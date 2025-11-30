@@ -48,6 +48,14 @@ input[type="checkbox"] { accent-color: black; }
 .item summary::-webkit-details-marker{display:none;}
 .details-body{ padding:20px; }
 .thumb{ width:100%; object-fit:cover; border:var(--line); }
+
+/*.thumb {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border: var(--line);
+}*/
+
 figure { margin: 0; padding: 0; margin-bottom: 10px; }
 figcaption { font-size: 13px; color: var(--ink-mute); }
 .info{ display:grid; grid-template-columns:1fr 150px; gap:18px; }
@@ -57,7 +65,8 @@ figcaption { font-size: 13px; color: var(--ink-mute); }
 #quickFilters button { cursor:pointer; }
 #quickFilters button.active, #formatFilters button.active { background: black; color: white; border-color: black; }
 .meta-small{font-size:13px;color:var(--ink-mute);}
-aside { position: sticky; top: 20px; max-height: calc(100vh); }
+.coment { margin-top:10px; font-size:14px; color:var(--ink); white-space: pre-wrap; }
+aside { position: sticky; top: 20px; max-height: calc(150vh); }
 .meta{ border:var(--line); padding:18px; background:#fff; }
 .meta select { width: 100%; padding: 6px 8px; margin-bottom: 8px; border: var(--line); background: #fff; font-size: 13px; }
 .meta h3{ margin-top:0; font-size:14px; letter-spacing:0; }
@@ -90,6 +99,23 @@ footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:3
   /* spacing / box look similaire aux .meta */
   .mobile-filters .meta { border: var(--line); padding: 12px; background: #fff; margin-bottom: 12px; }
   /* rendre select/buttons plus larges si besoin */
+}
+
+/* Desktop only: make list a fixed-scroll area */
+@media (min-width: 981px) {
+  /* wrapper: ensure archive doesn't overflow */
+  .archive {
+    overflow: visible; /* permet au .list de scroller indépendamment */
+  }
+
+  /* zone scrollable pour la liste d'articles */
+  #list {
+    overflow: auto;           /* affichage du scroll quand nécessaire */
+    -webkit-overflow-scrolling: touch;
+    /* valeur par défaut au cas où JS est désactivé : ajuste le 500px selon préférence */
+    max-height: 85vh;
+    padding-right: 8px;       /* évite que le contenu touche le bord quand scrollbar visible */
+  }
 }
 
   </style>
@@ -135,7 +161,7 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
     <aside>
       <div class="meta">
         <h3>Quick filters</h3>
-        <p style="margin-bottom: 0;">Click on a tag in the list below to filter the results.</p>
+        <p style="margin-bottom: 0;">Click on a tag in the list below to filter the results. (<a href="thesaurus.html">index de classification</a>)</p>
         <div id="quickFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
 
@@ -320,33 +346,86 @@ function escapeForOnClick(s) { return String(s).replace(/'/g,"\\'").replace(/"/g
 
 /* ---------------- articles (exemples) ---------------- */
 const articles = [
-  {
+    {
     id: 1,
     annee: 2025,
-    titre: "Eglise Orthodoxe",
+    titre: "Panagía Kapnikaréa Church",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0661.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "",
-    rangement: ["111"],
+    images: [{ url: "data/images/DSCF0661.webp", alt: "" }],
+    note: "L'église de la Panagía Kapnikaréa (en grec moderne : Εκκλησία της Παναγίας Καπνικαρέας), souvent appelée simplement Kapnikaréa (Καπνικαρέα), est une église byzantine datant du troisième quart du XIe siècle, situé rue Ermoú, en plein cœur du centre historique d'Athènes.",
+    rangement: ["712", "12", "111", "82"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Arch of Hadrian",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0700.webp", alt: "" }],
+    note: "L'Arc d'Hadrien (en grec : Αψίδα του Αδριανού, Apsida tou Adrianou), plus communément appelé la Porte d'Hadrien (Πύλη του Αδριανού, Pyli tou Adrianou), est un monumental portail inspiré des arcs de triomphe romains.",
+    rangement: ["7113", "12", "814"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Koulouri stands",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",    
+    rangement: ["6","21"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
     id: 1,
     annee: 2025,
-    titre: "Tag anarchiste",
+    titre: "Le jour des 13 heures",
+    type: ["Video"],
+    note: "Athènes, 1ᵉʳ octobre 2025. La Grèce vit au ralenti : syndicats et travailleurs observent une grève générale contre la réforme autorisant des journées de travail de treize heures.\nCe film suit une journée de rassemblements et de voix qui résonnent place Syntagma.",
+    link: "https://sous-les-titres.fr/films/le%20jour%20des%2013%20heures/le%20jour%20des%2013%20heures",
+    rangement: ["511", "521", "522"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Graffiti anarchiste",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0642.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "",
+    images: [{ url: "data/images/DSCF0642.webp", alt: "Graffiti anarchiste" }],
+    note: "Graffiti anarchiste",
+    coment: "Il est fréquent de retrouver ce graffiti sur le mobilier urbain ou à même les murs, dans bien des cas; lorsqu'ils sont effacés, ils sont reproduits les jours suivants.",
+    rangement: ["521", "42"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Graffiti récurrent",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0709.webp", alt: "Graffiti anarchiste" }],
+    note: "Il est fréquent de retrouver ce graffiti un peu partout à Athènes, à voir s'il a une signification particulière",
+    coment: "L'inscription \"Man Spreading\" n'est pas présente sur les autres graffitis rencontrés.",
     rangement: ["42"],
     localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2024,
+    titre: "NOUS N'AVONS PAS PEUR DES RUINES",
+    type: ["Video"],
+    note: "Que se passe-t-il en Grèce ? Voici un film qui offre un autre regard que celui proposé par les médias dominants. Un regard depuis l'intérieur du mouvement social à Athènes, en Crète et jusqu'à Paros. Un voyage en musique au sein de collectifs grecs en lutte pour une société plus juste et plus solidaire.",
+    link: "https://www.youtube.com/watch?v=W1IcUvKz-dE",
+    rangement: ["511", "521", "522"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
   },
   {
     id: 1,
     annee: 2025,
     titre: "Stationnements Vélos",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0737.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "",
+    images: [{ url: "data/images/DSCF0737.webp", alt: "" }],
+    note: "Emplacements permettant le stationnement de vélos",
+    coment: "Cette installation peut paraître étonnante, étant donné la faible utilisation du vélo à Athènes.",
     rangement: ["21", "32"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
@@ -355,7 +434,7 @@ const articles = [
     annee: 2025,
     titre: "Bouche à incendie",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0717.webp", alt: "Koulouri stand at Panepistimio" }],
+    images: [{ url: "data/images/DSCF0717.webp", alt: "" }],
     note: "",
     rangement: ["22"],
     localisation: { position: "Athens", municipalite: "Athina" }
@@ -363,32 +442,12 @@ const articles = [
   {
     id: 1,
     annee: 2025,
-    titre: "Evangelismos Oeuvre",
+    titre: "Dromeas (the runner) by Kostas",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0739.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "",
+    images: [{ url: "data/images/DSCF0739.webp", alt: "" }],
+    note: "Photo of Dromeas (the runner) by Kostas Varotsos from Evangelismos.",
     rangement: ["411"],
-    localisation: { position: "Athens", municipalite: "Athina" }
-  },
-  {
-    id: 1,
-    annee: 2025,
-    titre: "Cabine téléphonique",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0639.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "",
-    rangement: ["21"],
-    localisation: { position: "Athens", municipalite: "Athina" }
-  },
-  {
-    id: 1,
-    annee: 2025,
-    titre: "Koulouri stands",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "Koulouri stands (or “koulouri”) are an iconic feature ...",
-    rangement: ["6","21"],
-    localisation: { position: "Athens", municipalite: "Athina" }
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Kolonaki" }
   },
   {
     id: 2,
@@ -396,10 +455,31 @@ const articles = [
     titre: "Yellow Taxis",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" }],
-    note: "While Athens uses yellow ...",
+    note: "Taxi jaunes",
     tags: ["taxi","moblity","cars"],
     rangement: ["311"],
     localisation: { position: "Athens" }
+  },
+  {
+    id: 2,
+    annee: 2025,
+    titre: "Trottinettes électriques",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0730.webp", alt: "Trottinettes électriques" }],
+    note: "Trottinettes électriques",
+    rangement: ["32"],
+    localisation: { position: "Athens" }
+  },
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Cabines téléphoniques abandonnées",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0639.webp", alt: "" }],
+    note: "Ancinnes cabines téléphoniques, peu à peu démentelées",
+    link: "https://fr.rua.gr/2025/08/19/fin-de-lere-des-taxophones-a-athenes-les-cabines-telephoniques-abandonnees-sont-massivement-supprimees/",
+    rangement: ["21"],
+    localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
     id: 3,
@@ -614,8 +694,10 @@ const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
           ${imagesHTML}
           <div class="info">
             <div>
-              <p><strong>Note:</strong> ${article.note}</p>
+              <p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>
               ${ article.link ? `<p><strong>Link:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
+
+              ${ article.coment ? `<p class="comment"><strong>Coment:</strong> ${article.coment}</p>` : "" }
 
               ${ article.sources?.length ? `<p><strong>Sources :</strong></p>
                  <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
@@ -841,3 +923,5 @@ renderArticles();
   </script>
 </body>
 </html>
+
+
