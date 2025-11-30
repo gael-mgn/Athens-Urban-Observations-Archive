@@ -144,7 +144,14 @@ const thesaurus = {
 "84":  { label: "Période contemporaine", description: "Époque moderne et actuelle, marquée par de profondes transformations sociales et urbaines." },
 
 "841": { label: "Formation de l’État grec", description: "1830 – 1912 : Indépendance et structuration de l’État moderne ; reconstruction d’Athènes comme capitale néoclassique" },
-"842": { label: "Crise économique grecque", description: "2010 – 2020 : période de récession ayant fortement marqué l’espace urbain." }
+"842": { label: "Crise économique grecque", description: "2010 – 2020 : période de récession ayant fortement marqué l’espace urbain." },
+
+"9":   { label: "Biodiversité", description: "" },
+"91":   { label: "Faune", description: "" },
+"911":   { label: "Sauvage", description: "" },
+"912":   { label: "Domestique", description: "" },
+"92":   { label: "Flore", description: "" }
+
 
 };
 
