@@ -50,30 +50,26 @@ function resetAxis() {
   // codeMap.js (inchangé)
 const thesaurus = {
   "A": { 
-    label: "Axe Thématique (A)", 
-    description: "Axe regroupant les catégories thématiques d’observation urbaine." 
+    label: "Thématiques urbaines", 
+    description: "Axe regroupant les catégories thématiques d’observation urbaine. (matérialiste)" 
   },
-
-  "T": { 
-    label: "Axe Temporel (T)", 
+  "C": { 
+    label: "Architecture et matérialité urbaine",
     description: "Axe regroupant les typologies, époques, styles et éléments architecturaux." 
   },
-
-  "C": { 
-    label: "Axe Constructif / Architectural (C)", 
-    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes." 
-  },
-
-
   "P": { 
-    label: "Phénomènes urbains & dynamiques (P)", 
-    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes." 
+    label: "Phénomènes urbains & dynamiques", 
+    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes. (interprétatif)" 
   },
+  "T": { 
+    label: "Périodes historiques",
+    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes." 
+   },
 
 
 
 
-  "A.1":   { label: "Patrimoine bâti", description: "Ensemble des constructions relevant du patrimoine architectural." },
+  "A.1":   { label: "Bâti", description: "Ensemble des constructions relevant du patrimoine architectural." },
 
   "A.1.1":  { label: "Culte", description: "Espaces et édifices religieux, lieux spirituels ou liturgiques." },
   "A.1.1.1": { label: "Orthodoxe", description: "Édifices du culte orthodoxe (églises), petites chapelles, lieux rituels grecs." },
@@ -92,8 +88,8 @@ const thesaurus = {
 
   "A.3":   { label: "Transport et mobilité", description: "Infrastructures et modes de transport facilitant la circulation en ville." },
 
-  "A.3.1":  { label: "Motorisée", description: "Transports utilisant des véhicules à moteur (voitures, bus, motos, etc.)." },
-  "A.3.2":  { label: "Douce", description: "Transports non motorisés tels que la marche, le vélo, ou les transports publics." },
+  "A.3.1":  { label: "Mobilité douce", description: "Transports non motorisés tels que la marche ou le vélo." },
+  "A.3.2":  { label: "Motorisée", description: "Transports utilisant des véhicules à moteur (voitures, bus, motos, etc.)." },
   "A.3.3":  { label: "Transports collectifs", description: "" },
   "A.3.3.1":  { label: "Bus", description: "" },
   "A.3.3.2":  { label: "Tramway", description: "" },
@@ -106,7 +102,7 @@ const thesaurus = {
 336 — Stations / arrêts / infrastructures
 337 — Intermodalité (park and ride, correspondances, nœuds*/
 
-  "A.4":   { label: "Art, représentation & symbolique urbaine", description: "Formes d’expression artistique ou symbolique dans l'espace public." },
+  "A.4":   { label: "Art", description: "Formes d’expression artistique dans l'espace public." },
 
   "A.4.1":  { label: "Art officiel", description: "Œuvres d’art intégrées dans l’espace public par des instances officielles." },
   "A.4.1.1": { label: "Installations artistiques", description: "Œuvres d'art créées ou exposées dans des lieux publics ou urbains." },
@@ -114,14 +110,6 @@ const thesaurus = {
 
   "A.4.2":  { label: "Graffitis & inscriptions urbaines", description: "Messages visuels et inscriptions présentes sur les murs de la ville." },
 
-  "A.4.2.1":  { label: "Symbole anarchiste", description: "" },
-
-
-  "A.5":   { label: "Société et politique", description: "Manifestations visibles des dynamiques sociales et politiques qui façonnent les sociétés." },
-
-  "A.5.2":  { label: "Mouvements et revendications", description: "Signes de luttes sociales ou politiques exprimées dans l'espace public." },
-  "A.5.2.1": { label: "Anarchisme", description: "Symboles, graffitis et autres marques exprimant l'idéologie anarchiste." },
-  "A.5.2.2": { label: "Autres mouvements", description: "Revendications sociales ou politiques provenant de divers mouvements." },
 
   "A.6":   { label: "Commerces et services urbains", description: "Lieux et infrastructures liés à l’activité commerciale et aux services dans la ville." },
 
@@ -186,8 +174,8 @@ const thesaurus = {
 "C.2.1": { label: "Balcons / loggias", description: "Espaces extérieurs attenants aux façades, ouverts ou semi-fermés." },
 "C.2.2": { label: "Colonnes et piliers", description: "Éléments verticaux porteurs, de styles antiques ou modernes." },
 "C.2.3": { label: "Arcades", description: "Séries d’arches soutenues par des colonnes ou piliers." },
-"C.2.5": { label: "Toitures", description: "Parties supérieures d’un bâtiment, plates ou inclinées." },
-"C.2.6": { label: "Façades", description: "Parois extérieures d’un bâtiment, définies par leurs matériaux et traitements." },
+"C.2.4": { label: "Toitures", description: "Parties supérieures d’un bâtiment, plates ou inclinées." },
+"C.2.5": { label: "Façades", description: "Parois extérieures d’un bâtiment, définies par leurs matériaux et traitements." },
 
 
 
@@ -301,7 +289,7 @@ P42 Politique de rénovation / réhabilitation  Action planifiée ou mise en œu
 
 "P.1": { 
   "label": "Morphologie & transformations physiques", 
-  "description": "" 
+  "description": "résultat" 
 },
 "P.1.3": { 
   "label": "Gentrification", 
@@ -314,12 +302,12 @@ P42 Politique de rénovation / réhabilitation  Action planifiée ou mise en œu
 
 "P.3": { 
   "label": "Événements & manifestations", 
-  "description": "Période de récession majeure affectant l'espace urbain." 
+  "description": "" 
 },
 
 "P.4": { 
   "label": "Politiques & interventions urbaines", 
-  "description": "" 
+  "description": "intention" 
 },
 "P.4.1": { 
   "label": "Politique de végétalisation / plantation d’arbres", 
@@ -331,7 +319,18 @@ P42 Politique de rénovation / réhabilitation  Action planifiée ou mise en œu
   "description": "politique prévue" 
 },
 
-
+"P.5": { 
+  "label": "Mobilisations & conflits socio-politiques", 
+  "description": "Dynamiques politiques ou sociales produisant des signes visibles dans l’espace public." 
+},
+"P.5.1": { 
+  "label": "Contestation politique", 
+  "description": "Graffitis, banderoles, assemblées, occupations reflétant une position politique identifiable (ex. anarchisme, antifascisme…)" 
+},
+"P.5.2": { 
+  "label": "Revendications sociales", 
+  "description": "Mouvements féministes, LGBTQ+, justice sociale, logement, droits des travailleurs, etc." 
+},
 };
 
 

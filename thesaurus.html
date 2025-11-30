@@ -128,6 +128,9 @@ mark.hl{
         <div id="fullThesaurus" class="tree hidden" role="tree" aria-label="Arbre complet du thésaurus"></div>
       </section>
 
+
+<pre id="someContainer" style="white-space: pre-wrap; border:1px solid #ddd; padding:12px; background:#fff;"></pre>
+
     </main>
 
     <aside>
@@ -516,6 +519,60 @@ filterFullInput.addEventListener('input', () => {
 document.addEventListener('DOMContentLoaded', () => {
   renderFullThesaurus('');
 });
+</script>
+
+
+
+<script>
+  /**
+ * Génère un thésaurus textuel "type table des matières"
+ * Exemple :
+ * 1   Grandes catégories
+ *   1.1   Sous-catégorie
+ *     1.1.1   Élément
+ */
+function generateTextThesaurus() {
+
+  // construit récursivement le texte
+  function renderTextNode(key, depth) {
+    const entry = thesaurus[key] || {};
+    const label = entry.label || "(sans titre)";
+    const desc  = entry.description ? ` — ${entry.description}` : "";
+
+    // indentation avec espaces (2 par niveau)
+    const indent = "  ".repeat(depth);
+
+    // ligne principale
+    let out = `${indent}${key}  ${label}${desc}\n`;
+
+    // enfants directs triés selon ta logique
+    const children = getDirectChildren(key);
+    children.forEach(child => {
+      out += renderTextNode(child, depth + 1);
+    });
+
+    return out;
+  }
+
+  // racines = clés de niveau 1
+  const roots = keys.filter(k => keyToSegs[k].length === 1);
+
+  let text = "";
+  roots.forEach(root => {
+    text += renderTextNode(root, 0);
+  });
+
+  return text;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderFullThesaurus('');
+
+  // génération automatique du thésaurus texte
+  const container = document.getElementById("someContainer");
+  if (container) container.textContent = generateTextThesaurus();
+});
+
 </script>
 
 </body>
