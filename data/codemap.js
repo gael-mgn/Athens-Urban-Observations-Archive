@@ -1,67 +1,145 @@
-// codeMap.js
+  
+/* ---------- gestion d'axes (sélection / reset) ---------- */
+/*function enterAxis(axisKey) {
+  if (!axes[axisKey]) return;
+  currentAxis = axisKey;
+  // reset de la navigation d'arborescence (on affiche d'abord les racines de l'axe)
+  currentLayerPath = [];
+  activeTags = ["All"];
+
+  renderQuickFilters();
+  applyFilters();
+}*/
+  function enterAxis(axisKey) {
+  if (!axes[axisKey]) return;
+  currentAxis = axisKey;
+
+  // reset de la navigation d'arborescence
+  currentLayerPath = [];
+
+  // 1) récupérer toutes les racines de l'axe (ex: ["A.1","A.2"...])
+  const roots = Array.isArray(axes[axisKey].roots) ? axes[axisKey].roots.slice() : [];
+
+  // 2) pour chaque racine, récupérer toutes les feuilles (labels) sous cette racine
+  const leavesSet = new Set();
+  roots.forEach(rootCode => {
+    const leaves = getLeavesUnderPath([rootCode]); // renvoie labels en lowercase
+    leaves.forEach(l => leavesSet.add(l));
+  });
+
+  // 3) appliquer le filter : si on a des feuilles -> activeTags = ces feuilles
+  //    sinon on garde "All" (aucun contenu dans cet axe)
+  const leavesArr = Array.from(leavesSet);
+  activeTags = (leavesArr.length > 0) ? leavesArr : ["All"];
+
+  // rafraîchir l'UI et appliquer le filtre
+  renderQuickFilters();
+  applyFilters();
+}
+
+
+function resetAxis() {
+  currentAxis = null;
+  currentLayerPath = [];
+  activeTags = ["All"];
+  renderQuickFilters();
+  applyFilters();
+}
 
 
   // codeMap.js (inchangé)
 const thesaurus = {
-  "1":   { label: "Patrimoine bâti", description: "Ensemble des constructions relevant du patrimoine architectural." },
+  "A": { 
+    label: "Axe Thématique (A)", 
+    description: "Axe regroupant les catégories thématiques d’observation urbaine." 
+  },
 
-  "11":  { label: "Culte", description: "Espaces et édifices religieux, lieux spirituels ou liturgiques." },
-  "111": { label: "Orthodoxe", description: "Édifices du culte orthodoxe (églises), petites chapelles, lieux rituels grecs." },
+  "T": { 
+    label: "Axe Temporel (T)", 
+    description: "Axe regroupant les typologies, époques, styles et éléments architecturaux." 
+  },
 
-  "12":  { label: "Historique", description: "Patrimoine lié à l'histoire longue de la ville." },
-
-  "13":  { label: "Remarquable", description: "Bâtiments se distinguant par leur architecture ou leur importance locale." },
-
-  "14":  { label: "Ruines et bâtiments abandonnés", description: "Structures détériorées ou lieux désertés." },
-
-  "15":  { label: "Friches", description: "Espaces laissés à l'abandon ou non développés, souvent réinvestis de manière imprévue." },
-  "151": { label: "Friche urbaine", description: "Terrains abandonnés en milieu urbain, souvent envahis par la végétation." },
-  "153": { label: "Friche industrielle", description: "Sites industriels désaffectés, souvent en reconversion ou en ruine." },
-
-
-  "2":   { label: "Mobilier urbain", description: "Éléments fonctionnels et esthétiques intégrés dans l'espace public." },
-
-  "21":  { label: "Mobilier fonctionnel", description: "Éléments utilitaires dans l’espace public (bancs, poubelles, éclairage, etc.)." },
-  "22":  { label: "Mobilier technique", description: "Installations techniques liées à l’infrastructure urbaine (poteaux électriques, bornes, etc.)." },
-
-  "3":   { label: "Transport et mobilité", description: "Infrastructures et modes de transport facilitant la circulation en ville." },
-
-  "31":  { label: "Motorisée", description: "Transports utilisant des véhicules à moteur (voitures, bus, motos, etc.)." },
-  "32":  { label: "Douce", description: "Transports non motorisés tels que la marche, le vélo, ou les transports publics." },
-
-  "4":   { label: "Art, représentation & symbolique urbaine", description: "Formes d’expression artistique ou symbolique dans l'espace public." },
-
-  "41":  { label: "Art officiel", description: "Œuvres d’art intégrées dans l’espace public par des instances officielles." },
-  "411": { label: "Installations artistiques", description: "Œuvres d'art créées ou exposées dans des lieux publics ou urbains." },
-  "412": { label: "Fresques murales", description: "Œuvres d'art peintes directement sur des murs ou façades, créées ou exposées dans des espaces publics ou urbains, contribuant à l'enrichissement du paysage visuel et culturel de la ville." },
-
-  "42":  { label: "Graffitis & inscriptions urbaines", description: "Messages visuels et inscriptions présentes sur les murs de la ville." },
+  "C": { 
+    label: "Axe Constructif / Architectural (C)", 
+    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes." 
+  },
 
 
-  "5":   { label: "Société et politique", description: "Manifestations visibles des dynamiques sociales et politiques qui façonnent les sociétés. Ces événements peuvent revêtir diverses formes, allant des rassemblements populaires aux actions de protestation." },
-
-  "51":  { label: "Manifestations", description: "Événements publics ou rassemblements à caractère politique ou social." },
-  "511": { label: "Rassemblements", description: "Groupes de personnes se réunissant pour des actions collectives." },
-  "512": { label: "Processions / marches", description: "Défilés organisés, souvent à but revendicatif ou commémoratif." },
-
-  "52":  { label: "Mouvements et revendications", description: "Signes de luttes sociales ou politiques exprimées dans l'espace public." },
-  "521": { label: "Anarchisme", description: "Symboles, graffitis et autres marques exprimant l'idéologie anarchiste." },
-  "522": { label: "Autres mouvements", description: "Revendications sociales ou politiques provenant de divers mouvements." },
+  "P": { 
+    label: "Phénomènes urbains & dynamiques (P)", 
+    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes." 
+  },
 
 
-  "6":   { label: "Commerces et services urbains", description: "Lieux et infrastructures liés à l’activité commerciale et aux services dans la ville." },
 
 
-  "7":   { label: "Architecture", description: "Ensembles bâtis, styles, formes et structures caractéristiques de l'environnement construit." },
+  "A.1":   { label: "Patrimoine bâti", description: "Ensemble des constructions relevant du patrimoine architectural." },
 
-"71":  { label: "Typologies architecturales", description: "Catégories de constructions définies par leur style, leur période ou leur fonction." },
+  "A.1.1":  { label: "Culte", description: "Espaces et édifices religieux, lieux spirituels ou liturgiques." },
+  "A.1.1.1": { label: "Orthodoxe", description: "Édifices du culte orthodoxe (églises), petites chapelles, lieux rituels grecs." },
 
-"711": { label: "Antiques", description: "Typologies issues de l'architecture antique grecque et romaine." },
-"7111": { label: "Ordre dorique", description: "Style antique caractérisé par des colonnes massives et sans base." },
-"7112": { label: "Ordre ionique", description: "Style antique reconnaissable à ses colonnes à volutes." },
-"7113": { label: "Ordre corinthien", description: "Style antique distinctif avec chapiteaux ornés de feuilles d’acanthe." },
+  "A.1.2":  { label: "Historique", description: "Patrimoine lié à l'histoire longue de la ville." },
 
-"712": { 
+  "A.1.3":  { label: "Remarquable", description: "Bâtiments se distinguant par leur architecture ou leur importance locale." },
+
+  "A.1.4":  { label: "Friches", description: "Espaces laissés à l'abandon ou non développés." },
+
+
+  "A.2":   { label: "Mobilier urbain", description: "Éléments fonctionnels et esthétiques intégrés dans l'espace public." },
+
+  "A.2.1":  { label: "Mobilier fonctionnel", description: "Éléments utilitaires dans l’espace public (bancs, poubelles, éclairage, etc.)." },
+  "A.2.2":  { label: "Mobilier technique", description: "Installations techniques liées à l’infrastructure urbaine (poteaux électriques, bornes, etc.)." },
+
+  "A.3":   { label: "Transport et mobilité", description: "Infrastructures et modes de transport facilitant la circulation en ville." },
+
+  "A.3.1":  { label: "Motorisée", description: "Transports utilisant des véhicules à moteur (voitures, bus, motos, etc.)." },
+  "A.3.2":  { label: "Douce", description: "Transports non motorisés tels que la marche, le vélo, ou les transports publics." },
+  "A.3.3":  { label: "Transports collectifs", description: "" },
+  "A.3.3.1":  { label: "Bus", description: "" },
+  "A.3.3.2":  { label: "Tramway", description: "" },
+  "A.3.3.3":  { label: "Métro", description: "" },
+/*331 — Bus / trolleybus
+332 — Tramway
+333 — Métro
+334 — Train / Proastiakos
+335 — Téléphérique urbain (rare mais utile)
+336 — Stations / arrêts / infrastructures
+337 — Intermodalité (park and ride, correspondances, nœuds*/
+
+  "A.4":   { label: "Art, représentation & symbolique urbaine", description: "Formes d’expression artistique ou symbolique dans l'espace public." },
+
+  "A.4.1":  { label: "Art officiel", description: "Œuvres d’art intégrées dans l’espace public par des instances officielles." },
+  "A.4.1.1": { label: "Installations artistiques", description: "Œuvres d'art créées ou exposées dans des lieux publics ou urbains." },
+  "A.4.1.2": { label: "Fresques murales", description: "Œuvres d'art peintes directement sur des murs ou façades, créées ou exposées dans des espaces publics ou urbains, contribuant à l'enrichissement du paysage visuel et culturel de la ville." },
+
+  "A.4.2":  { label: "Graffitis & inscriptions urbaines", description: "Messages visuels et inscriptions présentes sur les murs de la ville." },
+
+  "A.4.2.1":  { label: "Symbole anarchiste", description: "" },
+
+
+  "A.5":   { label: "Société et politique", description: "Manifestations visibles des dynamiques sociales et politiques qui façonnent les sociétés." },
+
+  "A.5.2":  { label: "Mouvements et revendications", description: "Signes de luttes sociales ou politiques exprimées dans l'espace public." },
+  "A.5.2.1": { label: "Anarchisme", description: "Symboles, graffitis et autres marques exprimant l'idéologie anarchiste." },
+  "A.5.2.2": { label: "Autres mouvements", description: "Revendications sociales ou politiques provenant de divers mouvements." },
+
+  "A.6":   { label: "Commerces et services urbains", description: "Lieux et infrastructures liés à l’activité commerciale et aux services dans la ville." },
+
+"A.7":   { label: "Biodiversité", description: "" },
+"A.7.1":   { label: "Faune", description: "" },
+"A.7.1.1":   { label: "Sauvage", description: "" },
+"A.7.1.2":   { label: "Domestique", description: "" },
+"A.7.2":   { label: "Flore", description: "" },
+
+
+"C.1":  { label: "Typologies architecturales", description: "Catégories de constructions définies par leur style, leur période ou leur fonction." },
+
+"C.1.1": { label: "Antiques", description: "Typologies issues de l'architecture antique grecque et romaine." },
+"C.1.1.1": { label: "Ordre dorique", description: "Style antique caractérisé par des colonnes massives et sans base." },
+"C.1.1.2": { label: "Ordre ionique", description: "Style antique reconnaissable à ses colonnes à volutes." },
+"C.1.1.3": { label: "Ordre corinthien", description: "Style antique distinctif avec chapiteaux ornés de feuilles d’acanthe." },
+
+"C.1.2": { 
   label: "Byzantin", 
   description: "Architecture religieuse et urbaine développée entre le IVe et le XVe siècle, caractéristique d'Athènes médiévale." 
 },
@@ -79,78 +157,179 @@ const thesaurus = {
   description: "Usage de briques, pierres alternées, arcs cintrés et détails céramiques." 
 },*/
 
-"713": { 
+"C.1.3": { 
   label: "Ottoman", 
   description: "Styles issus de la période ottomane, influencés par l’architecture islamique et l’organisation urbaine turque." 
 },
 
-"714": { label: "Néoclassique", description: "Architecture inspirée de l'Antiquité, réinterprétée à partir du XVIIIe siècle." },
+"C.1.4": { label: "Néoclassique", description: "Architecture inspirée de l'Antiquité, réinterprétée à partir du XVIIIe siècle." },
 
-"715": { 
+"C.1.5": { 
   label: "Moderne et contemporaine", 
   description: "Architectures du XXe siècle à aujourd’hui, fondées sur l'innovation structurelle et fonctionnelle." 
 },
-"7151": { 
+"C.1.5.1": { 
   label: "Modernisme (polykatoikies)", 
   description: "Immeubles d’habitation en béton armé des années 1950–1980, typiques du paysage athénien." 
 },
-"7152": { 
+"C.1.5.2": { 
   label: "Architecture brutaliste", 
   description: "Structures en béton brut, aux formes géométriques affirmées (ex. universités, bâtiments administratifs)." 
 },
-"7153": { 
+"C.1.5.3": { 
   label: "Architecture contemporaine", 
   description: "Bâtiments récents utilisant verre, acier et géométrie innovante (ex. Stavros Niarchos Foundation Center)." 
 },
 
-"72":  { label: "Éléments architecturaux", description: "Parties constitutives d'un bâtiment, décoratives ou structurelles." },
+"C.2":  { label: "Éléments architecturaux", description: "Parties constitutives d'un bâtiment, décoratives ou structurelles." },
 
-"721": { label: "Balcons / loggias", description: "Espaces extérieurs attenants aux façades, ouverts ou semi-fermés." },
-"722": { label: "Colonnes et piliers", description: "Éléments verticaux porteurs, de styles antiques ou modernes." },
-"723": { label: "Arcades", description: "Séries d’arches soutenues par des colonnes ou piliers." },
-"725": { label: "Toitures", description: "Parties supérieures d’un bâtiment, plates ou inclinées." },
-"726": { label: "Façades", description: "Parois extérieures d’un bâtiment, définies par leurs matériaux et traitements." },
-
-
-"73":  { label: "Matériaux et techniques", description: "Substances et procédés utilisés pour la construction et la structure des bâtiments." },
-
-"731": { label: "Pierre", description: "Matériau traditionnel utilisé pour la construction monumentale ou vernaculaire." },
-"732": { label: "Béton armé", description: "Matériau moderne composé de béton renforcé par une armature métallique." },
-"733": { label: "Brique", description: "Élément de construction en terre cuite utilisé pour murs et structures." },
-"734": { label: "Métal", description: "Matériau utilisé pour structures, charpentes ou éléments décoratifs." },
-"735": { label: "Bois", description: "Matériau organique utilisé pour charpentes, menuiseries et constructions variées." },
+"C.2.1": { label: "Balcons / loggias", description: "Espaces extérieurs attenants aux façades, ouverts ou semi-fermés." },
+"C.2.2": { label: "Colonnes et piliers", description: "Éléments verticaux porteurs, de styles antiques ou modernes." },
+"C.2.3": { label: "Arcades", description: "Séries d’arches soutenues par des colonnes ou piliers." },
+"C.2.5": { label: "Toitures", description: "Parties supérieures d’un bâtiment, plates ou inclinées." },
+"C.2.6": { label: "Façades", description: "Parois extérieures d’un bâtiment, définies par leurs matériaux et traitements." },
 
 
-"74": { label: "Représentations architecturales", description: "Différentes représentations graphiques utilisées pour illustrer la conception architecturale."  },
-"741": { label: "Plans", description: "Représentations à échelle réduite d'un bâtiment, montrant la disposition des espaces." },
-"742": { label: "Coupes", description: "Coupe transversale d’un bâtiment pour montrer la structure interne et les différentes hauteurs."  },
-"743": { label: "Élévations", description: "Représentation verticale d’un bâtiment montrant sa façade." },
-"744": { label: "Dessins d'architecture", description: "Représentations graphiques des idées, concepts ou détails architecturaux sous forme de dessins, croquis ou plans." },
 
-"8":   { label: "Temporalité", description: "Périodes historiques permettant de situer les éléments patrimoniaux dans le temps." },
+"C.3":  { label: "Matériaux et techniques", description: "Substances et procédés utilisés pour la construction et la structure des bâtiments." },
 
-"81":  { label: "Antiquité", description: "Période correspondant au développement des civilisations grecque et romaine." },
-
-"811": { label: "Période archaïque", description: "VIIIe – VIe siècle av. J.-C. : premiers développements de la cité grecque." },
-"812": { label: "Période classique", description: "Ve – IVe siècle av. J.-C. : apogée de la culture et de l’art grecs." },
-"813": { label: "Période hellénistique", description: "323 – 31 av. J.-C. : diffusion de la culture grecque après Alexandre." },
-"814": { label: "Période romaine", description: "31 av. J.-C. – IVe siècle ap. J.-C. : domination romaine et intégration culturelle." },
-
-"82":  { label: "Période byzantine", description: "Période marquée par l’installation du christianisme, la transformation urbaine et le développement de l’architecture religieuse à Athènes." },
+"C.3.1": { label: "Pierre", description: "Matériau traditionnel utilisé pour la construction monumentale ou vernaculaire." },
+"C.3.2": { label: "Béton armé", description: "Matériau moderne composé de béton renforcé par une armature métallique." },
+"C.3.3": { label: "Brique", description: "Élément de construction en terre cuite utilisé pour murs et structures." },
+"C.3.4": { label: "Métal", description: "Matériau utilisé pour structures, charpentes ou éléments décoratifs." },
+"C.3.5": { label: "Bois", description: "Matériau organique utilisé pour charpentes, menuiseries et constructions variées." },
 
 
-"83":  { label: "Période ottomane", description: "Période de domination ottomane influençant l’organisation urbaine et architecturale." },
+"C.4": { label: "Représentations architecturales", description: "Différentes représentations graphiques utilisées pour illustrer la conception architecturale."  },
+"C.4.1": { label: "Plans", description: "Représentations à échelle réduite d'un bâtiment, montrant la disposition des espaces." },
+"C.4.2": { label: "Coupes", description: "Coupe transversale d’un bâtiment pour montrer la structure interne et les différentes hauteurs."  },
+"C.4.3": { label: "Élévations", description: "Représentation verticale d’un bâtiment montrant sa façade." },
+"C.4.4": { label: "Dessins d'architecture", description: "Représentations graphiques des idées, concepts ou détails architecturaux sous forme de dessins, croquis ou plans." },
 
-"84":  { label: "Période contemporaine", description: "Époque moderne et actuelle, marquée par de profondes transformations sociales et urbaines." },
 
-"841": { label: "Formation de l’État grec", description: "1830 – 1912 : Indépendance et structuration de l’État moderne ; reconstruction d’Athènes comme capitale néoclassique" },
-"842": { label: "Crise économique grecque", description: "2010 – 2020 : période de récession ayant fortement marqué l’espace urbain." },
+"T.1":  { 
+  "label": "Antiquité", 
+  "description": "Période de l'Antiquité grecque et romaine (de l'époque archaïque à la période romaine)." 
+},
+"T.1.1": { 
+  "label": "Période archaïque", 
+  "description": "VIIIe–VIe s. av. J.-C." 
+},
+"T.1.2": { 
+  "label": "Période classique", 
+  "description": "Ve–IVe s. av. J.-C." 
+},
+"T.1.3": { 
+  "label": "Période hellénistique", 
+  "description": "323–31 av. J.-C." 
+},
+"T.1.4": { 
+  "label": "Période romaine", 
+  "description": "31 av. J.-C. – IVe s. ap. J.-C." 
+},
+"T.2": { 
+  "label": "Byzantin", 
+  "description": "Période byzantine (IVe – XVe s.), subdivisée par phases historiques pertinentes localement." 
+},
+"T.2.1": { 
+  "label": "Proto-byzantin", 
+  "description": "IVe–VIIe s." 
+},
+"T.2.2": { 
+  "label": "Moyen-byzantin", 
+  "description": "VIIIe–XIIe s." 
+},
+"T.2.3": { 
+  "label": "Tardif-byzantin", 
+  "description": "XIIIe–XVe s." 
+},
+"T.3": { 
+  "label": "Période ottomane", 
+  "description": "Période de domination ottomane et ses transformations urbaines et architecturales." 
+},
+"T.4": { 
+  "label": "Période moderne & contemporaine", 
+  "description": "XIXe siècle à aujourd'hui : néoclassicisme, industrialisation, XXe siècle et mutations récentes." 
+},
+"T.4.1": { 
+  "label": "Formation de l'État grec", 
+  "description": "1830–1912 : urbanisme néoclassique et structuration de l'État." 
+},
+"T.4.2": { 
+  "label": "XXe siècle", 
+  "description": "Transformations urbaines et architectures du XXe siècle." 
+},
+"T.4.3": { 
+  "label": "Crises & mutations contemporaines", 
+  "description": "Phénomènes récents influant l'espace urbain (ex. crise 2010–2020)." 
+},
+"T.4.3.1": { 
+  "label": "Crise économique grecque (2010–2020)", 
+  "description": "Période de récession majeure affectant l'espace urbain."
+},
 
-"9":   { label: "Biodiversité", description: "" },
-"91":   { label: "Faune", description: "" },
-"911":   { label: "Sauvage", description: "" },
-"912":   { label: "Domestique", description: "" },
-"92":   { label: "Flore", description: "" }
+/*Voir doc word thesaurus sur drive eivp*/
+
+/*
+1.  Morphologie & transformations physiques
+o P11 Rénovation / réhabilitation → transformations du bâti existant
+o P12 Densification → augmentation de la densité résidentielle ou mixité fonctionnelle
+o P13 Gentrification → processus social-économique transformant quartiers
+o P14 Informalité / occupation illégale → constructions non autorisées, friches, usages improvisés
+o P15 Ilôts de chaleur / microclimat → phénomènes environnementaux urbains
+
+
+
+
+P4 : Politiques & interventions urbaines
+P — Phénomènes urbains & dynamiques → P4 : Politiques & interventions urbaines
+
+P41 Politique de végétalisation / plantation d’arbres
+Ex. : alignements d’arbres, parcs urbains, rues végétalisées
+P42 Politique de rénovation / réhabilitation de quartier
+Ex. : réaménagement de friches, réhabilitation de logements anciens
+P43 Politique de mobilité / transport
+Ex. : pistes cyclables, zones piétonnes, stations vélo en libre-service
+P44 Politique de gestion du patrimoine
+Ex. : protection de bâtiments historiques, restauration de monuments
+P45 Autres interventions urbaines
+
+Code  Description Perspective
+P11 Rénovation / réhabilitation Transformation physique du bâti ou de l’espace urbain observée sur le terrain Observation des résultats visibles : bâtiments rénovés, rues réaménagées, friches transformées
+P42 Politique de rénovation / réhabilitation  Action planifiée ou mise en œuvre par une autorité publique ou un acteur privé  Observation de l’initiative / intention : programme municipal, projet de rénovation, budget alloué, décision politique
+*/
+
+"P.1": { 
+  "label": "Morphologie & transformations physiques", 
+  "description": "" 
+},
+"P.1.3": { 
+  "label": "Gentrification", 
+  "description": "Processus social-économique transformant quartiers" 
+},
+"P.1.5": { 
+  "label": "Ilôts de chaleur / microclimat", 
+  "description": "" 
+},
+
+"P.3": { 
+  "label": "Événements & manifestations", 
+  "description": "Période de récession majeure affectant l'espace urbain." 
+},
+
+"P.4": { 
+  "label": "Politiques & interventions urbaines", 
+  "description": "" 
+},
+"P.4.1": { 
+  "label": "Politique de végétalisation / plantation d’arbres", 
+  "description": "politique prévue" 
+},
+
+"P.4.2": { 
+  "label": "Politiques de rénovation / réhabilitation / requalification urbaine", 
+  "description": "politique prévue" 
+},
 
 
 };
@@ -169,56 +348,3 @@ function extractLabels(codeMap) {
 }
 
 const codeMap = extractLabels(thesaurus);
-/*
-const codeMap = {
-  "1":   "Patrimoine bâti",
-    "11":  "Culte",
-      "111": "Orthodoxe (églises, ekklisakia)",
-
-    "12":  "Historique",
-      "121": "Antique (agora antique)",
-
-    "13":  "Remarquable",
-      "131": "Maisons remarquables",
-
-    "14":  "Ruines et bâtiments abandonnés",
-      "141": "Ruines",
-      "142": "Bâtiments abandonnés / désaffectés",
-
-    "15":  "Friches",
-      "151": "Friche urbaine",
-      "152": "Friche végétalisée",
-      "153": "Friche industrielle",
-
-  "2":   "Mobilier urbain",
-    "21":  "Mobilier fonctionnel",
-
-    "22":  "Mobilier technique",
-
-  "3":   "Transport et mobilité",
-    "31":  "Motorisée",
-
-    "32":  "Douce",
-
-  "4":   "Art, représentation & symbolique urbaine",
-    "41":  "Art officiel",
-      "411": "Installations artistiques",
-
-    "42":  "Graffitis & inscriptions urbaines",
-      "421": "Symboles anarchistes",
-      "422": "Motifs récurrents",
-      "423": "Graffitis divers",
-
-  "5":   "Expressions et signes socio-politiques",
-    "51":  "Manifestations",
-      "511": "Rassemblements",
-      "512": "Processions / marches",
-
-    "52":  "Mouvements et revendications",
-      "521": "Anarchisme",
-      "522": "Autres mouvements",
-      "523": "Affiches / stickers militants",
-
-  "6":   "Commerces et services urbains"
-};
-*/

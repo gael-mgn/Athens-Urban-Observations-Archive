@@ -81,6 +81,14 @@ aside { position: sticky; top: 20px; max-height: calc(150vh); }
 .sep { text-decoration: none; }
 .tag-link { text-decoration: underline; }
 
+/* --- affichage tags par axe (visu groupée) --- */
+.tag-line { display:flex; gap:8px; align-items:center; margin:6px 0; flex-wrap:wrap; }
+.axis { font-weight:800; font-size:12px; min-width:44px; display:inline-block; color:var(--ink); }
+.tag-hierarchy { display:inline-block; }
+.sep { margin: 0 8px; color: var(--ink-mute); text-decoration: none; }
+.tag-hierarchy .tag-link { text-decoration: underline; font-weight:700; font-size:12px; }
+
+
 footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:32px; display:flex; justify-content:space-between; font-size:14px; }
 @media(max-width:980px){
   .no-mobile { display: none; }
@@ -196,7 +204,85 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
   </div>
 
 
-<script src="data/codemap.js"></script>
+<script src="data/codemap.js">
+
+</script>
+
+<script>
+
+
+
+
+/* ---------- Transformation automatique des clés numériques en format LETTRE.points (ex: T.1.1) ---------- 
+   - conserve l'objet `thesaurus` tel quel dans le source JS (pas besoin de réécrire manuellement),
+   - puis on remplace *dynamiquement* les clés numériques par des clés de la forme AXE.d1.d2...
+   - axes: T = Thématique (1,2,3,4,5,6,9), A = Architecture (7), C = Chronologie (8)
+*/
+
+/*
+(function transformThesaurusKeys(){
+  const axisMap = { '7': 'A', '8': 'C' }; // autres -> 'T'
+  // clone l'ancien objet puis vide le thesaurus (on mutera l'objet const)
+  const original = Object.assign({}, thesaurus);
+  Object.keys(thesaurus).forEach(k => delete thesaurus[k]);
+
+  Object.entries(original).forEach(([key, value]) => {
+    if (/^[0-9]+$/.test(String(key))) {
+      // transforme "7111" -> "A.7.1.1.1" (lettre d'axe + points entre chaque chiffre)
+      const digits = String(key).split('');
+      const axis = axisMap[digits[0]] || 'T';
+      const newKey = axis + '.' + digits.join('.');
+      thesaurus[newKey] = value;
+    } else {
+      // conserve toute clé déjà non-numérique
+      thesaurus[key] = value;
+    }
+  });
+})();*/
+
+
+
+/* ---------- calcul dynamique des axes (après extractLabels) ---------- */
+/* ---------- calcul dynamique des axes (après extractLabels) ----------
+   Génère les axes à partir des clés top-level du `thesaurus` (ex: "A","T","C"),
+   récupère leur label depuis thesaurus[<AXE>].label et rassemble les racines
+   (clés à deux segments comme "T.1", "A.1", etc.).
+*/
+const axes = (function computeAxes(){
+  const base = {};
+
+  // 1) détecte toutes les clés top-level du thesaurus qui sont une lettre (ex "A","T","C")
+  Object.keys(thesaurus).forEach(topKey => {
+    if (/^[A-Z]$/.test(topKey)) {
+      base[topKey] = {
+        key: topKey,
+        label: (thesaurus[topKey] && thesaurus[topKey].label) ? thesaurus[topKey].label : `Axe ${topKey}`,
+        roots: []
+      };
+    }
+  });
+
+  // 2) parcourt les codes calculés (codeMap) et rattache les racines (deux segments) à leur axe
+  Object.keys(codeMap).forEach(k => {
+    const parts = k.split('.');
+    if (parts.length === 2) {
+      const axisLetter = parts[0];
+      if (base[axisLetter]) base[axisLetter].roots.push(k);
+    }
+  });
+
+  // 3) tri optionnel des racines pour stabilité d'affichage
+  Object.values(base).forEach(ax => {
+    ax.roots.sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+  });
+
+  return base;
+})();
+
+
+let currentAxis = null;
+
+</script>
 
 <script>
   /* --- Responsive : déplacer les .meta de aside vers #mobileFilters sur mobile --- */
@@ -260,36 +346,96 @@ An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1
 
 
 /* utils */
-function isCode(s) { return /^[0-9]+$/.test(String(s)); }
+/* accepte :
+   - anciens codes numériques (ex "7111")
+   - nouveaux codes avec lettre + points (ex "A.7.1.1")
+*/
+function isCode(s) {
+  const str = String(s).trim();
+  if (!str) return false;
+  if (/^[A-Z]$/.test(str)) return true; // ex: "A" ou "T" (axe)
+  return /^[A-Z]\.\d+(?:\.\d+)*$/.test(str); // ex: "T.1", "A.1.1"
+}
 function labelForCode(code) { return codeMap[String(code)] || String(code); }
 
-/* construire parentMap et childrenMap (pour navigation) */
-const parentMap = {};   // parentMap[code] = parentCode (string) or null
-const childrenMap = {}; // childrenMap[parentCode] = [childCode,...]
-Object.keys(codeMap).sort((a,b)=> a.length - b.length || a.localeCompare(b)).forEach(code=>{
-  if (code.length === 1) {
+/* construire parentMap et childrenMap (compatible ancien & nouveau format pointé) */
+const parentMap = {};   
+const childrenMap = {}; 
+
+Object.keys(codeMap).sort((a,b) => {
+  const aDepth = a.split('.').length;
+  const bDepth = b.split('.').length;
+  return aDepth - bDepth || a.localeCompare(b);
+}).forEach(code => {
+  const parts = code.split('.');
+  if (parts.length === 1) {
     parentMap[code] = null;
   } else {
-    const parent = code.slice(0, code.length - 1);
+    const parent = parts.slice(0, parts.length - 1).join('.');
     parentMap[code] = codeMap[parent] ? parent : null;
   }
-  // ensure childrenMap entry exists
   const p = parentMap[code] || "ROOT";
   if (!childrenMap[p]) childrenMap[p] = [];
   childrenMap[p].push(code);
 });
 
-/* helper : obtenir la chaîne d'étiquettes à partir d'un code (ex "131" -> ["Patrimoine bâti","Remarquable","Maisons remarquables"]) */
-function codeToLabelChain(code) {
-  code = String(code);
-  const parts = [];
-  for (let i=1;i<=code.length;i++){
-    const key = code.slice(0,i);
-    if (codeMap[key]) parts.push(codeMap[key]);
-  }
-  if (parts.length === 0 && codeMap[code]) return [codeMap[code]];
-  return parts;
+
+
+
+
+
+/* convertit un ancien code numérique en format pointé avec lettre d'axe */
+function numericToDotted(code) {
+  const str = String(code);
+  if (!/^[0-9]+$/.test(str)) return str;
+  const digits = str.split('');
+  const axis = (digits[0] === '7') ? 'A' : (digits[0] === '8') ? 'C' : 'T';
+  return axis + '.' + digits.join('.');
 }
+
+/* normalise toute entrée possible en clé réellement présente dans codeMap :
+   - si entrée est numérique -> convertit en dotted
+   - si entrée est dotted sans lettre -> essaie d'ajouter lettre (rare)
+   - si clé existe déjà dans codeMap, la retourne telle quelle
+*/
+function normalizeInputCode(raw) {
+  if (!raw) return null;
+  const s = String(raw);
+  if (codeMap[s]) return s;               // déjà une clé valide
+  if (/^[0-9]+$/.test(s)) {
+    const dotted = numericToDotted(s);
+    if (codeMap[dotted]) return dotted;
+    return dotted; // fallback (même si pas dans codeMap)
+  }
+  // dotted style but starting with digit: "7.1.1" -> try adding axis letter
+  if (/^\d+\./.test(s)) {
+    const compact = s.replace(/\./g,'');
+    const dotted = numericToDotted(compact);
+    if (codeMap[dotted]) return dotted;
+    return dotted;
+  }
+  return s;
+}
+
+function codeToLabelChain(rawCode) {
+  let code = String(rawCode).trim();
+
+
+  const parts = code.split('.');
+  const acc = [];
+  if (parts.length === 1) {
+    if (codeMap[code]) return [codeMap[code]];
+    return [];
+  }
+  for (let i = 2; i <= parts.length; i++) {
+    const key = parts.slice(0, i).join('.');
+    if (codeMap[key]) acc.push(codeMap[key]);
+  }
+  if (acc.length === 0 && codeMap[code]) return [codeMap[code]];
+  return acc;
+}
+
+
 
 /* helper : collecter toutes les étiquettes (labels en lowercase) sous un chemin de codes.
    pathCodes = [] -> tout l'arbre; sinon on part du dernier code et on descend. */
@@ -351,45 +497,14 @@ function escapeForOnClick(s) { return String(s).replace(/'/g,"\\'").replace(/"/g
 
 /* ---------------- articles (exemples) ---------------- */
 const articles = [
-    {
+  {
     id: 1,
     annee: 2025,
     titre: "St. Catherine's Church",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0691.webp", alt: "" }],
     note: "The Church of St. Catherine in Athens (Greek: Ναός Αγίας Αικατερίνης / Naós Agías Ekaterínis) is a Byzantine-style religious building located in the Pláka district of Athens. Its construction is roughly dated to the first half of the 11th century. The church was dedicated to Saint Catherine of Alexandria when it was affiliated with the Monastery of St. Catherine in Sinai in 1767.",
-    rangement: ["712", "12", "111", "82"],
-    localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
-  },
-  {
-    id: 1,
-    annee: 2025,
-    titre: "Panagía Kapnikaréa Church",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0661.webp", alt: "" }],
-    note: "L'église de la Panagía Kapnikaréa (en grec moderne : Εκκλησία της Παναγίας Καπνικαρέας), souvent appelée simplement Kapnikaréa (Καπνικαρέα), est une église byzantine datant du troisième quart du XIe siècle, situé rue Ermoú, en plein cœur du centre historique d'Athènes.",
-    rangement: ["712", "12", "111", "82"],
-    localisation: { position: "Athens", municipalite: "Athina" }
-  },
-  {
-    id: 1,
-    annee: 2025,
-    titre: "Chat",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0675.webp", alt: "" }],
-    note: "Les chats font partie intégrante du paysage urbain à Athènes, les habitants leur laissent de la nourriture dans tous les coins de rue.",
-    coment: "chat apperçu à proximité de l'Agora romaine.",
-    rangement: ["912"],
-    localisation: { position: "Athens", municipalite: "Athina" }
-  },
-      {
-    id: 1,
-    annee: 2025,
-    titre: "Agora romaine",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0676.webp", alt: "" }],
-    note: "L'agora romaine d'Athènes était une place publique antique, servant à la fois de marché et de lieu de rassemblement. Il existait deux agoras distinctes à Athènes : l'agora classique, fondée au VIe siècle av. J.-C., et l'agora romaine, créée sous la domination romaine, un peu plus à l'est.",
-    rangement: ["7111", "12", "814"],
+    rangement: ["A.1.1.1", "A.1.2", "C.1.2", "C.3.1", "T.2"],
     localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
   },
     {
@@ -399,30 +514,61 @@ const articles = [
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
     note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",    
-    rangement: ["6","21"],
+    rangement: ["A.6", "A.2.1", "C.3.4", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-      {
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Panagía Kapnikaréa Church",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0661.webp", alt: "" }],
+    note: "L'église de la Panagía Kapnikaréa (en grec moderne : Εκκλησία της Παναγίας Καπνικαρέας), souvent appelée simplement Kapnikaréa (Καπνικαρέα), est une église byzantine datant du troisième quart du XIe siècle, situé rue Ermoú, en plein cœur du centre historique d'Athènes.",
+    rangement: ["A.1.1.1", "A.1.2", "C.1.2", "C.3.1", "T.2"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 1,
+    annee: 2025,
+    titre: "Chat",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0675.webp", alt: "" }],
+    note: "Les chats font partie intégrante du paysage urbain à Athènes, les habitants leur laissent de la nourriture dans tous les coins de rue.",
+    coment: "chat apperçu à proximité de l'Agora romaine.",
+    rangement: ["A.7.1.2", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Agora romaine",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0676.webp", alt: "" }],
+    note: "L'agora romaine d'Athènes était une place publique antique, servant à la fois de marché et de lieu de rassemblement. Il existait deux agoras distinctes à Athènes : l'agora classique, fondée au VIe siècle av. J.-C., et l'agora romaine, créée sous la domination romaine, un peu plus à l'est.",
+    rangement: ["C.1.1.1", "A.1.2", "T.1.4"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
+  },
+        {
     id: 1,
     annee: 2025,
     titre: "Arch of Hadrian",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0700.webp", alt: "" }],
     note: "L'Arc d'Hadrien (en grec : Αψίδα του Αδριανού, Apsida tou Adrianou), plus communément appelé la Porte d'Hadrien (Πύλη του Αδριανού, Pyli tou Adrianou), est un monumental portail inspiré des arcs de triomphe romains.",
-    rangement: ["7113", "12", "814"],
+    rangement: ["C.1.1.3", "A.1.2", "C.3.1", "T.1.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-  {
+    {
     id: 1,
     annee: 2025,
     titre: "Le jour des 13 heures",
     type: ["Video"],
     note: "Athènes, 1ᵉʳ octobre 2025. La Grèce vit au ralenti : syndicats et travailleurs observent une grève générale contre la réforme autorisant des journées de travail de treize heures.\nCe film suit une journée de rassemblements et de voix qui résonnent place Syntagma.",
     link: "https://sous-les-titres.fr/films/le%20jour%20des%2013%20heures/le%20jour%20des%2013%20heures",
-    rangement: ["511", "521", "522"],
+    rangement: ["A.5.2.2", "A.5.2.1", "P.3", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-  {
+    {
     id: 1,
     annee: 2025,
     titre: "Graffiti anarchiste",
@@ -430,7 +576,7 @@ const articles = [
     images: [{ url: "data/images/DSCF0642.webp", alt: "Graffiti anarchiste" }],
     note: "Graffiti anarchiste",
     coment: "Il est fréquent de retrouver ce graffiti sur le mobilier urbain ou à même les murs, dans bien des cas; lorsqu'ils sont effacés, ils sont reproduits les jours suivants.",
-    rangement: ["521", "42"],
+    rangement: ["A.5.2.1", "A.4.2", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
@@ -441,27 +587,27 @@ const articles = [
     images: [{ url: "data/images/DSCF0709.webp", alt: "Graffiti anarchiste" }],
     note: "Il est fréquent de retrouver ce graffiti un peu partout à Athènes, à voir s'il a une signification particulière",
     coment: "L'inscription \"Man Spreading\" n'est pas présente sur les autres graffitis rencontrés.",
-    rangement: ["42"],
+    rangement: ["A.4.2", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-    {
+      {
     id: 1,
     annee: 2025,
     titre: "Nerantzies",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0628.webp", alt: "" }],
-    note: "This is a species of orange tree that is used in urban settings and is for decorative purposes only",
-    rangement: ["92"],
+    note: "This is a species of orange tree that is used in urban settings and is for decorative purposes only\nS'intègre dans le plan de plantation lancée par le maire d'athènes pour lutter contre les ilots de chaleur",
+    rangement: ["A.7.2", "P.4.1", "P.1.5", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-  {
+    {
     id: 1,
     annee: 2024,
     titre: "NOUS N'AVONS PAS PEUR DES RUINES",
     type: ["Video"],
     note: "Que se passe-t-il en Grèce ? Voici un film qui offre un autre regard que celui proposé par les médias dominants. Un regard depuis l'intérieur du mouvement social à Athènes, en Crète et jusqu'à Paros. Un voyage en musique au sein de collectifs grecs en lutte pour une société plus juste et plus solidaire.",
     link: "https://www.youtube.com/watch?v=W1IcUvKz-dE",
-    rangement: ["511", "521", "522"],
+    rangement: ["A.5.2.2", "A.5.2.1", "P.3", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
   },
   {
@@ -472,27 +618,28 @@ const articles = [
     images: [{ url: "data/images/DSCF0737.webp", alt: "" }],
     note: "Emplacements permettant le stationnement de vélos",
     coment: "Cette installation peut paraître étonnante, étant donné la faible utilisation du vélo à Athènes.",
-    rangement: ["21", "32"],
+    rangement: ["A.2.1", "A.3.2", "C.3.4", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-  {
+    {
     id: 1,
     annee: 2025,
     titre: "Bouche à incendie",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0717.webp", alt: "" }],
     note: "",
-    rangement: ["22"],
+    rangement: ["A.2.1", "C.3.4", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
-  {
+
+   {
     id: 1,
     annee: 2025,
     titre: "Dromeas (the runner) by Kostas",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0739.webp", alt: "" }],
     note: "Photo of Dromeas (the runner) by Kostas Varotsos from Evangelismos.",
-    rangement: ["411"],
+    rangement: ["A.4.1.1", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina", quartier: "Kolonaki" }
   },
   {
@@ -502,73 +649,85 @@ const articles = [
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" }],
     note: "Taxi jaunes",
-    rangement: ["311"],
+    rangement: ["A.3.1", "T.4"],
     localisation: { position: "Athens" }
   },
-  {
+    {
     id: 2,
     annee: 2025,
     titre: "Scooters et motos",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0740.webp", alt: "" }],
     note: "Types de véhicules fréquemment utilisés par les Grecs",
-    rangement: ["311"],
+    rangement: ["A.3.1", "T.4"],
     localisation: { position: "Athens" }
   },
-  {
+    {
     id: 2,
     annee: 2025,
     titre: "Trottinettes électriques",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0730.webp", alt: "Trottinettes électriques" }],
     note: "Trottinettes électriques",
-    rangement: ["32"],
+    rangement: ["A.3.2", "T.4"],
     localisation: { position: "Athens" }
   },
-    {
+  {
     id: 1,
     annee: 2025,
-    titre: "Cabines téléphoniques abandonnées",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0639.webp", alt: "" }],
-    note: "Ancinnes cabines téléphoniques, peu à peu démentelées",
+    titre: "Fin de l’ère des taxophones: à Athènes, les cabines téléphoniques abandonnées sont massivement supprimées",
+    type: ["Article"],
     link: "https://fr.rua.gr/2025/08/19/fin-de-lere-des-taxophones-a-athenes-les-cabines-telephoniques-abandonnees-sont-massivement-supprimees/",
-    rangement: ["21"],
+    rangement: ["A.2.1","P.4.2", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
     id: 3,
     annee: 2025,
-    titre: "Mailboxes",
+    titre: "Carte collaborative des arbres à Athènes",
+    type: ["Map"],
+    link: "https://urbanivore.fr/contribute",
+    rangement: ["A.7.3", "T.4"],
+    localisation: { position: "Athens" }
+  },
+  {
+    id: 1,
+    annee: 2025,
+    titre: "Cabine téléphonique abandonnée",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0639.webp", alt: "" }],
+    note: "Ancinnes cabines téléphoniques, peu à peu démentelées.",
+    rangement: ["A.2.1", "C.3.4", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+   {
+    id: 3,
+    annee: 2025,
+    titre: "Mailboxe",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0637.webp", alt: "Mailboxe" }],
     note: "The mailboxes of Athens ...",
-    tags: ["graffiti","activism","politic","anarchism"],
-    rangement: ["214"],
+   rangement: ["A.2.1", "C.3.4", "T.4"],
     localisation: { position: "Athens" }
-  }/*
-  {
-    id: 4,
-    annee: 2025,
-    titre: "Map of abandoned building of Athens",
-    type: ["Map"],
-    note: "Map of abandoned building of Athens",
-    tags: ["building"],
-    localisation: { position: "Athens", municipalite: "Athina" },
-    rangement: ["142"],
-    link: "lien"
   },
   {
-    id: 5,
-    annee: 2025,
-    titre: "Carte des friches naturelles",
-    type: ["Map"],
-    note: "Carte des friches naturelles",
-    tags: ["building"],
-    localisation: { position: "Athens", municipalite: "Athina" },
-    rangement: ["15"],
-    link: "lien"
-  }*/
+    id: 3,
+    annee: 2022,
+    titre: "A Exarchia, quartier contestataire d’Athènes, un métro de la discorde",
+    type: ["Article"],
+    link: "https://www.lemonde.fr/economie/article/2022/10/04/grece-a-exarchia-le-metro-de-la-discorde_6144332_3234.html",
+   rangement: ["A.3.3.3", "P.4.2", "P.3", "P.1.3", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
+  },
+  {
+    id: 3,
+    annee: 2016,
+    titre: "Plans d'Athènes pour une ville plus verte et plus fraîche",
+    type: ["Article"],
+    link: "https://www.c40.org/fr/case-studies/athens-plans-for-a-greener-and-cooler-city/",
+   rangement: ["A.7.3", "P.4.1", "P.1.5", "T.4"],
+    localisation: { position: "Athens" }
+  },
 ];
 
 /* --------- extraction de tags (compatible codes ou anciennes chaînes) --------- */
@@ -701,8 +860,6 @@ function renderFormatFilters() {
     const fmt = b.dataset.format; b.classList.toggle("active", activeFormats.includes(fmt));
   });
 }
-
-/* --------- render articles ---------- */
 function renderArticles(data = articles) {
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -717,26 +874,55 @@ function renderArticles(data = articles) {
       `).join("");
     }
 
-const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
-  let labels = [];
-  if (isCode(codeOrLabel)) labels = codeToLabelChain(codeOrLabel);
-  else labels = String(codeOrLabel).split(',').map(s=>s.trim());
+    /* ---------- Tags : grouper par axe (une seule ligne par axe, pas de doublons) ---------- */
+    // groupedTags: { 'A': Set([...]), 'T': Set([...]), 'C': Set([...]), 'U': Set([...]) }
+    const groupedTags = {};
 
-  const fullTitle = labels.join(" -> ");
-  // crée un lien par élément de la hiérarchie (chaque niveau cliquable)
-  const links = labels.map((lbl, idx) => {
-    const escaped = escapeForOnClick(lbl);
-    return `<a href="#" class="tag-link" onclick="filterTag('${escaped}'); return false;">${lbl}</a>`;
-  }).join('<span class="sep"> -> </span>');
+    (article.rangement || []).forEach(codeOrLabel => {
+      // 1) obtenir chaines labels (ex: ["Patrimoine bâti","Culte","Orthodoxe"])
+      let labels = [];
+      if (isCode(codeOrLabel)) labels = codeToLabelChain(codeOrLabel);
+      else labels = String(codeOrLabel).split(',').map(s=>s.trim()).filter(Boolean);
 
-  return `
-    <p class="tag-line" title="${fullTitle}">
-      ${links}
-    </p>
-  `;
-}).join("");
+      // 2) inférer la lettre d'axe
+      let axisLetter = "";
+      // si c'est un code pointé commençant par lettre -> première lettre
+      if (isCode(codeOrLabel)) {
+        const s = String(codeOrLabel);
+        if (/^[A-Z]/.test(s)) axisLetter = s[0];
+      } else {
+        // si c'est une étiquette texte: cherche un code connu
+        const found = findCodeByLabel(codeOrLabel);
+        if (found && /^[A-Z]/.test(found)) axisLetter = found[0];
+        else {
+          // fallback : essayer chaque label du chain pour trouver un code
+          for (let i=0;i<labels.length;i++){
+            const f = findCodeByLabel(labels[i]);
+            if (f && /^[A-Z]/.test(f)) { axisLetter = f[0]; break; }
+          }
+        }
+      }
+      if (!axisLetter) axisLetter = "U"; // U = unknown
 
+      // 3) ajouter chaque label final (feuille) dans le set de l'axe
+      if (!groupedTags[axisLetter]) groupedTags[axisLetter] = new Set();
+      labels.forEach(l => {
+        if (l) groupedTags[axisLetter].add(l);
+      });
+    });
 
+    // construire HTML des tags (une ligne par axe, labels uniques, chaque label cliquable)
+    const axisOrder = Object.keys(groupedTags).sort(); // tri simple (A,C,P,T,U...)
+    const tagsHtml = axisOrder.map(axisLetter => {
+      const set = groupedTags[axisLetter];
+      if (!set || set.size === 0) return "";
+      const axisDisplay = (axisLetter && axisLetter !== "U") ? `(${axisLetter}) :` : "";
+      const axisHtml = axisDisplay ? `<span class="axis">${axisDisplay}</span>` : `<span class="axis"></span>`;
+      const links = Array.from(set).map(lbl => {
+        return `<a href="#" class="tag-link" onclick="filterTag('${escapeForOnClick(lbl)}'); return false;">${lbl}</a>`;
+      }).join(`<span class="sep"> • </span>`);
+      return `<p class="tag-line" title="${Array.from(set).join(' -> ')}">${axisHtml}<span class="tag-hierarchy">${links}</span></p>`;
+    }).join("");
 
     const html = `
       <details class="item">
@@ -749,7 +935,7 @@ const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
           ${imagesHTML}
           <div class="info">
             <div>
-              <p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>
+              ${ article.note ? `<p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>` : "" }
               ${ article.link ? `<p><strong>Link:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
 
               ${ article.coment ? `<p class="comment"><strong>Coment:</strong> ${article.coment}</p>` : "" }
@@ -758,7 +944,8 @@ const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
                  <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
 
               <div class="meta-tags">
-                <strong>Tags:</strong>${tagsHtml}
+                <strong>Tags:</strong>
+                ${tagsHtml}
               </div>
             </div>
 
@@ -775,6 +962,7 @@ const tagsHtml = (article.rangement || []).map(codeOrLabel=>{
     list.insertAdjacentHTML("beforeend", html);
   });
 }
+
 
 /* ---------- Quick Filters (drilldown) ---------- */
 function enterLayer(code) {
@@ -814,24 +1002,41 @@ function toggleLeafTag(leaf) {
 
 /* build root codes array */
 const rootCodes = childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : [];
-
 function renderQuickFilters() {
   const container = document.getElementById("quickFilters");
   if (!container) return;
   const baseForCounts = getBaseForTagCounts();
   const allCount = baseForCounts.length;
-  let html = `<button data-tag="All" onclick="resetLayer()">All (${allCount})</button>`;
 
+  // 1) barre d'axes (toujours visible)
+  let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">`;
+  Object.values(axes).forEach(ax => {
+    const activeClass = (currentAxis === ax.key) ? "active" : "";
+    html += `<button onclick="enterAxis('${ax.key}')" class="${activeClass}" data-axis="${ax.key}">${ax.label}</button>`;
+  });
+  html += `<button onclick="resetAxis()">Afficher tout</button>`; // Inutile si pas de mode OR...
+  html += `</div>`;
+
+  // 2) bouton All (compteur global)
+  html += `<div style="width:100%;height:6px"></div>`;
+  //html += `<button data-tag="All" onclick="resetLayer()">All (${allCount})</button>`;
+
+  // 3) afficher racines utiles (NE PAS afficher les lettres d'axe seules)
+  // si on est dans un chemin (currentLayerPath non vide) : afficher enfants du noeud courant
   if (currentLayerPath.length === 0) {
-    html += "<div style='width:100%;height:6px'></div>";
-    rootCodes.forEach(rootCode => {
+    // Si un axe est sélectionné, n'afficher que les racines de cet axe ;
+    // sinon afficher toutes les racines SAUF les codes qui sont une lettre d'axe (A,T,...)
+    const rootsToShow = currentAxis ? (axes[currentAxis].roots || []) : (childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : []);
+    rootsToShow.forEach(rootCode => {
+      // sauter les codes top-level qui sont des lettres simples (A, T, C, P...)
+      if (rootCode.length === 1) return;
       const leaves = getLeavesUnderPath([rootCode]);
       const n = countArticlesForLeaves(leaves);
       if (n === 0) return;
       html += `<button data-parent="${escapeForOnClick(rootCode)}" onclick="enterLayer('${escapeForOnClick(rootCode)}')">${labelForCode(rootCode)} (${n})</button>`;
     });
   } else {
-    // chemin courant + bouton retour
+    // chemin courant + bouton retour vers le parent
     const chainLabels = currentLayerPath.map(c=>labelForCode(c)).join(' -> ');
     html += `<button onclick="goUpLayer()" class="active">${chainLabels}</button>`;
     const nodeCode = currentLayerPath[currentLayerPath.length - 1];
@@ -846,13 +1051,21 @@ function renderQuickFilters() {
 
   container.innerHTML = html;
 
-  // mark active parent button if at first level
+  // marque visuellement la racine active si on est au premier niveau
   if (currentLayerPath.length === 1) {
     container.querySelectorAll("button[data-parent]").forEach(b => {
       b.classList.toggle("active", b.getAttribute("data-parent") === currentLayerPath[0]);
     });
   }
+
+  // marque les boutons d'axe
+  container.querySelectorAll("button[data-axis]").forEach(b => {
+    const ax = b.getAttribute("data-axis");
+    b.classList.toggle("active", currentAxis === ax);
+  });
 }
+
+
 
 /* --------- filterTag: gère labels et codes ---------- */
 function findCodeByLabel(label) {
@@ -943,6 +1156,8 @@ function filterList() {
   applyFilters();
 }
 function resetFilters() {
+    currentAxis = null;
+
   locPosition = ""; locMunicipalite = ""; locQuartier = "";
   ['positionFilter','municipaliteFilter','quartierFilter'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
   const sb = document.getElementById('searchbox'); if (sb) sb.value = "";

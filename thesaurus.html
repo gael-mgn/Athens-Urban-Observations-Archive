@@ -148,6 +148,8 @@ mark.hl{
 
 <!-- charge ton jeu de données -->
 <script src="data/codemap.js"></script>
+  // codeMap.js
+
 
 <script>
 /* ---------------------------------------------------------------------
@@ -170,10 +172,9 @@ let lastKeyword = '';
 
 // ---- Utilitaires de parsing et tri ----
 function parseKeySegments(key){
-  if(key.includes('.')) return key.split('.').filter(Boolean);
-  // sinon on découpe caractère par caractère (1 2 1 1 -> "1.2.1.1")
-  return key.split('').map(ch=>ch);
+  return key.split('.').filter(Boolean);
 }
+
 function compareSegments(aSegs, bSegs){
   const n = Math.max(aSegs.length, bSegs.length);
   for(let i=0;i<n;i++){
@@ -230,15 +231,19 @@ function highlightMatch(text, keyword){
 function buildHierarchyArray(code){
   let cur = code;
   const arr = [];
-  while(cur && cur.length>0){
-    const entry = thesaurus[cur];
-    arr.push({
-      code: cur,
-      label: entry?.label || '(catégorie inconnue)',
-      description: entry?.description || ''
-    });
-    cur = cur.slice(0,-1);
-  }
+  while(cur){
+  const entry = thesaurus[cur];
+  arr.push({
+    code: cur,
+    label: entry?.label || '(catégorie inconnue)',
+    description: entry?.description || ''
+  });
+
+  const segs = cur.split('.');
+  segs.pop();
+  cur = segs.join('.') || null;
+}
+
   arr.reverse();
   return arr;
 }
