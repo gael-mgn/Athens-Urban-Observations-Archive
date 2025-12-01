@@ -58,8 +58,8 @@ const thesaurus = {
     description: "Axe regroupant les typologies, époques, styles et éléments architecturaux." 
   },
   "P": { 
-    label: "Phénomènes urbains & dynamiques", 
-    description: "Axe regroupant les périodes, phases historiques et temporalités d’Athènes. (interprétatif)" 
+    label: "Phénomènes & dynamiques urbaines", 
+    description: "Axe regroupant les processus, événements et actions qui transforment la ville." 
   },
   "T": { 
     label: "Périodes historiques",
@@ -69,7 +69,7 @@ const thesaurus = {
 
 
 
-  "A.1":   { label: "Bâti", description: "Ensemble des constructions relevant du patrimoine architectural." },
+  "A.1":   { label: "Bâti", description: "Ensemble des constructions de la ville, anciennes ou contemporaines." },
 
   "A.1.1":  { label: "Culte", description: "Espaces et édifices religieux, lieux spirituels ou liturgiques." },
   "A.1.1.1": { label: "Orthodoxe", description: "Édifices du culte orthodoxe (églises), petites chapelles, lieux rituels grecs." },
@@ -78,7 +78,7 @@ const thesaurus = {
 
   "A.1.3":  { label: "Remarquable", description: "Bâtiments se distinguant par leur architecture ou leur importance locale." },
 
-  "A.1.4":  { label: "Friches", description: "Espaces laissés à l'abandon ou non développés." },
+  "A.1.4":  { label: "Bâtiment Abandonné", description: "Espaces laissés à l'abandon ou non développés." },
 
 
   "A.2":   { label: "Mobilier urbain", description: "Éléments fonctionnels et esthétiques intégrés dans l'espace public." },
@@ -118,6 +118,15 @@ const thesaurus = {
 "A.7.1.1":   { label: "Sauvage", description: "" },
 "A.7.1.2":   { label: "Domestique", description: "" },
 "A.7.2":   { label: "Flore", description: "" },
+
+"A.8":  { label: "Matériaux", description: "Substances utilisées dans la construction du bâti ou des structures urbaines." },
+
+"A.8.1": { label: "Pierre", description: "Matériau traditionnel utilisé pour la construction monumentale ou vernaculaire." },
+"A.8.2": { label: "Béton armé", description: "Matériau moderne composé de béton renforcé par une armature métallique." },
+"A.8.3": { label: "Brique", description: "Élément de construction en terre cuite utilisé pour murs et structures." },
+"A.8.4": { label: "Métal", description: "Matériau utilisé pour structures, charpentes ou éléments décoratifs." },
+"A.8.5": { label: "Bois", description: "Matériau organique utilisé pour charpentes, menuiseries et constructions variées." },
+"A.8.6": { label: "Verre", description: "" },
 
 
 "C.1":  { label: "Typologies architecturales", description: "Catégories de constructions définies par leur style, leur période ou leur fonction." },
@@ -176,17 +185,6 @@ const thesaurus = {
 "C.2.3": { label: "Arcades", description: "Séries d’arches soutenues par des colonnes ou piliers." },
 "C.2.4": { label: "Toitures", description: "Parties supérieures d’un bâtiment, plates ou inclinées." },
 "C.2.5": { label: "Façades", description: "Parois extérieures d’un bâtiment, définies par leurs matériaux et traitements." },
-
-
-
-"C.3":  { label: "Matériaux", description: "Substances et procédés utilisés pour la construction et la structure des bâtiments." },
-
-"C.3.1": { label: "Pierre", description: "Matériau traditionnel utilisé pour la construction monumentale ou vernaculaire." },
-"C.3.2": { label: "Béton armé", description: "Matériau moderne composé de béton renforcé par une armature métallique." },
-"C.3.3": { label: "Brique", description: "Élément de construction en terre cuite utilisé pour murs et structures." },
-"C.3.4": { label: "Métal", description: "Matériau utilisé pour structures, charpentes ou éléments décoratifs." },
-"C.3.5": { label: "Bois", description: "Matériau organique utilisé pour charpentes, menuiseries et constructions variées." },
-
 
 "C.4": { label: "Représentations architecturales", description: "Différentes représentations graphiques utilisées pour illustrer la conception architecturale."  },
 "C.4.1": { label: "Plans", description: "Représentations à échelle réduite d'un bâtiment, montrant la disposition des espaces." },
@@ -256,81 +254,124 @@ const thesaurus = {
   "description": "Période de récession majeure affectant l'espace urbain."
 },
 
-/*Voir doc word thesaurus sur drive eivp*/
-
-/*
-1.  Morphologie & transformations physiques
-o P11 Rénovation / réhabilitation → transformations du bâti existant
-o P12 Densification → augmentation de la densité résidentielle ou mixité fonctionnelle
-o P13 Gentrification → processus social-économique transformant quartiers
-o P14 Informalité / occupation illégale → constructions non autorisées, friches, usages improvisés
-o P15 Ilôts de chaleur / microclimat → phénomènes environnementaux urbains
 
 
 
 
-P4 : Politiques & interventions urbaines
-P — Phénomènes urbains & dynamiques → P4 : Politiques & interventions urbaines
 
-P41 Politique de végétalisation / plantation d’arbres
-Ex. : alignements d’arbres, parcs urbains, rues végétalisées
-P42 Politique de rénovation / réhabilitation de quartier
-Ex. : réaménagement de friches, réhabilitation de logements anciens
-P43 Politique de mobilité / transport
-Ex. : pistes cyclables, zones piétonnes, stations vélo en libre-service
-P44 Politique de gestion du patrimoine
-Ex. : protection de bâtiments historiques, restauration de monuments
-P45 Autres interventions urbaines
 
-Code  Description Perspective
-P11 Rénovation / réhabilitation Transformation physique du bâti ou de l’espace urbain observée sur le terrain Observation des résultats visibles : bâtiments rénovés, rues réaménagées, friches transformées
-P42 Politique de rénovation / réhabilitation  Action planifiée ou mise en œuvre par une autorité publique ou un acteur privé  Observation de l’initiative / intention : programme municipal, projet de rénovation, budget alloué, décision politique
-*/
 
 "P.1": { 
-  "label": "Morphologie & transformations physiques", 
-  "description": "résultat" 
+  "label": "Processus socio-spatiaux structurels", 
+  "description": "Transformations évolutives."
+},
+
+"P.1.1": { 
+  "label": "Gentrification", 
+  "description": "Transformation socio-économique progressive d’un quartier"
+},
+"P.1.2": { 
+  "label": "Informalité urbaine", 
+  "description": "Constructions ou usages non autorisés, occupations improvisées"
 },
 "P.1.3": { 
-  "label": "Gentrification", 
-  "description": "Processus social-économique transformant quartiers" 
+  "label": "Effets environnementaux", 
+  "description": ""
 },
-"P.1.5": { 
-  "label": "Ilôts de chaleur / microclimat", 
-  "description": "" 
+"P.1.3.1": { 
+  "label": "Îlots de chaleur", 
+  "description": ""
+},
+"P.1.3.2": { 
+  "label": "Pollution locale", 
+  "description": ""
 },
 
+
+
+"P.2": { 
+  "label": "Transformations physiques visibles", 
+  "description": "Résultat matériel observable, indépendamment de l’origine."
+},
+"P.2.1": { 
+  "label": "Rénovation / réhabilitation réalisée", 
+  "description": ""
+},
+"P.2.2": { 
+  "label": "Ruine / abandon obtenu", 
+  "description": ""
+},
+"P.2.3": { 
+  "label": "Requalification effective", 
+  "description": ""
+},
+
+/*Voir doc word thesaurus sur drive eivp*/
 "P.3": { 
-  "label": "Événements & manifestations", 
-  "description": "" 
+  "label": "Événements & manifestations ponctuelles", 
+  "description": "Choses qui arrivent dans un temps court."
 },
-
+"P.3.1": { 
+  "label": "Manifestations publiques / cortèges", 
+  "description": ""
+},
+"P.3.2": { 
+  "label": "Assemblées, sit-in", 
+  "description": ""
+},
+"P.3.3": { 
+  "label": "Fêtes, rassemblements culturels", 
+  "description": ""
+},
+"P.3.4": { 
+  "label": "Crises locales (incendies, effondrements)", 
+  "description": ""
+},
 "P.4": { 
-  "label": "Politiques & interventions urbaines", 
-  "description": "intention" 
+  "label": "Politiques & interventions planifiées", 
+  "description": "Décisions publiques intentionnelles."
 },
 "P.4.1": { 
-  "label": "Politique de végétalisation / plantation d’arbres", 
-  "description": "politique prévue" 
+  "label": "Politiques de végétalisation", 
+  "description": ""
 },
-
 "P.4.2": { 
-  "label": "Politiques de rénovation / réhabilitation / requalification urbaine", 
-  "description": "politique prévue" 
+  "label": "Politiques de rénovation/requalification", 
+  "description": ""
 },
-
+"P.4.3": { 
+  "label": "Politiques de mobilité/transport", 
+  "description": ""
+},
+"P.4.4": { 
+  "label": "Politiques sociales (logement, inclusion)", 
+  "description": ""
+},
+"P.4.5": { 
+  "label": "Politiques touristiques / culturelles", 
+  "description": ""
+},
 "P.5": { 
-  "label": "Mobilisations & conflits socio-politiques", 
-  "description": "Dynamiques politiques ou sociales produisant des signes visibles dans l’espace public." 
+  "label": "Mobilisations & conflits sociopolitiques", 
+  "description": "Actions collectives produisant des signes visibles."
 },
 "P.5.1": { 
-  "label": "Contestation politique", 
-  "description": "Graffitis, banderoles, assemblées, occupations reflétant une position politique identifiable (ex. anarchisme, antifascisme…)" 
+  "label": "Contestations politiques", 
+  "description": "symboles anarchistes, antifascistes, slogans politiques"
 },
 "P.5.2": { 
   "label": "Revendications sociales", 
-  "description": "Mouvements féministes, LGBTQ+, justice sociale, logement, droits des travailleurs, etc." 
+  "description": "féminisme, LGBTQ+, travailleurs, logement"
 },
+/*"P.5.3": { 
+  "label": "Occupations militantes — squats politiques, assemblées auto-organisées", 
+  "description": ""
+},
+"P.5.4": { 
+  "label": "Mémoire & contre-mémoire — plaques alternatives, mémoriaux spontanés", 
+  "description": ""
+},*/
+
 };
 
 
