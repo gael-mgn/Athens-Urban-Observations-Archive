@@ -560,7 +560,7 @@ const articles = [
     titre: "Panagía Kapnikaréa Church",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0661.webp", alt: "" }],
-    note: "L'église de la Panagía Kapnikaréa (en grec moderne : Εκκλησία της Παναγίας Καπνικαρέας), souvent appelée simplement Kapnikaréa (Καπνικαρέα), est une église byzantine datant du troisième quart du XIe siècle, situé rue Ermoú, en plein cœur du centre historique d'Athènes.",
+    note: "The Church of Panagía Kapnikaréa (in Modern Greek: Εκκλησία της Παναγίας Καπνικαρέας), often simply called Kapnikaréa (Καπνικαρέα), is a Byzantine church dating from the third quarter of the 11th century, located on Ermou Street, in the very heart of Athens’ historic center.",
     rangement: ["A.1.1.1", "A.1.2", "C.1.2", "A.8.1", "T.2"],
     related: [1],
     localisation: { position: "Athens", municipalite: "Athina" }
@@ -568,21 +568,21 @@ const articles = [
     {
     id: 4,
     annee: 2025,
-    titre: "Chat",
+    titre: "Cat",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0675.webp", alt: "" }],
-    note: "Les chats font partie intégrante du paysage urbain à Athènes, les habitants leur laissent de la nourriture dans tous les coins de rue.",
-    coment: "chat apperçu à proximité de l'Agora romaine.",
+    note: "Cats are an integral part of the urban landscape in Athens; residents leave food for them on street corners.",
+    coment: "Cat seen near the Roman Agora.",
     rangement: ["A.7.1.2", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
     id: 5,
     annee: 2025,
-    titre: "Agora romaine",
+    titre: "Roman Agora",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0676.webp", alt: "" }],
-    note: "L'agora romaine d'Athènes était une place publique antique, servant à la fois de marché et de lieu de rassemblement. Il existait deux agoras distinctes à Athènes : l'agora classique, fondée au VIe siècle av. J.-C., et l'agora romaine, créée sous la domination romaine, un peu plus à l'est.",
+    note: "The Roman Agora of Athens was an ancient public square, serving both as a marketplace and as a gathering place. There were two distinct agoras in Athens: the Classical Agora, founded in the 6th century BC, and the Roman Agora, created under Roman rule, a little farther to the east.",
     rangement: ["C.1.1.1", "A.1.2", "T.1.4"],
     localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
   },
@@ -651,11 +651,11 @@ const articles = [
   {
     id: 12,
     annee: 2025,
-    titre: "Stationnements Vélos",
+    titre: "Bicycle parking",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0737.webp", alt: "" }],
-    note: "Emplacements permettant le stationnement de vélos",
-    coment: "Cette installation peut paraître étonnante, étant donné la faible utilisation du vélo à Athènes.",
+    note: "Locations allowing bicycle parking.",
+    coment: "This facility may seem surprising, given the low use of bicycles in Athens.",
     rangement: ["A.2.1", "A.3.1", "P.4.3", "T.4"],
     related: [24],
     localisation: { position: "Athens", municipalite: "Athina" }
@@ -1258,12 +1258,12 @@ function renderQuickFilters() {
   const allCount = baseForCounts.length;
 
   // 1) barre d'axes (toujours visible)
-  let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">`;
+  let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button onclick="resetAxis()">All</button>`;
   Object.values(axes).forEach(ax => {
     const activeClass = (currentAxis === ax.key) ? "active" : "";
     html += `<button onclick="enterAxis('${ax.key}')" class="${activeClass}" data-axis="${ax.key}">${ax.label}</button>`;
   });
-  html += `<button onclick="resetAxis()">Afficher tout</button>`; // Inutile si pas de mode OR...
+  //html += `<button onclick="resetAxis()">All</button>`; // Inutile si pas de mode OR...
   html += `</div>`;
 
   // 2) bouton All (compteur global)
