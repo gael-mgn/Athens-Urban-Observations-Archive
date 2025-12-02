@@ -3,383 +3,1444 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>La Ville Sonore — Cartographie Sonore de la Ville</title>
-  <meta name="robots" content="index, follow">
-  <meta name="keywords" content="La ville sonore, cartographie sonore, sonore, cartographie, son, Gaël Maignan">
-  <meta name="description" content="La ville parle, mais rarement on l’écoute. Ses voix se mêlent, se superposent, se perdent parfois dans le bruit de fond de notre quotidien, elles composent une partition vivante, à la fois banale et unique, qui disparaît souvent sans laisser de trace.">
-  <meta property="og:image" content="img/preview.webp">
+  <title>Athens Urban Observations Archive — AUOA</title>
+  <meta name="description" content="Athens Urban Observations Archive (AUOA) is a digital archive dedicated to documenting and studying the city of Athens in all its dimensions: historical, social, cultural, and architectural." />
+  <meta name="keywords" content="Athens, Urban Observations, Urbanism, Archive, digital archive">
+  <meta property="og:image" content="athens-urban-observations-archive.webp" />
+  <style>
+:root{
+  --bg:#fdfdfd;
+  --ink:#000;
+  --ink-mute:#777;
+  --panel:#f4f4f4;
+  --line:2px solid #000;
+  --gap:32px;
+  --radius:0;
+  --font-sans:"Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-serif:"Inter", "Helvetica Neue", Arial, sans-serif;
+}
+a { color: var(--ink); }
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.4;}
+body{padding:40px;}
+*{box-sizing:border-box;letter-spacing:-0.01em;}
+.wrap{ max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 380px; gap:var(--gap); }
+header{ grid-column:1/-1; border-bottom:var(--line); padding-bottom:16px; display:flex; justify-content:space-between; align-items:flex-end; }
+.site-title{ font-family:var(--font-serif); font-size:26px; font-weight:700; margin-bottom:4px; }
+header small{font-size:12px;color:var(--ink-mute)}
+header nav{display:flex;gap:18px;}
+header nav a{ text-decoration:none; color:var(--ink); font-weight:600; padding:6px 0; border-bottom:2px solid transparent; }
+header nav a:hover{ border-bottom:2px solid var(--ink); }
+.hero{ padding:38px 32px; background:var(--panel); border:var(--line); display:flex;flex-direction:column; gap:18px; }
+.hero h1{ margin:0; font-family:var(--font-serif); font-size:40px; line-height:1.1; }
+.hero p{margin:0;color:var(--ink-mute);max-width:70%;font-size:15px;}
+.hero .cta{ padding:12px 18px; border:var(--line); background:#fff; font-weight:800; text-transform:uppercase; }
+.hero .cta:hover{ background:var(--ink); color:#fff; }
+.archive{ border:var(--line); padding:20px; background:#fff; }
+.controls{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+.controls input[type=search]{ flex:1; padding:12px; border:var(--line); font-family:var(--font-sans); }
+input[type="checkbox"] { accent-color: black; }
+.controls button{ padding:12px 14px; border:var(--line); background:#fff; font-weight:700; text-transform:uppercase; cursor:pointer; }
+.controls button:hover{ background:var(--ink); color:#fff; }
+.list{display:flex;flex-direction:column;gap:22px;}
+.item{ border:var(--line); background:#fafafa; padding:0; }
+.item summary { cursor: pointer; list-style: none; padding: 16px 18px; border-bottom: var(--line); display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; gap: 20px; transition: background-color 0.4s ease, color 0.4s ease; }
+.item summary:hover { background: black; color: white; }
+.item summary::-webkit-details-marker{display:none;}
+.details-body{ padding:20px; }
+.thumb{ width:100%; object-fit:cover; border:var(--line); }
+
+/*.thumb {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border: var(--line);
+}*/
+
+figure { margin: 0; padding: 0; margin-bottom: 10px; }
+figcaption { font-size: 13px; color: var(--ink-mute); }
+.info{ display:grid; grid-template-columns:1fr 150px; gap:18px; }
+.info a {
+  word-break: break-all; /* Permet de couper le texte en plein mot si nécessaire */
+    overflow-wrap: break-word; /* Gère les retours à la ligne si le texte est trop long */
+    max-width: 100%; 
+}
+.meta-tags{ margin-top:10px; }
+.tag{ padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; cursor:pointer; }
+.tag:hover{ background:var(--ink); color:#fff; }
+#quickFilters button { cursor:pointer; }
+#quickFilters button.active, #formatFilters button.active { background: black; color: white; border-color: black; }
+.meta-small{font-size:13px;color:var(--ink-mute);}
+.coment { margin-top:10px; font-size:14px; color:var(--ink); white-space: pre-wrap; }
+aside { position: sticky; top: 20px; max-height: calc(150vh); }
+.meta{ border:var(--line); padding:18px; background:#fff; }
+.meta select { width: 100%; padding: 6px 8px; margin-bottom: 8px; border: var(--line); background: #fff; font-size: 13px; }
+.meta h3{ margin-top:0; font-size:14px; letter-spacing:0; }
+.meta button{ padding:6px 10px; border:var(--line); background:#fff; font-size:12px; font-weight:700; }
+.meta button:hover{ background:var(--ink); color:#fff; }
+.tag-line {margin: 0; padding: 0; display: block; }
+.sep { text-decoration: none; }
+.tag-link { text-decoration: underline; }
+
+/* --- affichage tags par axe (visu groupée) --- */
+.tag-line { display:flex; gap:8px; align-items:center; margin:6px 0; flex-wrap:wrap; }
+.axis { font-weight:800; font-size:12px; min-width:44px; display:inline-block; color:var(--ink); }
+.tag-hierarchy { display:inline-block; }
+.sep { margin: 0 8px; color: var(--ink-mute); text-decoration: none; }
+.tag-hierarchy .tag-link { text-decoration: underline; font-weight:700; font-size:12px; }
 
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
-  <link rel="icon" href="logo.png" type="image/x-icon">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Tailwind via CDN pour prototype rapide -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <script src="js/collections.js"></script>
-  <script src="js/script.js"></script>
-  <script type="module" src="https://gael-mgn.github.io/js/log.js"></script>
-
-  <link rel="stylesheet" href="style/main.css">
+/* related links + highlight */
+.related-links { margin-top:12px; border-top:1px dashed var(--ink-mute); padding-top:8px; font-size:13px; }
+.related-links a { text-decoration:underline; cursor:pointer; font-weight:700; }
+.item.highlight { background: #fff9d6; transition: background 0.4s ease; }
 
 
+footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:32px; display:flex; justify-content:space-between; font-size:14px; }
+@media(max-width:980px){
+  .no-mobile { display: none; }
+  body{padding:20px;}
+  .wrap{grid-template-columns:1fr;}
+  aside{order:3;margin-top:0px;}
+  aside { position: relative; }
+  .archive{order:2;}
+  .hero{order:1;}
+  .info{grid-template-columns:1fr;}
+  .hero p{max-width:100%;}
+}
+@media(max-width:980px){
+  .controls input[type=search]{ width: 100%; }
+}
+
+/* container mobile: invisible sur desktop, visible sur mobile */
+.mobile-filters { display: none; margin: 18px 0; gap: 12px; }
+@media (max-width:980px) {
+  .mobile-filters { display: block; }
+  /* spacing / box look similaire aux .meta */
+  .mobile-filters .meta { border: var(--line); padding: 12px; background: #fff; margin-bottom: 12px; }
+  /* rendre select/buttons plus larges si besoin */
+}
+
+/* Desktop only: make list a fixed-scroll area */
+@media (min-width: 981px) {
+  /* wrapper: ensure archive doesn't overflow */
+  .archive {
+    overflow: visible; /* permet au .list de scroller indépendamment */
+  }
+
+  /* zone scrollable pour la liste d'articles */
+  #list {
+    overflow: auto;           /* affichage du scroll quand nécessaire */
+    -webkit-overflow-scrolling: touch;
+    /* valeur par défaut au cas où JS est désactivé : ajuste le 500px selon préférence */
+    max-height: 85vh;
+    padding-right: 8px;       /* évite que le contenu touche le bord quand scrollbar visible */
+  }
+}
+
+/* Breadcrumb tags (fil d'arianne) */
+.breadcrumb { display:flex; gap:8px; align-items:center; margin:6px 0; flex-wrap:wrap; }
+.breadcrumb .axis { font-weight:800; font-size:12px; min-width:44px; display:inline-block; color:var(--ink); text-transform:uppercase; }
+.breadcrumb .tag-hierarchy { display:inline-block; font-size:13px; }
+.breadcrumb .tag-link { text-decoration:underline; font-weight:700; font-size:12px; cursor:pointer; }
+.breadcrumb .sep { margin: 0 8px; color: var(--ink-mute); text-decoration: none; user-select:none; }
+.tag-pill { padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; display:inline-block; margin-right:6px; }
+
+
+  </style>
 </head>
-
-<body> 
-
-<div class="site-header">
-  <a href="#" class="logo">
-    <div class="brand-mark no-mobile">
-      <img src="logo.png" alt="Logo La Ville Sonore" />
-    </div>
-    <div style="font-weight:700;" class="title">La Ville Sonore</div>
-  </a>
-
-  <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-
-  <nav>
-    <a href="#">Accueil</a>
-    <a href="map.html">Carte sonore</a>
-    <a href="contribute.html">Contribuer</a>
-    <a href="sonotheque.html">Sonothèque</a>
-    <a href="about.html">À propos</a>
-  </nav>
-</div>
-
-<main>
-  <!-- Hero -->
-  <section class="relative">
-      <div class="h-[70vh] md:h-[66vh] bg-cover bg-center hero-overlay" style="background-image: url('img/sonotheque.webp');">
-        <div class="absolute inset-0 hero-overlay"></div>
-        <div class="relative z-10 max-w-6xl mx-auto px-6 h-full flex items-center">
-          <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Enregistrer et cartographier la mémoire sonore des rues</h1>
-            <p class="mt-4 text-lg md:text-l subtitle">La ville parle, mais rarement on l’écoute. Ses voix se mêlent, se superposent, se perdent parfois dans le bruit de fond de notre quotidien, elles composent une partition vivante, à la fois banale et unique, qui disparaît souvent sans laisser de trace.</p>
-            
-            <a href="map.html" class="cta">Découvrir la cartographie sonore</a>
-          </div>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div>
+          <div class="site-title" style="font-weight: bold;">Athens Urban Observations Archive</div>
+          <div style="font-size:12px;color:var(--muted)">An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</div>
         </div>
       </div>
-  </section>
+      <nav aria-label="Navigation principale" class="no-mobile">
+        <a href="">Project</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">Athens Urban Observations Archive :<br>
+An Online Ethnographic and Urban Repository on Athenian Spaces in Transition</h1>
+        <p>The project aims to create a collaborative online archive documenting subtle, overlooked, or transitional spaces of Athens. It blends urban studies, ethnography, visual culture, and citizen contributions to build a living memory of the city’s informal, contested, or reappropriated places.</p>
+      </section>
+
+      <!-- insérer directement après </section> de .hero -->
+      <div id="mobileFilters" class="mobile-filters" aria-hidden="true"></div>
 
 
-  <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12">
-    <div class="view-elements">
-      <h2 class="text-3xl font-bold mb-4">Dernières entrées</h2>
-      <a href="sonotheque.html" class="view-all">Voir toutes les entrées</a>
-    </div>
-    <!-- Skeleton loading (Dark Theme) -->
-    <div id="latestClips-skeletons" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
-        <div class="h-20 bg-gray-700 rounded"></div>
-        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
-        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-      </div>
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
-        <div class="h-20 bg-gray-700 rounded"></div>
-        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
-        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-      </div>
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
-        <div class="h-20 bg-gray-700 rounded"></div>
-        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
-        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
-      </div>
-    </div>
-
-    <!-- Vrai contenu (caché au départ) -->
-    <div id="latestClips" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-  </section>
-
-
-    <section class="max-w-6xl mx-auto px-6 py-6">
-
-        <h2 class="text-3xl font-bold mb-4">À propos de La Ville Sonore</h2>
-
-
-  <p><em>La Ville Sonore</em> est une invitation à écouter autrement nos espaces urbains.
-Plutôt qu’une simple sonothèque, le projet propose une cartographie sensible des villes, composée non de rues et de façades, mais de voix, de rythmes et de respirations. Chaque fragment sonore : une sirène lointaine, un rire d’enfant, l’écho d’une passerelle, la rumeur d’un marché devient une trace, une mémoire fugace qui révèle l’âme des lieux.</p>
-
-<p>En parcourant ces paysages sonores, on redécouvre la ville comme une partition vivante : à la fois familière et surprenante, banale et unique. L’oreille devient un outil d’observation, et chaque bruit, même le plus discret, se charge de sens.</p>
-
-<p class="mb-4"><em>La Ville Sonore</em> n’est pas seulement un projet d’archives, mais une exploration artistique : elle révèle ce que nous n’entendons plus, elle transforme le quotidien en matière poétique, et elle propose une autre manière d’habiter la ville, par l’écoute.</p>
-
-<a class="hover:underline font-semibold" href="about.html">En savoir plus</a>
-
-
-
-</section>
-
-
-
-<!--
-
-    <section id="derniers-audios" class="max-w-6xl mx-auto px-6 py-8 mt-3">
-         <div class="view-elements">
-  <h2 class="text-3xl font-bold mb-4">Dernières entrées</h2>
-  <a href="sonotheque.html" class="view-all">Voir toutes les entrées</a>
-</div>
-      <div id="latestClips" class="grid grid-cols-1 sm:grid-cols-3 gap-6"></div>
-    </section>-->
-
-
-
-
-
-
-<style>
-  .view-elements {
-  display: flex; /* Utilisation de flexbox pour l'alignement */
-  justify-content: space-between; /* Espace entre le titre et le lien */
-  align-items: center; /* Centrer verticalement le titre et le lien */
-}
-
-/* --- Media Query pour mobile --- */
-@media (max-width: 480px) {
-  .view-elements {
-    flex-direction: column; /* Empiler les éléments en colonne sur mobile */
-    align-items: flex-start; /* Aligner les éléments à gauche */
-  }
-
-  .view-all {
-    margin-bottom: 2rem;
-  }
-}
-
-.view-all {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #C2BCD7;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.view-all:hover {
-  text-decoration: underline;
-}
-
-</style>
-
-
-<!-- Ajoute dans ton <head> -->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-/>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-<!--<section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between">
-
-  <div class="w-full md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
-    <h2 class="text-3xl font-bold mb-2">À la Une — Cartes postales sonores</h2>
-    <p class="text-2xl font-bold mb-4">Écouter un lieu, c’est déjà voyager</p>
-    <p class="mb-4">
-      Une carte postale raconte une image figée, un instant capturé. Mais qu’en est-il des sons qui donnent vie à un endroit ? Les Cartes Postales Sonores prolongent ce geste familier en lui donnant une nouvelle dimension : celle de l’écoute.
-    </p>
-    <a href="" class="hover:underline font-semibold">En savoir plus</a>
-  </div>
-
-  <div class="w-full md:w-1/2">
-    <div class="swiper rounded-lg shadow-lg">
-      <div class="swiper-wrapper">
-
-        <div class="swiper-slide relative">
-          <img src="img/occitanie.webp" alt="Toulouse" class="w-full h-80 object-cover rounded-lg">
-          <div class="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center text-white p-4 rounded-lg">
-            <h3 class="text-xl font-bold mb-2">Carte Postale Sonore — Occitània</h3>
-            <a href="map.html?tag=occitanie" class="px-4 py-2 rounded-lg shadow-md hover:underline">Découvrir</a>
-          </div>
+      <section id="archives" class="archive" aria-labelledby="archives-title">
+        <div class="controls">
+          <input id="searchbox" type="search" placeholder="Search" oninput="filterList()" />
+          <button onclick="resetFilters()">Reset filters</button>
+          <button onclick="sortBy('date')" class="no-mobile">Sort by date</button>
         </div>
+
+        <div id="list" class="list" role="list"></div>
+      </section>
+    </main>
+
+    <aside>
+      <div class="meta">
+        <h3>Quick filters</h3>
+        <p style="margin-bottom: 0;">Click on a tag in the list below to filter the results. (<a href="thesaurus.html">classification index</a>)</p>
+        <div id="quickFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
 
+      <div style="height:16px"></div>
 
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
+      <div class="meta">
+        <h3>Localisation</h3>
+        <select id="positionFilter" onchange="filterLocation()"></select>
+        <select id="municipaliteFilter" onchange="filterLocation()"></select>
+        <select id="quartierFilter" onchange="filterLocation()"></select>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <div class="meta">
+        <h3>Format</h3>
+        <div id="formatFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+      </div>
+
+      <div style="height:16px"></div>
+    </aside>
+
+    <footer>
+      <div>© <strong>Athens Urban Observations Archive</strong> — <span id="year"></span></div>
+      <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+    </footer>
   </div>
-</section>
 
-<script>
-  const swiper = new Swiper('.swiper', {
-    loop: true,
-    autoplay: {
-      delay: 4000,
-      disableOnInteraction: false,
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
+
+<script src="data/codemap.js">
+
 </script>
 
-
--->
-
-<section id="nouveautes" class="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between">
-
-  <div class="clip-card w-full pr-0 md:pr-8 mb-8 md:mb-0">
-    <h2 class="text-3xl font-bold mb-2 mt-2">À la Une — Villes jumelées, voix jumelles</h2>
-    <p class="text-2xl font-bold">Écouter un lieu, c’est déjà voyager</p>
-    <p class="mb-4">
-      Depuis plusieurs décennies, les villes françaises se lient à d’autres villes du monde à travers les jumelages, cherchant à favoriser les rencontres, les échanges culturels et la solidarité internationale. Ce projet propose d’explorer ces liens sous un angle inédit : l’écoute.
-    </p>
-    <a href="villes-jumelees.html" class="hover:underline font-semibold">En savoir plus</a>
-  </div>
-
-</section>
-
-
-
-  <section class="max-w-6xl mx-auto px-6 py-8">
-    <div class="view-elements">
-      <h2 class="text-3xl font-bold mb-4">Collections thématiques</h2>
-      <a href="collections.html" class="view-all">Voir toutes les collections</a>
-    </div>
-
-    <!-- Skeleton loading (Dark Theme) -->
-    <div id="tag-section-skeletons" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
-      </div>
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
-      </div>
-      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
-      </div>
-    </div>
-
-    <!-- Vrai contenu (caché au départ) -->
-    <div class="tag-section" id="tag-section"></div>
-  </section>
+<script>
 
 
 
 
-  <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-6">
+/* ---------- Transformation automatique des clés numériques en format LETTRE.points (ex: T.1.1) ---------- 
+   - conserve l'objet `thesaurus` tel quel dans le source JS (pas besoin de réécrire manuellement),
+   - puis on remplace *dynamiquement* les clés numériques par des clés de la forme AXE.d1.d2...
+   - axes: T = Thématique (1,2,3,4,5,6,9), A = Architecture (7), C = Chronologie (8)
+*/
 
-    <h2 class="text-3xl font-bold mb-4">Carte sonore</h2>
+/*
+(function transformThesaurusKeys(){
+  const axisMap = { '7': 'A', '8': 'C' }; // autres -> 'T'
+  // clone l'ancien objet puis vide le thesaurus (on mutera l'objet const)
+  const original = Object.assign({}, thesaurus);
+  Object.keys(thesaurus).forEach(k => delete thesaurus[k]);
 
-    <p class="lead justify">Cliquez sur les marqueurs pour écouter une captation. Utilisez la liste pour naviguer et contrôler la lecture.<br>Tous les enregistrements de <em>La Ville Sonore</em> sont mis à disposition en accès libre. Vous pouvez les écouter, les télécharger et les réutiliser librement, à condition de respecter un usage non commercial. Cette ouverture vise à favoriser le partage, l’expérimentation et la création collective, afin que ces fragments sonores puissent continuer à vivre et à résonner ailleurs, dans de nouveaux projets artistiques, pédagogiques ou personnels.</p>
+  Object.entries(original).forEach(([key, value]) => {
+    if (/^[0-9]+$/.test(String(key))) {
+      // transforme "7111" -> "A.7.1.1.1" (lettre d'axe + points entre chaque chiffre)
+      const digits = String(key).split('');
+      const axis = axisMap[digits[0]] || 'T';
+      const newKey = axis + '.' + digits.join('.');
+      thesaurus[newKey] = value;
+    } else {
+      // conserve toute clé déjà non-numérique
+      thesaurus[key] = value;
+    }
+  });
+})();*/
 
-    <div class="layout">
-      <div>
-        <div id="map" aria-label="Carte des captations sonores"></div>
-      </div>
 
-      <aside>
-        <div class="search">
-          <input id="search" placeholder="Rechercher un titre ou une date..." />
-        </div>
-        <div class="clip" id="clipsList" aria-live="polite">
-          <!-- items injected here -->
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
 
-  <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between mt-4">
-  <!-- Texte à gauche -->
-  <div class="w-full md:w-2/3 pr-0 md:pr-8 mb-8 md:mb-0">
-    <h2 class="text-3xl font-bold mb-2">Gaël Maignan</h2>
-    <p class="text-2xl font-bold mb-4">Artiste / Urbaniste</p>
-    <p>
-      Je suis <a href="http://gael-maignan.fr/" target="_blank" class="lien">Gaël Maignan</a>, artiste et urbaniste. Mon travail explore les manières dont la ville se vit et se perçoit au-delà de ses formes visibles : à travers ses sons, ses usages et ses mémoires sensibles.</p>
-      <p>
-Formé à l’École des Ingénieurs de la Ville de Paris, j’accorde une attention particulière aux espaces du quotidien, aux ambiances, aux détails souvent invisibles mais qui façonnent profondément notre rapport à l’environnement urbain.</p>
-<p class="mb-4">
-Avec <em>La Ville Sonore</em>, je cherche à révéler la dimension poétique et vivante des villes en les écoutant autrement : comme des partitions mouvantes, faites de voix, de rythmes et de silences. Mon approche se situe à la croisée de l’art sonore et de la recherche urbaine, afin d’inviter chacun à prêter l’oreille et à redécouvrir la richesse sensorielle de nos espaces partagés.
-    </p>
-  </div>
+/* ---------- calcul dynamique des axes (après extractLabels) ---------- */
+/* ---------- calcul dynamique des axes (après extractLabels) ----------
+   Génère les axes à partir des clés top-level du `thesaurus` (ex: "A","T","C"),
+   récupère leur label depuis thesaurus[<AXE>].label et rassemble les racines
+   (clés à deux segments comme "T.1", "A.1", etc.).
+*/
+const axes = (function computeAxes(){
+  const base = {};
 
-  <div class="w-full md:w-1/3">
-    <img src="img/gael-maignan.jpg" alt="Toulouse" class="w-full h-full object-cover rounded-lg">
-  </div>
-</section>
+  // 1) détecte toutes les clés top-level du thesaurus qui sont une lettre (ex "A","T","C")
+  Object.keys(thesaurus).forEach(topKey => {
+    if (/^[A-Z]$/.test(topKey)) {
+      base[topKey] = {
+        key: topKey,
+        label: (thesaurus[topKey] && thesaurus[topKey].label) ? thesaurus[topKey].label : `Axe ${topKey}`,
+        roots: []
+      };
+    }
+  });
 
-  <!-- Mobile sticky player -->
-  <div class="mobile-player" id="mobilePlayer" style="display:none; z-index: 1000;">
-    <div style="width:48px;height:48px;border-radius:6px;background:#f2f2f2;display:grid;place-items:center">♫</div>
-    <div class="info">
-      <div id="mp-title" style="font-weight:700">Titre</div>
-      <div id="mp-meta" style="font-size:0.85rem;color:#666">00:00 — 0.0s</div>
-    </div>
-    <div>
-      <button id="mp-play" class="btn">Pause</button>
-    </div>
-  </section>
+  // 2) parcourt les codes calculés (codeMap) et rattache les racines (deux segments) à leur axe
+  Object.keys(codeMap).forEach(k => {
+    const parts = k.split('.');
+    if (parts.length === 2) {
+      const axisLetter = parts[0];
+      if (base[axisLetter]) base[axisLetter].roots.push(k);
+    }
+  });
 
-  <!-- Audio element used globally -->
-  <audio id="globalAudio" crossorigin="anonymous"></audio>
+  // 3) tri optionnel des racines pour stabilité d'affichage
+  Object.values(base).forEach(ax => {
+    ax.roots.sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+  });
 
-  <script src="js/map.js"></script>
-  <script>map();</script>
-</main>
+  return base;
+})();
 
-<footer class="bg-[#1e1f23] text-gray-300 mt-16">
-  <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-    
-    <!-- Colonne 1 -->
-    <div>
-      <h3 class="text-lg font-bold mb-4 text-white">La Ville Sonore</h3>
-      <p class="text-sm leading-relaxed">
-        La ville parle, mais rarement on l’écoute...
-      </p>
-    </div>
 
-    <!-- Colonne 2 -->
-    <div>
-      <h3 class="text-lg font-bold mb-4 text-white">Navigation</h3>
-      <ul class="space-y-2 text-sm">
-        <li><a href="#" class="hover:text-white">Accueil</a></li>
-        <li><a href="map.html" class="hover:text-white">Carte sonore</a></li>
-        <li><a href="contribute.html" class="hover:text-white">Contribuer</a></li>
-        <li><a href="sonotheque.html" class="hover:text-white">Sonothèque</a></li>
-        <li><a href="about.html" class="hover:text-white">À propos</a></li>
-      </ul>
-    </div>
+let currentAxis = null;
 
-    <!-- Colonne 3 -->
-    <div>
-      <h3 class="text-lg font-bold mb-4 text-white">Contact</h3>
-      <ul class="space-y-2 text-sm">
-        <li>Email : <a href="mailto:contact@gael-maignan.fr" class="hover:text-white">contact@gael-maignan.fr</a></li>
-        <li>Site : <a href="https://gael-maignan.fr" class="hover:text-white" target="_blank">https://gael-maignan.fr</a></li>
-        <li>LinkedIn : <a href="https://www.linkedin.com/in/gael-maignan/" class="hover:text-white" target="_blank">Gaël Maignan</a></li>
-      </ul>
-    </div>
-  </div>
+</script>
 
-  <div class="border-t border-gray-700 text-center text-sm py-4">
-    © <span id="currentYear"></span> La Ville Sonore — Tous droits réservés
-  </div>
+<script>
+  /* --- Responsive : déplacer les .meta de aside vers #mobileFilters sur mobile --- */
+(function(){
+  const MOBILE_QUERY = '(max-width:980px)';
+  const mql = window.matchMedia(MOBILE_QUERY);
+  const aside = document.querySelector('aside');
+  const mobileContainer = document.getElementById('mobileFilters');
+
+  if (!aside || !mobileContainer) return;
+
+  // capture order initiale (NodeList -> Array)
+  const metas = Array.from(aside.querySelectorAll('.meta'));
+
+  // helper : move elements into container (preserve nodes)
+  function moveToMobile() {
+    if (!metas || metas.length === 0) return;
+    // set aria
+    mobileContainer.setAttribute('aria-hidden','false');
+    metas.forEach(el => {
+      // avoid moving if already moved
+      if (el.parentElement !== mobileContainer) mobileContainer.appendChild(el);
+    });
+  }
+
+  // helper : move elements back to aside (restaure ordre initial)
+  function moveToAside() {
+    if (!metas || metas.length === 0) return;
+    mobileContainer.setAttribute('aria-hidden','true');
+    metas.forEach(el => {
+      // append back to aside (restaure ordre)
+      if (el.parentElement !== aside) aside.appendChild(el);
+    });
+  }
+
+  // initial check
+  function handleMqChange(e) {
+    if (e.matches) moveToMobile();
+    else moveToAside();
+    // ré-render éventuellement les selects / comptes si besoin
+    // (les fonctions existent déjà dans votre script)
+    if (typeof renderLocationFilters === 'function') renderLocationFilters();
+    if (typeof renderFormatFilters === 'function') renderFormatFilters();
+    if (typeof renderQuickFilters === 'function') renderQuickFilters();
+  }
+
+  // run once now
+  handleMqChange(mql);
+
+  // listen for changes (resize)
+  if (mql.addEventListener) {
+    mql.addEventListener('change', handleMqChange);
+  } else if (mql.addListener) { // ancien Safari/IE fallback
+    mql.addListener(handleMqChange);
+  }
+})();
+
+</script>
 
   <script>
-    // Obtenir l'année actuelle
-    const currentYear = new Date().getFullYear();
-    
-    // Afficher l'année dans le span avec l'id "currentYear"
-    document.getElementById("currentYear").textContent = currentYear;
-  </script>
-</footer>
 
+
+/* utils */
+/* accepte :
+   - anciens codes numériques (ex "7111")
+   - nouveaux codes avec lettre + points (ex "A.7.1.1")
+*/
+function isCode(s) {
+  const str = String(s).trim();
+  if (!str) return false;
+  if (/^[A-Z]$/.test(str)) return true; // ex: "A" ou "T" (axe)
+  return /^[A-Z]\.\d+(?:\.\d+)*$/.test(str); // ex: "T.1", "A.1.1"
+}
+function labelForCode(code) { return codeMap[String(code)] || String(code); }
+
+/* construire parentMap et childrenMap (compatible ancien & nouveau format pointé) */
+const parentMap = {};   
+const childrenMap = {}; 
+
+Object.keys(codeMap).sort((a,b) => {
+  const aDepth = a.split('.').length;
+  const bDepth = b.split('.').length;
+  return aDepth - bDepth || a.localeCompare(b);
+}).forEach(code => {
+  const parts = code.split('.');
+  if (parts.length === 1) {
+    parentMap[code] = null;
+  } else {
+    const parent = parts.slice(0, parts.length - 1).join('.');
+    parentMap[code] = codeMap[parent] ? parent : null;
+  }
+  const p = parentMap[code] || "ROOT";
+  if (!childrenMap[p]) childrenMap[p] = [];
+  childrenMap[p].push(code);
+});
+
+
+
+
+
+
+/* convertit un ancien code numérique en format pointé avec lettre d'axe */
+function numericToDotted(code) {
+  const str = String(code);
+  if (!/^[0-9]+$/.test(str)) return str;
+  const digits = str.split('');
+  const axis = (digits[0] === '7') ? 'A' : (digits[0] === '8') ? 'C' : 'T';
+  return axis + '.' + digits.join('.');
+}
+
+/* normalise toute entrée possible en clé réellement présente dans codeMap :
+   - si entrée est numérique -> convertit en dotted
+   - si entrée est dotted sans lettre -> essaie d'ajouter lettre (rare)
+   - si clé existe déjà dans codeMap, la retourne telle quelle
+*/
+function normalizeInputCode(raw) {
+  if (!raw) return null;
+  const s = String(raw);
+  if (codeMap[s]) return s;               // déjà une clé valide
+  if (/^[0-9]+$/.test(s)) {
+    const dotted = numericToDotted(s);
+    if (codeMap[dotted]) return dotted;
+    return dotted; // fallback (même si pas dans codeMap)
+  }
+  // dotted style but starting with digit: "7.1.1" -> try adding axis letter
+  if (/^\d+\./.test(s)) {
+    const compact = s.replace(/\./g,'');
+    const dotted = numericToDotted(compact);
+    if (codeMap[dotted]) return dotted;
+    return dotted;
+  }
+  return s;
+}
+
+function codeToLabelChain(rawCode) {
+  let code = String(rawCode).trim();
+
+
+  const parts = code.split('.');
+  const acc = [];
+  if (parts.length === 1) {
+    if (codeMap[code]) return [codeMap[code]];
+    return [];
+  }
+  for (let i = 2; i <= parts.length; i++) {
+    const key = parts.slice(0, i).join('.');
+    if (codeMap[key]) acc.push(codeMap[key]);
+  }
+  if (acc.length === 0 && codeMap[code]) return [codeMap[code]];
+  return acc;
+}
+
+
+
+/* helper : collecter toutes les étiquettes (labels en lowercase) sous un chemin de codes.
+   pathCodes = [] -> tout l'arbre; sinon on part du dernier code et on descend. */
+function getLeavesUnderPath(pathCodes) {
+  const leaves = new Set();
+
+  // determine starting nodes
+  let startCodes = [];
+  if (!pathCodes || pathCodes.length === 0) {
+    startCodes = childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : [];
+  } else {
+    const last = String(pathCodes[pathCodes.length - 1]);
+    if (!codeMap[last]) return []; // path invalide -> none
+    startCodes = [last];
+  }
+
+  function recurse(code) {
+    // ajouter le label du noeud
+    if (codeMap[code]) leaves.add(String(codeMap[code]).toLowerCase());
+    // descendre dans ses enfants
+    const kids = childrenMap[code] || [];
+    kids.forEach(k => recurse(k));
+  }
+
+  startCodes.forEach(c => recurse(c));
+  return Array.from(leaves);
+}
+
+/* label -> code mapping rapide (utile pour migration et recherche) */
+const labelToCodeMap = {};
+Object.entries(codeMap).forEach(([c,l]) => labelToCodeMap[l.toLowerCase()] = c);
+
+/* tentative de correspondance souple pour anciennes chaînes (ex "Mobilier urbain, Fonctionnel") */
+function migrateRangementArray(oldArr) {
+  if (!Array.isArray(oldArr)) return oldArr;
+  const out = [];
+  oldArr.forEach(entry=>{
+    if (!entry) return;
+    if (isCode(entry)) { out.push(entry); return; }
+    // split possible "Parent, Child"
+    const parts = String(entry).split(',').map(s=>s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const childLabel = parts[1].toLowerCase();
+      if (labelToCodeMap[childLabel]) { out.push(labelToCodeMap[childLabel]); return; }
+      const parentLabel = parts[0].toLowerCase();
+      if (labelToCodeMap[parentLabel]) { out.push(labelToCodeMap[parentLabel]); return; }
+    }
+    // exact match full string
+    const full = String(entry).toLowerCase();
+    if (labelToCodeMap[full]) { out.push(labelToCodeMap[full]); return; }
+    // fallback : keep original token (so nothing lost)
+    out.push(entry);
+  });
+  return out;
+}
+
+/* escape pour onclick inline */
+function escapeForOnClick(s) { return String(s).replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+
+/* ---------------- articles (exemples) ---------------- */
+const articles = [
+      {
+    id: 25,
+    annee: 2025,
+    titre: "Turtle",
+    type: ["Picture"],
+    images: [{ url: "data/images/WhatsApp Image 2025-12-02 à 00.20.24_5fd98981.webp", alt: "" }],
+    note: "Turtle spotted on the NTUA campus in Zográfou",
+    coment:"It is also possible to observe turtles in the heart of Athens, particularly near the Acropolis.",
+    rangement: ["A.7.1.1", "T.4"],
+    localisation: { position: "Athens", municipalite: "Zográfou" }
+  },
+  {
+    id: 24,
+    annee: 2015,
+    titre: "Walking and Biking",
+    type: ["Article"],
+    link: "https://www.athenssocialatlas.gr/en/article/walking-and-biking/",
+    rangement: ["A.3", "P.4.3", "T.4"],
+    localisation: { position: "Athens" }
+  },
+
+  {
+    id: 1,
+    annee: 2025,
+    titre: "St. Catherine's Church",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0691.webp", alt: "" }],
+    note: "The Church of St. Catherine in Athens (Greek: Ναός Αγίας Αικατερίνης / Naós Agías Ekaterínis) is a Byzantine-style religious building located in the Pláka district of Athens. Its construction is roughly dated to the first half of the 11th century. The church was dedicated to Saint Catherine of Alexandria when it was affiliated with the Monastery of St. Catherine in Sinai in 1767.",
+    rangement: ["A.1.1.1", "A.1.2", "C.1.2", "A.8.1", "T.2"],
+    related: [3],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
+  },
+    {
+    id: 2,
+    annee: 2025,
+    titre: "Koulouri stands",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",    
+    rangement: ["A.6", "A.2.1", "A.8.4", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 3,
+    annee: 2025,
+    titre: "Panagía Kapnikaréa Church",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0661.webp", alt: "" }],
+    note: "The Church of Panagía Kapnikaréa (in Modern Greek: Εκκλησία της Παναγίας Καπνικαρέας), often simply called Kapnikaréa (Καπνικαρέα), is a Byzantine church dating from the third quarter of the 11th century, located on Ermou Street, in the very heart of Athens’ historic center.",
+    rangement: ["A.1.1.1", "A.1.2", "C.1.2", "A.8.1", "T.2"],
+    related: [1],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 4,
+    annee: 2025,
+    titre: "Cat",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0675.webp", alt: "" }],
+    note: "Cats are an integral part of the urban landscape in Athens; residents leave food for them on street corners.",
+    coment: "Cat seen near the Roman Agora.",
+    rangement: ["A.7.1.2", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 5,
+    annee: 2025,
+    titre: "Roman Agora",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0676.webp", alt: "" }],
+    note: "The Roman Agora of Athens was an ancient public square, serving both as a marketplace and as a gathering place. There were two distinct agoras in Athens: the Classical Agora, founded in the 6th century BC, and the Roman Agora, created under Roman rule, a little farther to the east.",
+    rangement: ["C.1.1.1", "A.1.2", "T.1.4"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
+  },
+        {
+    id: 6,
+    annee: 2025,
+    titre: "Arch of Hadrian",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0700.webp", alt: "" }],
+    note: "L'Arc d'Hadrien (en grec : Αψίδα του Αδριανού, Apsida tou Adrianou), plus communément appelé la Porte d'Hadrien (Πύλη του Αδριανού, Pyli tou Adrianou), est un monumental portail inspiré des arcs de triomphe romains.",
+    rangement: ["C.1.1.3", "A.1.2", "A.8.1", "T.1.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 7,
+    annee: 2025,
+    titre: "Le jour des 13 heures",
+    type: ["Video"],
+    note: "Athènes, 1ᵉʳ octobre 2025. La Grèce vit au ralenti : syndicats et travailleurs observent une grève générale contre la réforme autorisant des journées de travail de treize heures.\nCe film suit une journée de rassemblements et de voix qui résonnent place Syntagma.",
+    link: "https://sous-les-titres.fr/films/le%20jour%20des%2013%20heures/le%20jour%20des%2013%20heures",
+    rangement: ["T.4", "P.3.1", "P.5.2"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 8,
+    annee: 2025,
+    titre: "Graffiti anarchiste",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0642.webp", alt: "Graffiti anarchiste" }],
+    note: "Graffiti anarchiste",
+    coment: "Il est fréquent de retrouver ce graffiti sur le mobilier urbain ou à même les murs, dans bien des cas; lorsqu'ils sont effacés, ils sont reproduits les jours suivants.",
+    rangement: ["A.4.2", "P.5.1", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 9,
+    annee: 2025,
+    titre: "Graffiti récurrent",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0709.webp", alt: "Graffiti anarchiste" }],
+    note: "Il est fréquent de retrouver ce graffiti un peu partout à Athènes, à voir s'il a une signification particulière",
+    coment: "L'inscription \"Man Spreading\" n'est pas présente sur les autres graffitis rencontrés.",
+    rangement: ["A.4.2", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+      {
+    id: 10,
+    annee: 2025,
+    titre: "Nerantzies",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0628.webp", alt: "" }],
+    note: "This is a species of orange tree that is used in urban settings and is for decorative purposes only\nS'intègre dans le plan de plantation lancée par le maire d'athènes pour lutter contre les ilots de chaleur",
+    rangement: ["A.7.2", "P.4.1", "P.1.3.1", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 11,
+    annee: 2024,
+    titre: "NOUS N'AVONS PAS PEUR DES RUINES",
+    type: ["Video"],
+    note: "Que se passe-t-il en Grèce ? Voici un film qui offre un autre regard que celui proposé par les médias dominants. Un regard depuis l'intérieur du mouvement social à Athènes, en Crète et jusqu'à Paros. Un voyage en musique au sein de collectifs grecs en lutte pour une société plus juste et plus solidaire.",
+    link: "https://www.youtube.com/watch?v=W1IcUvKz-dE",
+    rangement: ["T.4", "P.5.1", "P.5.2", "P.4.3", "P.1.1"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
+  },
+  {
+    id: 12,
+    annee: 2025,
+    titre: "Bicycle parking",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0737.webp", alt: "" }],
+    note: "Locations allowing bicycle parking.",
+    coment: "This facility may seem surprising, given the low use of bicycles in Athens.",
+    rangement: ["A.2.1", "A.3.1", "P.4.3", "T.4"],
+    related: [24],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+    {
+    id: 13,
+    annee: 2025,
+    titre: "Bouche à incendie",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0717.webp", alt: "" }],
+    note: "",
+    rangement: ["A.2.1", "A.8.4", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+
+   {
+    id: 14,
+    annee: 2025,
+    titre: "Dromeas (the runner) by Kostas",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0739.webp", alt: "" }],
+    note: "Photo of Dromeas (the runner) by Kostas Varotsos from Evangelismos.",
+    rangement: ["A.4.1.1", "A.8.6", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Kolonaki" }
+  },
+  {
+    id: 15,
+    annee: 2025,
+    titre: "Yellow Taxis",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0614.webp", alt: "Yellow Taxi at Syntagma" }],
+    note: "Taxi jaunes",
+    rangement: ["A.3.2", "T.4"],
+    localisation: { position: "Athens" }
+  },
+    {
+    id: 16,
+    annee: 2025,
+    titre: "Scooters et motos",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0740.webp", alt: "" }],
+    note: "Types de véhicules fréquemment utilisés par les Grecs",
+    rangement: ["A.3.2", "T.4"],
+    localisation: { position: "Athens" }
+  },
+    {
+    id: 17,
+    annee: 2025,
+    titre: "Trottinettes électriques",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0730.webp", alt: "Trottinettes électriques" }],
+    note: "Trottinettes électriques",
+    rangement: ["A.3.1", "T.4"],
+    localisation: { position: "Athens" }
+  },
+  {
+    id: 18,
+    annee: 2025,
+    titre: "Fin de l’ère des taxophones: à Athènes, les cabines téléphoniques abandonnées sont massivement supprimées",
+    type: ["Article"],
+    link: "https://fr.rua.gr/2025/08/19/fin-de-lere-des-taxophones-a-athenes-les-cabines-telephoniques-abandonnees-sont-massivement-supprimees/",
+    rangement: ["A.2.1", "P.2.2", "T.4"],
+    related: [20],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 19,
+    annee: 2025,
+    titre: "Carte collaborative des arbres à Athènes",
+    type: ["Map"],
+    link: "https://urbanivore.fr/contribute",
+    rangement: ["A.7.2", "T.4"],
+    localisation: { position: "Athens" }
+  },
+  {
+    id: 20,
+    annee: 2025,
+    titre: "Cabine téléphonique abandonnée",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0639.webp", alt: "" }],
+    note: "Ancinnes cabines téléphoniques, peu à peu démentelées.",
+    related: [18],
+    rangement: ["A.2.1", "P.2.2", "A.8.4", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+   {
+    id: 21,
+    annee: 2025,
+    titre: "Mailboxe",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0637.webp", alt: "Mailboxe" }],
+    note: "The mailboxes of Athens ...",
+   rangement: ["A.2.1", "A.8.4", "T.4"],
+    localisation: { position: "Athens" }
+  },
+  {
+    id: 22,
+    annee: 2022,
+    titre: "A Exarchia, quartier contestataire d’Athènes, un métro de la discorde",
+    type: ["Article"],
+    link: "https://www.lemonde.fr/economie/article/2022/10/04/grece-a-exarchia-le-metro-de-la-discorde_6144332_3234.html",
+   rangement: ["A.3.3.3", "P.1.1", "P.4.3", "P.4.2", "P.5.2", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
+  },
+  {
+    id: 23,
+    annee: 2016,
+    titre: "Plans d'Athènes pour une ville plus verte et plus fraîche",
+    type: ["Article"],
+    link: "https://www.c40.org/fr/case-studies/athens-plans-for-a-greener-and-cooler-city/",
+   rangement: ["A.7.3", "P.4.1", "T.4"],
+    localisation: { position: "Athens" }
+  },
+];
+
+/* --------- extraction de tags (compatible codes ou anciennes chaînes) --------- */
+function getArticleTags(article) {
+  if (!article || !Array.isArray(article.rangement) || article.rangement.length === 0) return [];
+  const set = new Set();
+  article.rangement.forEach(item => {
+    if (isCode(item)) {
+      const chain = codeToLabelChain(item);
+      chain.forEach(c => set.add(String(c).toLowerCase()));
+    } else {
+      // ancienne logique: "Mobilier urbain, Fonctionnel"
+      const chain = String(item).split(',').map(s=>s.trim()).filter(Boolean);
+      chain.forEach(c => set.add(String(c).toLowerCase()));
+    }
+  });
+  return Array.from(set);
+}
+
+/* ---------- filtrage / counts / rendu ---------- */
+let activeTags = ["All"];
+let activeFormats = ["All"];
+let searchQuery = "";
+let locPosition = "";
+let locMunicipalite = "";
+let locQuartier = "";
+let currentLayerPath = []; // maintenant tableau de codes (ex ["1"] ou ["1","13"])
+
+function getBaseForTagCounts() {
+  let filtered = [...articles];
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(q));
+  }
+  if (!activeFormats.includes("All") && activeFormats.length > 0) {
+    filtered = filtered.filter(a => a.type && a.type.some(t => activeFormats.includes(t)));
+  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
+    filtered = [];
+  }
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+  return filtered;
+}
+
+function countArticlesForLeaves(leaves) {
+  if (!leaves || leaves.length === 0) return 0;
+  const base = getBaseForTagCounts();
+  return base.filter(a => {
+    const at = getArticleTags(a);
+    return at && at.some(t => leaves.includes(String(t).toLowerCase()));
+  }).length;
+}
+
+function applyFilters() {
+  renderQuickFilters();
+  renderFormatFilters();
+  let result = [...articles];
+  if (searchQuery.trim() !== "") {
+    result = result.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(searchQuery));
+  }
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    result = result.filter(a => {
+      const atags = getArticleTags(a);
+      return atags && atags.some(tag => activeTags.includes(tag));
+    });
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    result = []; // aucun tag sélectionné → rien n'affiche
+  }
+  if (!activeFormats.includes("All") && activeFormats.length > 0) {
+    result = result.filter(a => a.type && a.type.some(type => activeFormats.includes(type)));
+  } else if (!activeFormats.includes("All") && activeFormats.length === 0) {
+    result = [];
+  }
+  if (locPosition) result = result.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) result = result.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) result = result.filter(a => a.localisation?.quartier === locQuartier);
+  renderArticles(result);
+}
+
+/* format filters */
+function getAllFormats(articles) {
+  const set = new Set();
+  articles.forEach(a => a.type.forEach(f => set.add(f)));
+  return [...set];
+}
+function getFilteredForCounts() {
+  let filtered = [...articles];
+  if (searchQuery && searchQuery.trim() !== "") {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(a => (a.titre + " " + (a.note||"") + " " + getArticleTags(a).join(" ")).toLowerCase().includes(q));
+  }
+  if (!activeTags.includes("All") && activeTags.length > 0) {
+    filtered = filtered.filter(a => {
+      const at = getArticleTags(a);
+      return at && at.some(tag => activeTags.includes(tag));
+    });
+  } else if (!activeTags.includes("All") && activeTags.length === 0) {
+    filtered = [];
+  }
+  if (locPosition) filtered = filtered.filter(a => a.localisation?.position === locPosition);
+  if (locMunicipalite) filtered = filtered.filter(a => a.localisation?.municipalite === locMunicipalite);
+  if (locQuartier) filtered = filtered.filter(a => a.localisation?.quartier === locQuartier);
+  return filtered;
+}
+function filterFormat(format) {
+  const buttons = document.querySelectorAll("#formatFilters button");
+  if (format === "All") {
+    activeFormats = ["All"];
+  } else {
+    activeFormats = activeFormats.filter(f => f !== "All");
+    if (activeFormats.includes(format)) activeFormats = activeFormats.filter(f => f !== format);
+    else activeFormats.push(format);
+  }
+  buttons.forEach(b => { const fmt = b.dataset.format; b.classList.toggle("active", activeFormats.includes(fmt)); });
+  applyFilters();
+}
+function renderFormatFilters() {
+  const container = document.getElementById("formatFilters");
+  const formats = ["All", ...getAllFormats(articles)];
+  const filteredForCounts = getFilteredForCounts();
+  const counts = {};
+  counts["All"] = filteredForCounts.length;
+  formats.slice(1).forEach(f => counts[f] = filteredForCounts.filter(a => a.type && a.type.includes(f)).length);
+  container.innerHTML = formats.map(f => {
+    const n = counts[f] || 0;
+    return `<button data-format="${f}" onclick="filterFormat('${f}')">${f} (${n})</button>`;
+  }).join("");
+  container.querySelectorAll("button").forEach(b => {
+    const fmt = b.dataset.format; b.classList.toggle("active", activeFormats.includes(fmt));
+  });
+}
+/* ---------- helpers pour construire fil d'arianne cliquable ---------- */
+function buildBreadcrumbForRangement(rawEntry) {
+  if (!rawEntry) return "";
+  const original = String(rawEntry).trim();
+
+  // essayer de résoudre un code/label connu
+  let possibleCode = normalizeInputCode(original); // peut retourner dotted (A.1.2...) même si absent de codeMap
+  const byLabel = findCodeByLabel(original); // peut trouver code à partir d'un label
+
+  // si on a trouvé un code exact via label, on l'utilise
+  if (byLabel) possibleCode = byLabel;
+
+  // si on n'a pas de code valide dans codeMap -> fallback tag simple (non hiérarchique)
+  if (!codeMap[possibleCode]) {
+    // bouton simple qui toggle la recherche par label
+    return `<span class="tag-pill"><a href="#" class="tag-link" onclick="filterTag('${escapeForOnClick(original)}');return false;">${original}</a></span>`;
+  }
+
+  // on a un code présent dans codeMap -> construire la chaîne de crumb
+  const parts = String(possibleCode).split('.');
+  // axis label (ex: "A" -> afficher le libellé si disponible)
+  const axisLabel = codeMap[parts[0]] ? codeMap[parts[0]] : parts[0];
+
+  const crumbs = [];
+  // Commencer à 2 pour ne pas afficher la lettre seule (A)
+  for (let i = 2; i <= parts.length; i++) {
+    const key = parts.slice(0, i).join('.');
+    const label = codeMap[key] || key;
+    // clic = entrer dans la couche correspondante (entièrement compatible avec enterLayer)
+    const onclick = `enterLayer('${escapeForOnClick(key)}')`;
+    crumbs.push(`<a href="#" class="tag-link" onclick="${onclick};return false;">${label}</a>`);
+  }
+
+  return `<nav class="tag-line breadcrumb" role="navigation" aria-label="Fil d'arianne">
+            <span class="axis">${axisLabel}</span>
+            <span class="tag-hierarchy">${crumbs.join('<span class="sep">›</span>')}</span>
+          </nav>`;
+}
+
+function buildTagHtmlFromRangement(rangementArray) {
+  if (!Array.isArray(rangementArray) || rangementArray.length === 0) return `<span class="meta-small" style="color:var(--ink-mute)">—</span>`;
+  // pour chaque entrée de rangement, on produit soit un fil hiérarchique soit une pill (fallback)
+  return rangementArray.map(r => buildBreadcrumbForRangement(r)).join("");
+}
+/* ---------- utility to find article data by id (first match) ---------- */
+function findArticleById(id) {
+  const nid = Number(id);
+  for (let i = 0; i < articles.length; i++) {
+    if (Number(articles[i].id) === nid) return { article: articles[i], index: i };
+  }
+  return null;
+}
+
+/* ---------- find the rendered details element for an article id ---------- */
+function findArticleElementById(id) {
+  // select by data attribute created during render
+  return document.querySelector(`#list .item[data-article-id="${id}"]`);
+}
+
+/* ---------- create related links HTML for a given article ---------- */
+function renderRelatedLinksHtml(article) {
+  if (!article || !Array.isArray(article.related) || article.related.length === 0) return '';
+  const links = article.related.map(relId => {
+    const found = findArticleById(relId);
+    if (found) {
+      // use safe inner text later via dataset + event listeners
+      return `<a href="#" class="related-link" data-related="${relId}">${found.article.titre} (${found.article.type})</a>`;
+    } else {
+      return `<span style="opacity:0.6">Missing article</span>`;
+    }
+  });
+  return `<div class="related-links"><strong>Voir aussi :</strong><br>${links.join(' · ')}</div>`;
+}
+
+/* ---------- wire click handlers for related links after render ---------- */
+function wireRelatedLinks() {
+  document.querySelectorAll('.related-link').forEach(a => {
+    // avoid binding twice
+    if (a._wired) return;
+    a.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      const rid = this.dataset.related;
+      openArticleById(rid);
+    });
+    a._wired = true;
+  });
+}
+
+/* ---------- improved renderArticles (adds data-article-id and related links) ---------- */
+function renderArticles(data = articles) {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  data.forEach((article, idx) => {
+    // ensure we have a stable id string (coerce to number/string)
+    const aid = (article.id !== undefined) ? String(article.id) : `idx-${idx}`;
+
+    let imagesHTML = "";
+    if (article.images && article.images.length) {
+      imagesHTML = article.images.map(img => `
+        <figure>
+          <img class="thumb" src="${img.url}" alt="${img.alt}">
+          <figcaption>${img.alt}</figcaption>
+        </figure>
+      `).join("");
+    }
+
+    // --- construction du HTML pour les tags (fils d'arianne) ---
+    const tagsHtml = buildTagHtmlFromRangement(article.rangement);
+
+    // related links html (empty if none)
+    const relatedHtml = renderRelatedLinksHtml(article);
+
+    const html = `
+      <details class="item" data-article-id="${aid}" id="article-${aid}">
+        <summary>
+          <span>+ ${article.annee} — ${article.titre}</span>
+          <span style="font-size:12px;color:var(--muted)">${article.type ? article.type.join(", ") : ""}</span>
+        </summary>
+
+        <div class="details-body">
+          ${imagesHTML}
+          <div class="info">
+            <div>
+              ${ article.note ? `<p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>` : "" }
+              ${ article.link ? `<p><strong>Link:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
+
+              ${ article.coment ? `<p class="comment"><strong>Coment:</strong> ${article.coment}</p>` : "" }
+
+              ${ article.sources?.length ? `<p><strong>Sources :</strong></p>
+                 <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
+
+              <div class="meta-tags">
+                ${tagsHtml}
+              </div>
+
+              ${relatedHtml}
+            </div>
+
+            ${ article.localisation ? `
+              <div class="meta-small">
+                <strong>Localisation :</strong><br>
+                ${[ article.localisation.position, article.localisation.municipalite, article.localisation.quartier ].filter(Boolean).join(", ")}
+              </div>
+            ` : "" }
+          </div>
+        </div>
+      </details>
+    `;
+    list.insertAdjacentHTML("beforeend", html);
+  });
+
+  // attach handlers for related links
+  wireRelatedLinks();
+}
+/* ---------- Build HTML string for a single article (used for temporary render) ---------- */
+function buildArticleHTML(article, aid, isTemporary = false) {
+  const imagesHTML = (article.images && article.images.length) ?
+    article.images.map(img => `
+      <figure>
+        <img class="thumb" src="${img.url}" alt="${img.alt}">
+        <figcaption>${img.alt}</figcaption>
+      </figure>
+    `).join("") : "";
+
+  const tagsHtml = buildTagHtmlFromRangement(article.rangement);
+  const relatedHtml = renderRelatedLinksHtml(article);
+
+  // If temporary, use a special id to avoid collisions
+  const elId = isTemporary ? `article-temp-${aid}` : `article-${aid}`;
+  const tempAttr = isTemporary ? `data-temporary="true"` : "";
+
+  return `
+    <details class="item" data-article-id="${aid}" id="${elId}" ${tempAttr}>
+      <summary>
+        <span>+ ${article.annee || ''} — ${article.titre || ''}</span>
+        <span style="font-size:12px;color:var(--muted)">${article.type ? article.type.join(", ") : ""}</span>
+      </summary>
+
+      <div class="details-body">
+        ${imagesHTML}
+        <div class="info">
+          <div>
+            ${ article.note ? `<p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>` : "" }
+            ${ article.link ? `<p><strong>Link:</strong> <a href="${article.link}" target="_blank">${article.link}</a></p>` : "" }
+            ${ article.coment ? `<p class="comment"><strong>Coment:</strong> ${article.coment}</p>` : "" }
+            ${ article.sources?.length ? `<p><strong>Sources :</strong></p>
+               <ul>${article.sources.map(src => src.url ? `<li><a href="${src.url}" target="_blank">${src.title}</a></li>` : `<li>${src.title}</li>`).join("")}</ul>` : "" }
+            <div class="meta-tags">${tagsHtml}</div>
+            ${relatedHtml}
+          </div>
+
+          ${ article.localisation ? `
+            <div class="meta-small">
+              <strong>Localisation :</strong><br>
+              ${[ article.localisation.position, article.localisation.municipalite, article.localisation.quartier ].filter(Boolean).join(", ")}
+            </div>
+          ` : "" }
+        </div>
+      </div>
+    </details>
+  `;
+}
+
+/* ---------- Enhanced openArticleById: inserts temporary article if target is filtered out ---------- */
+function openArticleById(id) {
+  const aid = String(id);
+  let el = findArticleElementById(aid);
+
+  if (el) {
+    // target is rendered -> normal behavior
+    el.setAttribute('open', '');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('highlight');
+    setTimeout(() => el.classList.remove('highlight'), 2200);
+
+    // warn on duplicates (optional)
+    const duplicates = document.querySelectorAll(`#list .item[data-article-id="${aid}"]`);
+    if (duplicates.length > 1) {
+      console.warn(`Multiple rendered elements (${duplicates.length}) share the same article id=${aid}.`);
+    }
+    return;
+  }
+
+  // target not rendered: try to find in data source
+  const found = findArticleById(aid);
+  if (!found) {
+    console.warn(`Article with id ${aid} not found in data source.`);
+    return;
+  }
+
+  // build temporary HTML, insert at top of list (without changing filters)
+  const html = buildArticleHTML(found.article, aid, true);
+  const list = document.getElementById('list');
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  const tempEl = container.firstElementChild;
+
+  // insert at the top so user sees it immediately (but you may change position)
+  if (list.firstChild) list.insertBefore(tempEl, list.firstChild);
+  else list.appendChild(tempEl);
+
+  // wire related links in the newly inserted temp element
+  wireRelatedLinks();
+
+  // open, scroll and highlight
+  tempEl.setAttribute('open', '');
+  tempEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  tempEl.classList.add('highlight');
+  setTimeout(() => tempEl.classList.remove('highlight'), 2200);
+
+  // remove temporary element when user closes it (toggle event)
+  function onTempToggle() {
+    // when details is closed, remove it from DOM
+    if (!tempEl.open) {
+      tempEl.removeEventListener('toggle', onTempToggle);
+      // small delay to avoid abrupt jump
+      setTimeout(() => {
+        if (tempEl.parentElement) tempEl.parentElement.removeChild(tempEl);
+      }, 100);
+    }
+  }
+  tempEl.addEventListener('toggle', onTempToggle);
+
+  // also provide a small "close and remove" UX: if user clicks a related link that opens another temporary,
+  // the previous temp will be removed when closed. No filter state is mutated.
+}
+
+/* ---------- Optional alternative helper: forceOpenArticleIgnoringFilters(id)
+   If instead you prefer to temporarily clear filters and re-render so article is part of the list,
+   uncomment and use this function (it will change the visible list momentarily).
+*/
+/*
+function forceOpenArticleIgnoringFilters(id) {
+  // backup current filter state
+  const prevActiveTags = [...activeTags];
+  const prevActiveFormats = [...activeFormats];
+  const prevSearch = searchQuery;
+  const prevLocPos = locPosition; const prevLocMun = locMunicipalite; const prevLocQua = locQuartier;
+
+  // reset filters
+  activeTags = ["All"];
+  activeFormats = ["All"];
+  searchQuery = "";
+  locPosition = ""; locMunicipalite = ""; locQuartier = "";
+  renderFormatFilters();
+  renderQuickFilters();
+  renderLocationFilters();
+  applyFilters();
+
+  // then open the article (it should be rendered now)
+  setTimeout(() => {
+    openArticleById(id);
+    // restore previous filters after a short delay so user sees the article but filters come back
+    setTimeout(() => {
+      activeTags = prevActiveTags;
+      activeFormats = prevActiveFormats;
+      searchQuery = prevSearch;
+      locPosition = prevLocPos; locMunicipalite = prevLocMun; locQuartier = prevLocQua;
+      renderFormatFilters();
+      renderQuickFilters();
+      renderLocationFilters();
+      applyFilters();
+    }, 800);
+  }, 40);
+}
+*/
+
+
+
+
+
+
+/* ---------- Quick Filters (drilldown) ---------- */
+function enterLayer(code) {
+  // code attendu : string code (ex "1" ou "13")
+  if (!codeMap[code]) return;
+  currentLayerPath.push(code);
+  const leaves = getLeavesUnderPath(currentLayerPath);
+  if (leaves.length) activeTags = [...leaves];
+  else activeTags = activeTags.filter(t => t !== "All");
+  applyFilters();
+  renderQuickFilters();
+}
+function goUpLayer() {
+  currentLayerPath.pop();
+  if (currentLayerPath.length === 0) activeTags = ["All"];
+  else {
+    activeTags = getLeavesUnderPath(currentLayerPath);
+    if (activeTags.length === 0) activeTags = ["All"];
+  }
+  applyFilters();
+  renderQuickFilters();
+}
+function resetLayer() {
+  currentLayerPath = [];
+  activeTags = ["All"];
+  applyFilters();
+  renderQuickFilters();
+}
+function toggleLeafTag(leaf) {
+  const tag = String(leaf).toLowerCase();
+  activeTags = activeTags.filter(t => t !== "All");
+  if (activeTags.includes(tag)) activeTags = activeTags.filter(t => t !== tag);
+  else activeTags.push(tag);
+  applyFilters();
+  renderQuickFilters();
+}
+
+/* build root codes array */
+const rootCodes = childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : [];
+function renderQuickFilters() {
+  const container = document.getElementById("quickFilters");
+  if (!container) return;
+  const baseForCounts = getBaseForTagCounts();
+  const allCount = baseForCounts.length;
+
+  // 1) barre d'axes (toujours visible)
+  let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button onclick="resetAxis()">All</button>`;
+  Object.values(axes).forEach(ax => {
+    const activeClass = (currentAxis === ax.key) ? "active" : "";
+    html += `<button onclick="enterAxis('${ax.key}')" class="${activeClass}" data-axis="${ax.key}">${ax.label}</button>`;
+  });
+  //html += `<button onclick="resetAxis()">All</button>`; // Inutile si pas de mode OR...
+  html += `</div>`;
+
+  // 2) bouton All (compteur global)
+  html += `<div style="width:100%;height:6px"></div>`;
+  //html += `<button data-tag="All" onclick="resetLayer()">All (${allCount})</button>`;
+
+  // 3) afficher racines utiles (NE PAS afficher les lettres d'axe seules)
+  // si on est dans un chemin (currentLayerPath non vide) : afficher enfants du noeud courant
+  if (currentLayerPath.length === 0) {
+    // Si un axe est sélectionné, n'afficher que les racines de cet axe ;
+    // sinon afficher toutes les racines SAUF les codes qui sont une lettre d'axe (A,T,...)
+    const rootsToShow = currentAxis ? (axes[currentAxis].roots || []) : (childrenMap["ROOT"] ? childrenMap["ROOT"].slice() : []);
+    rootsToShow.forEach(rootCode => {
+      // sauter les codes top-level qui sont des lettres simples (A, T, C, P...)
+      if (rootCode.length === 1) return;
+      const leaves = getLeavesUnderPath([rootCode]);
+      const n = countArticlesForLeaves(leaves);
+      if (n === 0) return;
+      html += `<button data-parent="${escapeForOnClick(rootCode)}" onclick="enterLayer('${escapeForOnClick(rootCode)}')">${labelForCode(rootCode)} (${n})</button>`;
+    });
+  } else {
+    // chemin courant + bouton retour vers le parent
+    const chainLabels = currentLayerPath.map(c=>labelForCode(c)).join(' -> ');
+    html += `<button onclick="goUpLayer()" class="active">${chainLabels}</button>`;
+    const nodeCode = currentLayerPath[currentLayerPath.length - 1];
+    const children = childrenMap[nodeCode] || [];
+    children.forEach(childCode => {
+      const leaves = getLeavesUnderPath([...currentLayerPath, childCode]);
+      const n = countArticlesForLeaves(leaves);
+      if (n === 0) return;
+      html += `<button data-child="${escapeForOnClick(childCode)}" onclick="enterLayer('${escapeForOnClick(childCode)}')">${labelForCode(childCode)} (${n})</button>`;
+    });
+  }
+
+  container.innerHTML = html;
+
+  // marque visuellement la racine active si on est au premier niveau
+  if (currentLayerPath.length === 1) {
+    container.querySelectorAll("button[data-parent]").forEach(b => {
+      b.classList.toggle("active", b.getAttribute("data-parent") === currentLayerPath[0]);
+    });
+  }
+
+  // marque les boutons d'axe
+  container.querySelectorAll("button[data-axis]").forEach(b => {
+    const ax = b.getAttribute("data-axis");
+    b.classList.toggle("active", currentAxis === ax);
+  });
+}
+
+
+
+/* --------- filterTag: gère labels et codes ---------- */
+function findCodeByLabel(label) {
+  if (!label) return null;
+  const lower = String(label).toLowerCase();
+  // 1) quick map
+  if (labelToCodeMap[lower]) return labelToCodeMap[lower];
+  // 2) exact match among codeMap values
+  for (const [c,l] of Object.entries(codeMap)) {
+    if (String(l).toLowerCase() === lower) return c;
+  }
+  return null;
+}
+
+function filterTag(tag) {
+  const lower = String(tag).toLowerCase();
+
+  // 1) si tag correspond exactement à un label connu -> bascule code / entrée dans layer
+  const code = findCodeByLabel(tag);
+  if (code) {
+    // si code est une racine ou un parent: entrer dans sa couche
+    enterLayer(code);
+    return;
+  }
+
+  // 2) si tag apparaît dans les feuilles connues -> toggle
+  const allLeaves = getLeavesUnderPath([]);
+  if (allLeaves.includes(lower)) {
+    toggleLeafTag(lower);
+    return;
+  }
+
+  // 3) fallback : toggle simple (conserver ancien comportement)
+  toggleLeafTag(lower);
+}
+
+/* ---------- location helpers ---------- */
+function getAllLocations(articles) {
+  const positions = new Set();
+  const municipalites = new Set();
+  const quartiers = new Set();
+  articles.forEach(a => {
+    if (a.localisation) {
+      if (a.localisation.position) positions.add(a.localisation.position);
+      if (a.localisation.municipalite) municipalites.add(a.localisation.municipalite);
+      if (a.localisation.quartier) quartiers.add(a.localisation.quartier);
+    }
+  });
+  return { positions: [...positions], municipalites: [...municipalites], quartiers: [...quartiers] };
+}
+function renderLocationFilters() {
+  const posSel = document.getElementById("positionFilter");
+  const munSel = document.getElementById("municipaliteFilter");
+  const quaSel = document.getElementById("quartierFilter");
+  posSel.innerHTML = `<option value="">Position</option>`;
+  munSel.innerHTML = `<option value="">Municipality</option>`;
+  quaSel.innerHTML = `<option value="">Neighborhood</option>`;
+  const allPositions = new Set();
+  articles.forEach(a => { if (a.localisation?.position) allPositions.add(a.localisation.position); });
+  allPositions.forEach(p => posSel.insertAdjacentHTML("beforeend", `<option value="${p}">${p}</option>`));
+  let filteredByPosition = articles;
+  if (locPosition) filteredByPosition = filteredByPosition.filter(a => a.localisation?.position === locPosition);
+  const municipalites = new Set();
+  filteredByPosition.forEach(a => { if (a.localisation?.municipalite) municipalites.add(a.localisation.municipalite); });
+  municipalites.forEach(m => munSel.insertAdjacentHTML("beforeend", `<option value="${m}">${m}</option>`));
+  let filteredByPosAndMun = filteredByPosition;
+  if (locMunicipalite) filteredByPosAndMun = filteredByPosAndMun.filter(a => a.localisation?.municipalite === locMunicipalite);
+  const quartiers = new Set();
+  filteredByPosAndMun.forEach(a => { if (a.localisation?.quartier) quartiers.add(a.localisation.quartier); });
+  quartiers.forEach(q => quaSel.insertAdjacentHTML("beforeend", `<option value="${q}">${q}</option>`));
+  if (!allPositions.has(locPosition)) locPosition = "";
+  if (!municipalites.has(locMunicipalite)) locMunicipalite = "";
+  if (!quartiers.has(locQuartier)) locQuartier = "";
+  posSel.value = locPosition;
+  munSel.value = locMunicipalite;
+  quaSel.value = locQuartier;
+}
+function filterLocation() {
+  locPosition = document.getElementById("positionFilter").value;
+  locMunicipalite = document.getElementById("municipaliteFilter").value;
+  locQuartier = document.getElementById("quartierFilter").value;
+  renderLocationFilters();
+  applyFilters();
+}
+function filterList() {
+  const v = document.getElementById('searchbox').value || "";
+  searchQuery = v.trim().toLowerCase();
+  applyFilters();
+}
+function resetFilters() {
+    currentAxis = null;
+
+  locPosition = ""; locMunicipalite = ""; locQuartier = "";
+  ['positionFilter','municipaliteFilter','quartierFilter'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+  const sb = document.getElementById('searchbox'); if (sb) sb.value = "";
+  searchQuery = "";
+  activeFormats = ["All"];
+  document.querySelectorAll('#list details[open]').forEach(d => d.removeAttribute('open'));
+  resetLayer();
+  renderFormatFilters();
+  renderLocationFilters();
+  applyFilters();
+}
+
+/* sort */
+function sortBy(mode){
+  const list = document.getElementById('list');
+  const items = Array.from(list.querySelectorAll('.item'));
+  if(mode === 'date'){
+    items.sort((a,b)=>{
+      const da = (a.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+      const db = (b.innerText.match(/\b(19|20)\d{2}\b/)||['9999'])[0];
+      return parseInt(db) - parseInt(da);
+    });
+  }
+  items.forEach(i=>list.appendChild(i));
+}
+
+/* initial render */
+renderQuickFilters();
+renderFormatFilters();
+renderLocationFilters();
+renderArticles();
+
+  </script>
 </body>
 </html>
+
+
