@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>La Ville Sonore — À propos</title>
+  <meta name="keywords" content="Gaël Maignan, à propos, La ville sonore, cartographie sonore, contact, collections, urbanisme sensible">
+  <meta name="description" content="La Ville Sonore est une exploration sensible de nos espaces urbains à travers leurs bruits, leurs voix et leurs silences. Chaque enregistrement capte un fragment de quotidien : le cri d’une sirène, le rire d’un enfant, le souffle d’une fontaine, le rythme des pas dans une gare. Ensemble, ces sons dessinent une cartographie vivante de la ville, faite non pas de rues et de bâtiments, mais d’ambiances et d’émotions.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="logo.png" type="image/x-icon">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="js/collections.js"></script>
+  <script src="js/script.js"></script>
+  <script type="module" src="https://gael-mgn.github.io/js/log.js"></script>
+
+  <link rel="stylesheet" href="style/main.css">
+</head>
+
+<body> 
+
+<div class="site-header">
+  <a href="index.html" class="logo">
+    <div class="brand-mark no-mobile">
+      <img src="logo.png" alt="Logo La Ville Sonore" />
+    </div>
+    <div style="font-weight:700;" class="title">La Ville Sonore</div>
+  </a>
+
+  <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="map.html">Carte sonore</a>
+    <a href="contribute.html">Contribuer</a>
+    <a href="sonotheque.html">Sonothèque</a>
+    <a href="#">À propos</a>
+  </nav>
+</div>
+
+<main>
+  <!-- Hero -->
+  <section class="relative">
+      <div class="h-[70vh] md:h-[66vh] bg-cover bg-center hero-overlay" style="background-image: url('img/sonotheque.webp');">
+        <div class="absolute inset-0 hero-overlay"></div>
+        <div class="relative z-10 max-w-6xl mx-auto px-6 h-full flex items-center">
+          <div class="max-w-2xl">
+            <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">À propos de La Ville Sonore</h1>
+            <p class="mt-4 text-lg md:text-l subtitle">La Ville Sonore cartographie nos villes à travers leurs sons, transformant bruits, silences et voix en une fresque vivante d’émotions urbaines. Chaque murmure compose une symphonie intime du quotidien...</p>
+          </div>
+        </div>
+      </div>
+  </section>
+
+     <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12 justify">
+      <h2 class="text-3xl font-bold mb-4">À propos</h2>
+      <p>La Ville Sonore est une exploration sensible de nos espaces urbains à travers leurs bruits, leurs voix et leurs silences. Chaque enregistrement capte un fragment de quotidien : le cri d’une sirène, le rire d’un enfant, le souffle d’une fontaine, le rythme des pas dans une gare. Ensemble, ces sons dessinent une cartographie vivante de la ville, faite non pas de rues et de bâtiments, mais d’ambiances et d’émotions.</p>
+
+      <h2 class="text-3xl font-bold mb-4 mt-6">Contact</h2>
+      <p>Vous souhaitez en savoir plus sur La Ville Sonore, proposer un partenariat, ou partager une idée de collaboration ?<br>Vous aimeriez contribuer en envoyant vos propres enregistrements sonores ou poser une question sur le projet ?</p>
+      <p>Écrivez-nous à : <a href="mailto:contact@ville-sonore.fr">contact@ville-sonore.fr</a></p>
+
+      <h2 class="text-3xl font-bold mb-4 mt-6">Note d’intention</h2>
+      <p>La ville parle, mais rarement on l’écoute. Ses voix se mêlent, se superposent, se perdent parfois dans le bruit de fond de notre quotidien. Pourtant, ces sons façonnent notre rapport intime aux lieux : le cri du marchand de fruits sur la place du marché, la rumeur douce d’un square un dimanche après-midi, la résonance métallique d’une passerelle de gare. Ils composent une partition vivante, à la fois banale et unique, qui disparaît souvent sans laisser de trace.</p>
+      <p><em>La Ville Sonore</em> est une tentative de capter cette mémoire fugace.
+Il s’agit d’arpenter la ville, micro en main, pour en extraire des fragments d’ambiances, de voix, de rythmes, et les conserver comme on conserverait une archive précieuse. Chaque enregistrement est réalisé in situ, dans un lieu précis, à un moment donné, afin de saisir son identité sonore.</p>
+<p>Au-delà du simple enregistrement, le projet se veut une cartographie sensible : les sons seront géolocalisés sur une carte interactive, accompagnés, si nécessaire, de courts textes explicatifs, traces d’histoires, indices sociaux, regards sur l’urbanisme et les usages. L’objectif est de permettre au public de voyager par l’oreille, de retrouver ou de découvrir la ville autrement.</p><p>Il ne s’agit pas seulement de documenter, mais aussi de révéler. L’oreille devient outil d’observation, la ville devient matière musicale, et chaque son, même le plus anodin, devient porteur de sens.
+Ce projet souhaite rappeler que l’identité d’une ville ne se lit pas uniquement dans ses pierres ou ses plans, mais aussi dans ses murmures.</p>
+    </section>
+
+
+      <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between">
+  <!-- Texte à gauche -->
+  <div class="w-full md:w-2/3 pr-0 md:pr-8 mb-8 md:mb-0">
+    <h2 class="text-3xl font-bold mb-2">Gaël Maignan</h2>
+    <p class="text-2xl font-bold mb-4">Artiste / Urbaniste</p>
+    <p>
+      Je suis <a href="http://gael-maignan.fr/" target="_blank" class="lien">Gaël Maignan</a>, artiste et urbaniste. Mon travail explore les manières dont la ville se vit et se perçoit au-delà de ses formes visibles : à travers ses sons, ses usages et ses mémoires sensibles.</p>
+      <p>
+Formé à l’École des Ingénieurs de la Ville de Paris, j’accorde une attention particulière aux espaces du quotidien, aux ambiances, aux détails souvent invisibles mais qui façonnent profondément notre rapport à l’environnement urbain.</p>
+<p class="mb-4">
+Avec <em>La Ville Sonore</em>, je cherche à révéler la dimension poétique et vivante des villes en les écoutant autrement : comme des partitions mouvantes, faites de voix, de rythmes et de silences. Mon approche se situe à la croisée de l’art sonore et de la recherche urbaine, afin d’inviter chacun à prêter l’oreille et à redécouvrir la richesse sensorielle de nos espaces partagés.
+    </p>
+  </div>
+
+  <div class="w-full md:w-1/3">
+    <img src="img/gael-maignan.jpg" alt="Toulouse" class="w-full h-full object-cover rounded-lg">
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-[#1e1f23] text-gray-300 mt-16">
+  <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10">
+    
+    <!-- Colonne 1 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">La Ville Sonore</h3>
+      <p class="text-sm leading-relaxed">
+        La ville parle, mais rarement on l’écoute...
+      </p>
+    </div>
+
+    <!-- Colonne 2 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">Navigation</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="index.html" class="hover:text-white">Accueil</a></li>
+        <li><a href="map.html" class="hover:text-white">Carte sonore</a></li>
+        <li><a href="contribute.html" class="hover:text-white">Contribuer</a></li>
+        <li><a href="sonotheque.html" class="hover:text-white">Sonothèque</a></li>
+        <li><a href="#" class="hover:text-white">À propos</a></li>
+      </ul>
+    </div>
+
+    <!-- Colonne 3 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">Contact</h3>
+      <ul class="space-y-2 text-sm">
+        <li>Email : <a href="mailto:contact@gael-maignan.fr" class="hover:text-white">contact@gael-maignan.fr</a></li>
+        <li>Site : <a href="https://gael-maignan.fr" class="hover:text-white" target="_blank">https://gael-maignan.fr</a></li>
+        <li>LinkedIn : <a href="https://www.linkedin.com/in/gael-maignan/" class="hover:text-white" target="_blank">Gaël Maignan</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-gray-700 text-center text-sm py-4">
+    © <span id="currentYear"></span> La Ville Sonore — Tous droits réservés
+  </div>
+
+  <script>
+    // Obtenir l'année actuelle
+    const currentYear = new Date().getFullYear();
+    
+    // Afficher l'année dans le span avec l'id "currentYear"
+    document.getElementById("currentYear").textContent = currentYear;
+  </script>
+</footer>
+
+</body>
+</html>

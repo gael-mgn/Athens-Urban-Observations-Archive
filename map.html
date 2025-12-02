@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>La Ville Sonore — Cartographie Sonore</title>
+  <meta name="keywords" content="La ville sonore, cartographie sonore, carte, sonore, Gaël Maignan, urbanisme">
+  <meta name="description" content="La ville parle, mais rarement on l’écoute. Ses voix se mêlent, se superposent, se perdent parfois dans le bruit de fond de notre quotidien, elles composent une partition vivante, à la fois banale et unique, qui disparaît souvent sans laisser de trace.">
+
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <link rel="icon" href="logo.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind via CDN pour prototype rapide -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="js/collections.js"></script>
+  <script src="js/script.js"></script>
+  <script type="module" src="https://gael-mgn.github.io/js/log.js"></script>
+
+  <link rel="stylesheet" href="style/main.css">
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tag = urlParams.get('tag') ?? "all";
+  </script>
+
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 18px;
+    }
+
+    #map {
+      width: 100%;
+      height: var(--map-height-desktop);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    aside {
+      background: rgba(30, 31, 35, 0.9);
+      padding: 14px;
+      border-radius: 12px;
+      height: var(--map-height-desktop);
+      overflow: auto;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+
+    .search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .search input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #1e1f23;
+      color: var(--rf-contrast);
+    }
+
+    .search button {
+      background: var(--rf-red);
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .search button:hover {
+      background: #ff333f;
+    }
+
+    .clip {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+    }
+
+    .clip-card {
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid #333;
+      background: linear-gradient(180deg, #1b1c1f, #141517);
+      color: var(--rf-contrast);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .clip-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .clip-title {
+      font-weight: 700;
+      color: white;
+    }
+
+    .clip-meta {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .clip-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: none;
+
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      text-decoration: underline;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #555;
+      color: var(--rf-contrast);
+      transition: border 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--rf-red);
+      color: var(--rf-red);
+    }
+
+    .mobile-player {
+      display: none;
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(30,31,35,0.95);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(6px);
+    }
+
+    .mobile-player .info {
+      flex: 1;
+      color: var(--rf-contrast);
+    }
+
+
+      /* Personnalisation de la barre de défilement */
+  aside::-webkit-scrollbar {
+    width: 12px; /* Largeur de la barre de défilement verticale */
+    height: 12px; /* Hauteur de la barre de défilement horizontale */
+  }
+
+  aside::-webkit-scrollbar-thumb {
+    background-color: #555; /* Couleur de la partie glissante (le "thumb") */
+    border-radius: 6px; /* Bord arrondi pour le "thumb" */
+  }
+
+  aside::-webkit-scrollbar-track {
+    background-color: #333; /* Couleur de la piste de défilement */
+    border-radius: 6px; /* Bord arrondi pour la piste */
+  }
+
+  /* Optionnel : quand la souris est sur la barre de défilement */
+  aside::-webkit-scrollbar-thumb:hover {
+    background-color: #888; /* Change la couleur du "thumb" au survol */
+  }
+
+    @media (max-width:900px) {
+      .layout { grid-template-columns: 1fr; }
+      /*aside { height: auto; order: 2; }*/
+      #map { height: var(--map-height-mobile); }
+      .mobile-player { display: flex; }
+    }
+
+    .leaflet-control-container .leaflet-top.leaflet-left {
+      top: 0px;
+    }
+  </style>
+
+</head>
+
+<body> 
+
+<div class="site-header">
+  <a href="index.html" class="logo">
+    <div class="brand-mark no-mobile">
+      <img src="logo.png" alt="Logo La Ville Sonore" />
+    </div>
+    <div style="font-weight:700;" class="title">La Ville Sonore</div>
+  </a>
+
+  <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="#">Carte sonore</a>
+    <a href="contribute.html">Contribuer</a>
+    <a href="sonotheque.html">Sonothèque</a>
+    <a href="about.html">À propos</a>
+  </nav>
+</div>
+
+<main>
+  <!-- Hero -->
+  <section class="relative">
+  <div class="h-[70vh] md:h-[66vh] bg-cover bg-center hero-overlay" id="hero-bg">
+    <div class="absolute inset-0 hero-overlay"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 h-full flex items-center">
+      <div class="max-w-2xl">
+        <h1 id="collection-title" class="text-3xl md:text-5xl font-extrabold leading-tight"></h1>
+        <p id="collection-description" class="mt-4 text-lg md:text-l subtitle"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Trouver la collection correspondante dans le tableau
+  const collection = collections.find(c => c.id === tag);
+
+  // Mettre à jour les éléments HTML avec le titre et la description de la collection
+  if (collection) {
+    document.getElementById('collection-title').innerText = collection.titre;
+    document.getElementById('collection-description').innerText = collection.description;
+    document.getElementById('hero-bg').style.backgroundImage = `url('${collection.image}')`;
+  } else {
+    console.log("Collection non trouvée pour l'ID:", tag);
+  }
+</script>
+
+<section id="nouveautes" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="view-elements">
+      <h2 class="text-3xl font-bold mb-4">Dernières entrées</h2>
+      <a href="sonotheque.html" class="view-all">Voir toutes les entrées</a>
+    </div>
+    <!-- Skeleton loading (Dark Theme) -->
+    <div id="latestClips-skeletons" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
+        <div class="h-20 bg-gray-700 rounded"></div>
+        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+      </div>
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
+        <div class="h-20 bg-gray-700 rounded"></div>
+        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+      </div>
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4">
+        <div class="h-20 bg-gray-700 rounded"></div>
+        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+        <div class="h-4 bg-gray-700 rounded w-1/2"></div>
+      </div>
+    </div>
+
+    <!-- Vrai contenu (caché au départ) -->
+    <div id="latestClips" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+  </section>
+
+
+<style>
+  .view-elements {
+  display: flex; /* Utilisation de flexbox pour l'alignement */
+  justify-content: space-between; /* Espace entre le titre et le lien */
+  align-items: center; /* Centrer verticalement le titre et le lien */
+}
+
+/* --- Media Query pour mobile --- */
+@media (max-width: 480px) {
+  .view-elements {
+    flex-direction: column; /* Empiler les éléments en colonne sur mobile */
+    align-items: flex-start; /* Aligner les éléments à gauche */
+  }
+
+  .view-all {
+    margin-bottom: 2rem;
+  }
+}
+
+.view-all {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #C2BCD7;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+</style>
+
+
+  <section class="max-w-6xl mx-auto px-6 py-8" style="display: none;">
+    <div class="view-elements">
+  <h2 class="text-3xl font-bold mb-4">Collections thématiques</h2>
+  <a href="collections.html" class="view-all">Voir toutes les collections</a>
+</div>
+
+    <!-- Skeleton loading (Dark Theme) -->
+    <div id="tag-section-skeletons" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
+      </div>
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
+      </div>
+      <div class="animate-pulse flex flex-col space-y-4 bg-gray-800 rounded-lg p-4 tag">
+      </div>
+    </div>
+
+    <!-- Vrai contenu (caché au départ) -->
+    <div class="tag-section" id="tag-section"></div>
+  </section>
+
+
+
+  <section id="nouveautes" class="max-w-6xl mx-auto px-6 py-6">
+
+    <h2 class="text-3xl font-bold mb-4">Carte sonore</h2>
+
+    <p class="lead justify">Cliquez sur les marqueurs pour écouter une captation. Utilisez la liste pour naviguer et contrôler la lecture.</p>
+
+    <div class="layout">
+      <div>
+        <div id="map" aria-label="Carte des captations sonores"></div>
+      </div>
+
+      <aside>
+        <div class="search">
+          <input id="search" placeholder="Rechercher un titre ou une date..." />
+        </div>
+        <div class="clip" id="clipsList" aria-live="polite">
+          <!-- items injected here -->
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Mobile sticky player -->
+  <div class="mobile-player" id="mobilePlayer" style="display:none; z-index: 1000;">
+    <div style="width:48px;height:48px;border-radius:6px;background:#f2f2f2;display:grid;place-items:center">♫</div>
+    <div class="info">
+      <div id="mp-title" style="font-weight:700">Titre</div>
+      <div id="mp-meta" style="font-size:0.85rem;color:#666">00:00 — 0.0s</div>
+    </div>
+    <div>
+      <button id="mp-play" class="btn">Play</button>
+    </div>
+  </section>
+
+  <!-- Audio element used globally -->
+  <audio id="globalAudio" crossorigin="anonymous"></audio>
+
+
+  <script src="js/map.js"></script>
+  <script>map(tag);</script>
+
+
+</main>
+
+<footer class="bg-[#1e1f23] text-gray-300 mt-16">
+  <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-10">
+    
+    <!-- Colonne 1 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">La Ville Sonore</h3>
+      <p class="text-sm leading-relaxed">
+        La ville parle, mais rarement on l’écoute...
+      </p>
+    </div>
+
+    <!-- Colonne 2 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">Navigation</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="index.html" class="hover:text-white">Accueil</a></li>
+        <li><a href="#" class="hover:text-white">Carte sonore</a></li>
+        <li><a href="contribute.html" class="hover:text-white">Contribuer</a></li>
+        <li><a href="sonotheque.html" class="hover:text-white">Sonothèque</a></li>
+        <li><a href="about.html" class="hover:text-white">À propos</a></li>
+      </ul>
+    </div>
+
+    <!-- Colonne 3 -->
+    <div>
+      <h3 class="text-lg font-bold mb-4 text-white">Contact</h3>
+      <ul class="space-y-2 text-sm">
+        <li>Email : <a href="mailto:contact@gael-maignan.fr" class="hover:text-white">contact@gael-maignan.fr</a></li>
+        <li>Site : <a href="https://gael-maignan.fr" class="hover:text-white" target="_blank">https://gael-maignan.fr</a></li>
+        <li>LinkedIn : <a href="https://www.linkedin.com/in/gael-maignan/" class="hover:text-white" target="_blank">Gaël Maignan</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-gray-700 text-center text-sm py-4">
+    © <span id="currentYear"></span> La Ville Sonore — Tous droits réservés
+  </div>
+
+  <script>
+    // Obtenir l'année actuelle
+    const currentYear = new Date().getFullYear();
+    
+    // Afficher l'année dans le span avec l'id "currentYear"
+    document.getElementById("currentYear").textContent = currentYear;
+  </script>
+</footer>
+
+</body>
+</html>
