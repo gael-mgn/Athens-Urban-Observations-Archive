@@ -617,18 +617,20 @@ const articles = [
     rangement: ["P.1.3.3", "T.4"],
     localisation: { position: "Athens" }
   },
-{
-    id: 34,
+
+  {
+    id: 26,
     annee: 2025,
-    titre: "Extreme Rainfall Analysis Including Seasonality in Athens, Greece",
-    type: ["Article"],
-    link: "https://www.mdpi.com/3042-5743/32/1/1",
-    coment: "Extreme rainfall analysis is essential for accurate flood hazard assessment. Traditional approaches, such as the use of annual maxima, may overlook seasonal variations and lead to underestimated precipitation extremes, compromising effective flood risk management strategies. This study applies a point process model to uninterrupted daily rainfall records (1901–2023) from the National Observatory of Athens meteorological station in Thiseion. This method analyzes both the frequency of exceedances above a given threshold and the values of those exceedances, incorporating seasonality into the modeling process. Preliminary analysis using annual maxima revealed no statistically significant trend but indicated clear monthly seasonality in precipitation extremes. By incorporating seasonality, the point process method yielded estimates up to 22% higher than those obtained using traditional annual maxima approaches, such as those employed in Greece’s National Flood Risk Management Plans. These findings highlight the need for a revision of current methodologies, which could significantly impact flood risk assessments and management strategies.",
-    rangement: ["P.1.3.3", "T.4"],
-    localisation: { position: "Athens" }
+    titre: "Polykatoikía",
+    type: ["Picture"],
+    images: [{ url: "data/images/f665761f-36bc-444a-b3f3-f18912ddfb8d.png", alt: "" }],
+    note: "Polykatoikía",
+    coment:"A polykatoikía (πολυκατοικία in Greek) is a collective residential building, typical of Greek cities, especially Athens.\nPolykatoikíes played a major role in the densification of Greek cities, particularly in the post-war period, thanks to the antiparochí system: landowners would give their plot to a developer, who in return would give them one or several apartments in the new building.",
+    rangement: ["C.1.5.1", "C.2.5", "C.4.3", "T.4"],
+    localisation: { position: "Athens"}
   },
 
-   {
+  {
     id: 27,
     annee: 2025,
     titre: "Map of urban brownfields",
@@ -642,6 +644,33 @@ const articles = [
     allowFullScreen: true
   }
   },
+
+    {
+    id: 2,
+    annee: 2025,
+    titre: "Koulouri stands",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
+    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",    
+    rangement: ["A.6", "A.2.1", "A.8.4", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+
+
+
+
+{
+    id: 34,
+    annee: 2025,
+    titre: "Extreme Rainfall Analysis Including Seasonality in Athens, Greece",
+    type: ["Article"],
+    link: "https://www.mdpi.com/3042-5743/32/1/1",
+    coment: "Extreme rainfall analysis is essential for accurate flood hazard assessment. Traditional approaches, such as the use of annual maxima, may overlook seasonal variations and lead to underestimated precipitation extremes, compromising effective flood risk management strategies. This study applies a point process model to uninterrupted daily rainfall records (1901–2023) from the National Observatory of Athens meteorological station in Thiseion. This method analyzes both the frequency of exceedances above a given threshold and the values of those exceedances, incorporating seasonality into the modeling process. Preliminary analysis using annual maxima revealed no statistically significant trend but indicated clear monthly seasonality in precipitation extremes. By incorporating seasonality, the point process method yielded estimates up to 22% higher than those obtained using traditional annual maxima approaches, such as those employed in Greece’s National Flood Risk Management Plans. These findings highlight the need for a revision of current methodologies, which could significantly impact flood risk assessments and management strategies.",
+    rangement: ["P.1.3.3", "T.4"],
+    localisation: { position: "Athens" }
+  },
+
+   
 
 {
     id: 32,
@@ -679,55 +708,10 @@ const articles = [
   },
 
 
-{
-    id: 30,
-    annee: 2025,
-    titre: "Blue bin",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0723.webp", alt: "" }],
-    note: "The blue bins that collect all recyclable waste such as glass, iron, aluminum, paper, and of course plastics.",
-    rangement: ["A.2.1", "T.4"],
-    related: [28, 29],
-    localisation: { position: "Athens"}
-  },
-
-  {
-    id: 29,
-    annee: 2025,
-    titre: "Green bin",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0728.webp", alt: "" }],
-    note: "The bottle-green bins are intended for non-recyclable waste, such as food scraps and fabrics.",
-    rangement: ["A.2.1", "T.4"],
-    related: [28, 30],
-    localisation: { position: "Athens"}
-  },
-
-  {
-    id: 28,
-    annee: 2025,
-    titre: "Clothing collection bins",
-    type: ["Picture"],
-    images: [{ url: "data/images/DSCF0726.webp", alt: "" }],
-    note: "Clothing collection bins",
-    rangement: ["A.2.1", "T.4"],
-    related: [29, 30],
-    localisation: { position: "Athens"}
-  },
 
 
 
-        {
-    id: 26,
-    annee: 2025,
-    titre: "Polykatoikía",
-    type: ["Picture"],
-    images: [{ url: "data/images/f665761f-36bc-444a-b3f3-f18912ddfb8d.png", alt: "" }],
-    note: "Polykatoikía",
-    coment:"A polykatoikía (πολυκατοικία in Greek) is a collective residential building, typical of Greek cities, especially Athens.\nPolykatoikíes played a major role in the densification of Greek cities, particularly in the post-war period, thanks to the antiparochí system: landowners would give their plot to a developer, who in return would give them one or several apartments in the new building.",
-    rangement: ["C.1.5.1", "C.2.5", "C.4.3", "T.4"],
-    localisation: { position: "Athens"}
-  },
+        
 
 
 
@@ -799,16 +783,44 @@ const articles = [
     related: [3],
     localisation: { position: "Athens", municipalite: "Athina", quartier: "Pláka" }
   },
-    {
-    id: 2,
+
+
+  {
+    id: 30,
     annee: 2025,
-    titre: "Koulouri stands",
+    titre: "Blue bin",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0629.webp", alt: "Koulouri stand at Panepistimio" }],
-    note: "Koulouri stands (or “koulouri”) are an iconic feature of the urban landscape of Athens. These small structures mainly sell koulouris, ring-shaped breads coated with sesame seeds, a typical Greek snack highly appreciated by both locals and tourists. The stands are ubiquitous in downtown Athens, especially in pedestrian areas such as Syntagma Square, Monastiraki, and the Agora.",    
-    rangement: ["A.6", "A.2.1", "A.8.4", "T.4"],
-    localisation: { position: "Athens", municipalite: "Athina" }
+    images: [{ url: "data/images/DSCF0723.webp", alt: "" }],
+    note: "The blue bins that collect all recyclable waste such as glass, iron, aluminum, paper, and of course plastics.",
+    rangement: ["A.2.1", "T.4"],
+    related: [28, 29],
+    localisation: { position: "Athens"}
   },
+
+  {
+    id: 29,
+    annee: 2025,
+    titre: "Green bin",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0728.webp", alt: "" }],
+    note: "The bottle-green bins are intended for non-recyclable waste, such as food scraps and fabrics.",
+    rangement: ["A.2.1", "T.4"],
+    related: [28, 30],
+    localisation: { position: "Athens"}
+  },
+
+  {
+    id: 28,
+    annee: 2025,
+    titre: "Clothing collection bins",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0726.webp", alt: "" }],
+    note: "Clothing collection bins",
+    rangement: ["A.2.1", "T.4"],
+    related: [29, 30],
+    localisation: { position: "Athens"}
+  },
+
     {
     id: 3,
     annee: 2025,
