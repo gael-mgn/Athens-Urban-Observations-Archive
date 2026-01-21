@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Map</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors *">
+
+  <style>
+    html, body { height: 100%; margin: 0; font-family: "Helvetica Neue", Arial, sans-serif; }
+    #map { height: 100%; width: 100%; }
+    .popup-content h3 { margin: 0 0 6px; font-size: 16px; }
+    .popup-content p { margin: 0 0 6px; font-size: 14px; color: #444; }
+    .popup-content img { width: 100%; max-width: 220px; border-radius: 4px; margin-top: 6px; display:block; }
+    .debug {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      background: rgba(255,255,255,0.95);
+      padding: 6px 8px;
+      font-size: 12px;
+      z-index: 9999;
+      border-radius: 4px;
+      max-width: 45%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .debug small { color:#666; display:block; margin-top:4px; }
+  </style>
+</head>
+<body>
+
+<div id="map" role="application" aria-label="Carte des points d'intérêt"></div>
+<div id="debug" class="debug" aria-hidden="true" style="display:none"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/*
+  map.html — charge localement un fichier .js défissant `window.pointsInteret`
+  Usage local (file://) :
+    file:///.../map.html?data=points-paris.js
+
+  Sécurité : les schémas `javascript:` et `data:` sont refusés.
+*/
+
+/* ---------- Helpers UI / debug ---------- */
+const dbgEl = document.getElementById('debug');
+function dbg(msg, show = false) {
+  dbgEl.textContent = String(msg || '');
+  dbgEl.style.display = show ? 'block' : 'none';
+}
+
+/* ---------- Initialisation Leaflet ---------- */
+const map = L.map('map', { zoomControl: true }).setView([48.8566, 2.3522], 13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  maxZoom: 19
+}).addTo(map);
+
+let markerLayer = L.layerGroup().addTo(map);
+
+/* ---------- utilitaires ---------- */
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function isLatLngLike(o) {
+  if (!o || typeof o !== 'object') return false;
+  const lat = Number(o.lat), lng = Number(o.lng);
+  return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
+/* ---------- Fit / recadrage global (utilisé après rendu) ---------- */
+/**
+ * fitMapToMarkers :
+ * - récupère les marqueurs actuels dans markerLayer
+ * - appelle invalidateSize() puis fitBounds (avec délai court) pour fiabilité dans iframe
+ * - gère cas 0/1/multiples marqueurs
+ */
+function fitMapToMarkers() {
+  const layers = markerLayer.getLayers ? markerLayer.getLayers() : [];
+  if (!layers || layers.length === 0) {
+    // nothing to fit
+    return;
+  }
+
+  // ensure Leaflet knows current container size
+  map.invalidateSize();
+
+  if (layers.length === 1) {
+    try {
+      map.setView(layers[0].getLatLng(), 16);
+    } catch (e) {
+      console.warn('setView failed', e);
+    }
+    return;
+  }
+
+  const group = L.featureGroup(layers);
+  if (!group.getBounds || !group.getBounds().isValid()) return;
+
+  // small delay to allow reflow (improves behavior when embedded in iframe)
+  setTimeout(() => {
+    try {
+      map.fitBounds(group.getBounds(), { padding: [40, 40] });
+    } catch (e) {
+      console.warn('fitBounds failed', e);
+    }
+  }, 120);
+}
+
+/* ---------- render markers et appel du fit ---------- */
+function renderMarkers(points) {
+  markerLayer.clearLayers();
+  if (!Array.isArray(points) || points.length === 0) {
+    dbg('Aucun point à afficher — vérifie le fichier data.', true);
+    return;
+  }
+
+  const created = [];
+  points.forEach(pt => {
+    if (!isLatLngLike(pt)) return;
+    const popup = `
+      <div class="popup-content">
+        <h3>${escapeHtml(pt.titre || '')}</h3>
+        <p>${escapeHtml(pt.description || '')}</p>
+        ${pt.image ? `<img src="${escapeHtml(pt.image)}" alt="${escapeHtml(pt.titre||'')}" loading="lazy">` : ''}
+      </div>
+    `;
+    const m = L.marker([Number(pt.lat), Number(pt.lng)]).bindPopup(popup);
+    markerLayer.addLayer(m);
+    created.push(m);
+  });
+
+  // après rendu, forcer le fit
+  // on appelle fitMapToMarkers() de manière robuste :
+  if (map._loaded) {
+    fitMapToMarkers();
+  } else {
+    map.whenReady(fitMapToMarkers);
+  }
+}
+
+/* ---------- loader local : charger un .js qui définit window.pointsInteret ---------- */
+function getDataParam() {
+  try {
+    return new URL(location.href).searchParams.get('data');
+  } catch (e) {
+    return null;
+  }
+}
+
+function sanitizeDataParam(s) {
+  if (!s) return null;
+  const str = String(s).trim();
+  if (/^\s*javascript:/i.test(str) || /^\s*data:/i.test(str)) return null;
+  return str;
+}
+
+function loadJsGlobal(url, globalName = 'pointsInteret', timeoutMs = 6000) {
+  return new Promise((resolve, reject) => {
+    try {
+      const script = document.createElement('script');
+      script.src = url;
+      script.async = true;
+      script.onload = () => {
+        const val = window[globalName];
+        resolve(val || null);
+      };
+      script.onerror = (e) => reject(new Error('Erreur chargement script: ' + url));
+      document.head.appendChild(script);
+
+      setTimeout(() => resolve(window[globalName] || null), timeoutMs);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+/* ---------- auto-detection visibilité (IntersectionObserver) ----------
+   Si l'iframe était masquée au chargement, on détecte son apparition et on recalcule.
+   (utile quand parent gère onglets / accordéons)
+*/
+(function setupVisibilityObserver() {
+  try {
+    const io = new IntersectionObserver(entries => {
+      for (const ent of entries) {
+        if (ent.isIntersecting) {
+          // when the map iframe becomes visible within its parent viewport
+          setTimeout(() => {
+            map.invalidateSize();
+            fitMapToMarkers();
+          }, 80);
+          // optional: stop observing after first visible
+          // io.disconnect();
+        }
+      }
+    }, { threshold: 0.01 });
+    io.observe(document.getElementById('map'));
+  } catch (e) {
+    // ignore if IntersectionObserver not supported
+  }
+})();
+
+/* ---------- main : tenter de charger depuis param `data` sinon fallback ---------- */
+(async function main() {
+  const dataParamRaw = getDataParam();
+  const dataParam = sanitizeDataParam(dataParamRaw);
+
+  if (!dataParam) {
+    dbg('Aucun paramètre data fourni → utilisation des points embarqués (fallback).', false);
+    renderMarkers([
+      { titre: "Fallback — Centre", description: "Aucun fichier data fourni", lat: 48.8566, lng: 2.3522 }
+    ]);
+    return;
+  }
+
+  dbg('Chargement du fichier local : ' + dataParam + ' ...', true);
+
+  try {
+    const url = new URL(dataParam, location.href).toString();
+    const data = await loadJsGlobal(url, 'pointsInteret', 5000);
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      dbg('Le fichier chargé ne contient pas `window.pointsInteret` ou aucun point valide. Fallback utilisé.', true);
+      renderMarkers([
+        { titre: "Fallback — Centre", description: "Données introuvables dans " + dataParam, lat: 48.8566, lng: 2.3522 }
+      ]);
+      return;
+    }
+
+    const pts = data.filter(isLatLngLike);
+    if (!pts.length) {
+      dbg('Aucun point valide dans le fichier. Fallback utilisé.', true);
+      renderMarkers([{ titre: "Fallback — Centre", description: "Aucun point valide", lat: 48.8566, lng: 2.3522 }]);
+      return;
+    }
+
+    dbg('Points chargés : ' + pts.length, false);
+    renderMarkers(pts);
+  } catch (err) {
+    console.error(err);
+    dbg('Erreur chargement : ' + (err.message || err), true);
+    renderMarkers([{ titre: "Fallback — Erreur", description: "Erreur lors du chargement", lat: 48.8566, lng: 2.3522 }]);
+  }
+})();
+
+/* ---------- listeners supplémentaires pour iframe / parent interaction ---------- */
+/* appel initial sur load (au cas où le navigateur charge dimensions tardivement) */
+window.addEventListener('load', () => setTimeout(() => { map.invalidateSize(); fitMapToMarkers(); }, 150));
+
+/* resize -> invalide la taille (le fit sera déclenché par renderMarkers ou explicitement) */
+window.addEventListener('resize', () => map.invalidateSize());
+
+/* message from parent: deux actions utiles :
+   - { type: 'invalidateMap' } -> recalculer taille + fit
+   - { type: 'reloadData', url: '...' } -> recharger un nouveau fichier .js et re-render markers
+*/
+window.addEventListener('message', ev => {
+  try {
+    if (!ev.data) return;
+    if (ev.data.type === 'invalidateMap') {
+      setTimeout(() => { map.invalidateSize(); fitMapToMarkers(); }, 60);
+    }
+    if (ev.data.type === 'reloadData' && ev.data.url) {
+      (async () => {
+        dbg('Reload depuis parent : ' + ev.data.url, true);
+        try {
+          const url = new URL(ev.data.url, location.href).toString();
+          const d = await loadJsGlobal(url, 'pointsInteret', 5000);
+          if (Array.isArray(d) && d.length) {
+            renderMarkers(d.filter(isLatLngLike));
+            // s'assurer qu'on soit bien recadré
+            setTimeout(() => { map.invalidateSize(); fitMapToMarkers(); }, 80);
+          }
+        } catch (e) { console.warn(e); }
+      })();
+    }
+  } catch (e){}
+});
+</script>
+</body>
+</html>

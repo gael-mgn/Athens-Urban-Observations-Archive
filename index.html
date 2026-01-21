@@ -49,6 +49,28 @@ input[type="checkbox"] { accent-color: black; }
 .details-body{ padding:20px; }
 .thumb{ width:100%; object-fit:cover; border:var(--line); }
 
+/* ---------- embedded iframe (responsive) ---------- */
+.iframe-wrap {
+  position: relative;
+  width: 100%;
+  /* ratio 16:9 par défaut */
+  padding-top: 56.25%;
+  margin-top: 12px;
+  border: var(--line);
+  background: #fff;
+  overflow: hidden;
+}
+.iframe-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.iframe-caption { font-size:13px; color:var(--ink-mute); margin-top:6px; }
+
+
 /*.thumb {
   width: 100%;
   max-height: 500px;
@@ -510,8 +532,191 @@ function migrateRangementArray(oldArr) {
 /* escape pour onclick inline */
 function escapeForOnClick(s) { return String(s).replace(/'/g,"\\'").replace(/"/g,'\\"'); }
 
+/* ---------- iframe helpers ---------- */
+/**
+ * Vérifie que l'URL commence par http(s) et échappe les guillemets.
+ * Retourne null si l'URL n'est pas sûre (ou absent).
+ */
+/**
+ * sanitizeIframeUrl étendue :
+ * - autorise http(s)://, file:// et les URLs relatives (ex: "map.html" ou "./map.html" ou "/path/page.html")
+ * - autorise aussi les URLs protocol-relative (//example.com)
+ * - bloque explicitement javascript: et data: (risques d'injection)
+ * - échappe les caractères dangereux pour l'insertion dans un attribut src
+ */
+function sanitizeIframeUrl(raw) {
+  if (!raw) return null;
+  let s = String(raw).trim();
+
+  // Bloquer les protocoles dangereux
+  if (/^\s*javascript:/i.test(s)) return null;
+  if (/^\s*data:/i.test(s)) return null;
+
+  // Autoriser protocol-relative (//example.com)
+  if (/^\/\//.test(s)) {
+    return s.replace(/"/g, '&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Si l'URL a un schéma explicite, autoriser seulement http(s) et file
+  const m = s.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):/);
+  if (m) {
+    const scheme = m[1].toLowerCase();
+    if (scheme === 'http' || scheme === 'https' || scheme === 'file') {
+      return s.replace(/"/g, '&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    // tout autre scheme interdit
+    return null;
+  }
+
+  // Pas de schéma -> URL relative (ex: "map.html", "./map.html", "/foo/bar.html") : on autorise
+  return s.replace(/"/g, '&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+
+/**
+ * Construit le HTML de l'iframe (string) si article.iframe.url existe.
+ * Usage : injecter directement dans les templates HTML existants.
+ */
+function renderIframeHTML(article) {
+  if (!article || !article.iframe || !article.iframe.url) return '';
+  const safe = sanitizeIframeUrl(article.iframe.url);
+  if (!safe) return '';
+  // hauteur optionnelle fournie (en px) : utilisée comme fallback si nécessaire
+  const height = article.iframe.height ? String(article.iframe.height) : null;
+  const caption = article.iframe.caption ? String(article.iframe.caption) : '';
+  // on utilise un container responsive (.iframe-wrap)
+ return `
+  <div class="iframe-wrap" ${
+    height
+      ? `style="padding-top:${(height / (16 / 9))}%"`
+      : 'style="padding-top:56.25%"'
+  }>
+    <iframe
+      src="${safe}"
+      loading="lazy"
+      ${article.iframe.allowFullScreen ? 'allowfullscreen' : ''}
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+  ${caption ? `<div class="iframe-caption">${caption}</div>` : ''}
+`;
+
+}
+
+
 /* ---------------- articles (exemples) ---------------- */
 const articles = [
+
+{
+    id: 35,
+    annee: 2025,
+    titre: "Tentative tree planting 'decades overdue' in sweltering Athens",
+    type: ["Article"],
+    link: "https://www.france24.com/en/live-news/20250422-tentative-tree-planting-decades-overdue-in-sweltering-athens",
+    coment: "Athens (AFP) – On a cloudy spring morning in one of Athens' most densely inhabited districts, thousands of fresh saplings dotting a small hilltop park mark a fledgling effort to tackle crippling heat that critics say is long overdue.",
+    rangement: ["P.1.3.3", "T.4"],
+    localisation: { position: "Athens" }
+  },
+{
+    id: 34,
+    annee: 2025,
+    titre: "Extreme Rainfall Analysis Including Seasonality in Athens, Greece",
+    type: ["Article"],
+    link: "https://www.mdpi.com/3042-5743/32/1/1",
+    coment: "Extreme rainfall analysis is essential for accurate flood hazard assessment. Traditional approaches, such as the use of annual maxima, may overlook seasonal variations and lead to underestimated precipitation extremes, compromising effective flood risk management strategies. This study applies a point process model to uninterrupted daily rainfall records (1901–2023) from the National Observatory of Athens meteorological station in Thiseion. This method analyzes both the frequency of exceedances above a given threshold and the values of those exceedances, incorporating seasonality into the modeling process. Preliminary analysis using annual maxima revealed no statistically significant trend but indicated clear monthly seasonality in precipitation extremes. By incorporating seasonality, the point process method yielded estimates up to 22% higher than those obtained using traditional annual maxima approaches, such as those employed in Greece’s National Flood Risk Management Plans. These findings highlight the need for a revision of current methodologies, which could significantly impact flood risk assessments and management strategies.",
+    rangement: ["P.1.3.3", "T.4"],
+    localisation: { position: "Athens" }
+  },
+
+   {
+    id: 27,
+    annee: 2025,
+    titre: "Map of urban brownfields",
+    type: ["Map"],
+    note: "Map of urban brownfields",
+    rangement: ["A.1.4", "T.4"],
+    localisation: { position: "Athens"},
+    iframe: {
+    url: "data/map.html?data=maps/brownfields.js",
+    caption: "OpenStreetMap",
+    allowFullScreen: true
+  }
+  },
+
+{
+    id: 32,
+    annee: 2025,
+    titre: "Parakeet",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF2144.webp", alt: "" }],
+    note: "Parakeet observed at the National Garden of Athens",
+    rangement: ["A.7.1.1", "T.4"],
+    localisation: { position: "Athens" }
+  },
+
+
+  {
+    id: 33,
+    annee: 2025,
+    titre: "Greek Wuta Pigeon",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0756.webp", alt: "" }],
+    rangement: ["A.7.1.1", "T.4"],
+    localisation: { position: "Athens" }
+  },
+
+
+{
+    id: 31,
+    annee: 2025,
+    titre: "À Athènes, les trottoirs se détériorent et les piétons dégringolent",
+    type: ["Article"],
+    link: "https://www.geo.fr/voyage/a-athenes-les-trottoirs-se-deteriorent-et-les-pietons-degringolent-vetuste-stationnement-illegal-221983",
+    images: [{ url: "data/images/pavements.png", alt: "" }],
+    note: "Dans la capitale grecque, les chutes de piétons se multiplient en raison de la vétusté des trottoirs et du stationnement sauvage des voitures. Des citoyens demandent des mesures drastiques pour rendre l'espace public aux mobilités douces.",
+    rangement: ["A.3.1", "A.3.4", "T.4"],
+    localisation: { position: "Athens"}
+  },
+
+
+{
+    id: 30,
+    annee: 2025,
+    titre: "Blue bin",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0723.webp", alt: "" }],
+    note: "The blue bins that collect all recyclable waste such as glass, iron, aluminum, paper, and of course plastics.",
+    rangement: ["A.2.1", "T.4"],
+    related: [28, 29],
+    localisation: { position: "Athens"}
+  },
+
+  {
+    id: 29,
+    annee: 2025,
+    titre: "Green bin",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0728.webp", alt: "" }],
+    note: "The bottle-green bins are intended for non-recyclable waste, such as food scraps and fabrics.",
+    rangement: ["A.2.1", "T.4"],
+    related: [28, 30],
+    localisation: { position: "Athens"}
+  },
+
+  {
+    id: 28,
+    annee: 2025,
+    titre: "Clothing collection bins",
+    type: ["Picture"],
+    images: [{ url: "data/images/DSCF0726.webp", alt: "" }],
+    note: "Clothing collection bins",
+    rangement: ["A.2.1", "T.4"],
+    related: [29, 30],
+    localisation: { position: "Athens"}
+  },
+
+
+
         {
     id: 26,
     annee: 2025,
@@ -523,6 +728,45 @@ const articles = [
     rangement: ["C.1.5.1", "C.2.5", "C.4.3", "T.4"],
     localisation: { position: "Athens"}
   },
+
+
+
+{
+    id: 38,
+    annee: 2023,
+    titre: "Victoria Square, Athens: migratory movements and social stratifications in the centre of the Greek capital",
+    type: ["Article"],
+    link: "https://www.tandfonline.com/doi/full/10.1080/1070289X.2024.2406659",
+    coment: "Greece, a key European migration crossroads, has witnessed significant societal shifts due to successive waves of incoming and outgoing migrations. By using the concept of ‘migratory stratification’, this paper analyses the reality of a specific urban space, located in Athens, namely Victoria Square. Over the years this square and the surrounding neighbourhood have seen numerous transformations, transits, and settlements and over the years it has become a hub for migrants, their shops, their informal networks, and their interactions. Starting from ethnographic research, in this paper I analyse this particular context, by highlighting the interactions and interweaving triggered in such plural, layered and heterogeneous situations. As it emerges from the analysis, such spaces can be viewed as generative, as a fertile foundation for creating alternative senses of belonging, fostering practices of solidarity, and strengthening diverse networks and relations.",
+    rangement: ["P.4.4", "T.4"],
+     localisation: { position: "Athens", municipalite: "Athina"}
+  },
+
+
+{
+    id: 37,
+    annee: 2019,
+    titre: "Inside Exarcheia: the self-governing community Athens police want rid of",
+    type: ["Article"],
+    link: "https://www.theguardian.com/cities/2019/aug/26/athens-police-poised-to-evict-refugees-from-squatted-housing-projects",
+    coment: "The central Athens neighbourhood of Exarcheia, which has helped house refugees, is in the crosshairs of a government crackdown",
+    rangement: ["P.4.4", "P.1.2", "T.4"],
+     localisation: { position: "Athens", municipalite: "Athina", quartier: "Exárcheia" }
+  },
+
+
+{
+    id: 36,
+    annee: 2016,
+    titre: "Greek leftists turn deserted hotel into refugee homes",
+    type: ["Article"],
+    link: "https://www.aljazeera.com/features/2016/7/3/greek-leftists-turn-deserted-hotel-into-refugee-homes",
+    coment: "Athens, Greece – The roar of children’s laughter erupts as they play tag and chase one another through the corridors, while several adults prepare the tables in the City Plaza hotel’s dining hall in preparation to break the fast for Ramadan, a holy month for Muslims.",
+    rangement: ["P.4.4", "P.1.2", "T.4"],
+     localisation: { position: "Athens", municipalite: "Athina" }
+  },
+
+
       {
     id: 25,
     annee: 2025,
@@ -576,6 +820,17 @@ const articles = [
     related: [1],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
+  {
+    id: 39,
+    annee: 2023,
+    titre: "La Grèce inquiète pour le bien-être de ses chats grecs",
+    type: ["Article"],
+    link: "https://www.geo.fr/animaux/la-grece-inquiete-pour-le-bien-etre-de-ses-chats-grecs-216701",
+    note: "Des rues d’Athènes aux plages des Cyclades, les félins adespota («sans maîtres») sont devenus un symbole du pays. Inquiètes pour leur bien-être, de plus en plus d’associations cherchent à leur trouver un foyer. Faut-il enfermer les chats pour leur propre bien ? Ou les laisser vivre en liberté ?",
+    rangement: ["A.7.1.2", "T.4"],
+    related: [4],
+    localisation: { position: "Athens" }
+  },
     {
     id: 4,
     annee: 2025,
@@ -585,7 +840,19 @@ const articles = [
     note: "Cats are an integral part of the urban landscape in Athens; residents leave food for them on street corners.",
     coment: "Cat seen near the Roman Agora.",
     rangement: ["A.7.1.2", "T.4"],
-    localisation: { position: "Athens", municipalite: "Athina" }
+    related: [39],
+    localisation: { position: "Athens" }
+  },
+  {
+    id: 40,
+    annee: 2025,
+    titre: "Access to Housing and Social Inclusion in a Post-Crisis Era: Contextualizing Recent Trends in the City of Athens",
+    link:"https://www.cogitatiopress.com/socialinclusion/article/viewFile/2778/1669",
+    type: ["Article"],
+    note: "The way housing affordability evolved since WW2 in Greece—and in its capital city in particular—is an example of how the South European welfare system managed, for several decades, to provide socially inclusive housing solutions without developing the services of a sizeable welfare state until global forces and related policies brought it to an end. The increased role of the market in housing provision since the 1980s, the rapid growth of mortgage lending in the 1990s, the neoliberal policy recipes imposed during the crisis of the 2010s and the unleashed demand for housing in the aftermath of the crisis have led to increased housing inequalities and converged the outcome of this South European path with the outcome of undoing socially inclusive housing solutions provided by the welfare state in other contexts. The article follows longstanding and recent developments concerning the housing model in Greece and especially in the city of Athens, focusing on mechanisms that have allowed access to affordable housing for broad parts of the population during different historical periods, and examines the extent to which the current housing model remains inclusive or not. The aim here is to discuss the most important challenges concerning access to decent housing and highlight the need for inclusive housing policies to be introduced into the current social and political agenda.",
+    rangement: ["P.1.1", "T.4"],
+    related: [28, 29],
+    localisation: { position: "Athens"}
   },
   {
     id: 5,
@@ -620,23 +887,33 @@ const articles = [
     {
     id: 8,
     annee: 2025,
-    titre: "Graffiti anarchiste",
+    titre: "Anarchist graffiti",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0642.webp", alt: "Graffiti anarchiste" }],
-    note: "Graffiti anarchiste",
-    coment: "Il est fréquent de retrouver ce graffiti sur le mobilier urbain ou à même les murs, dans bien des cas; lorsqu'ils sont effacés, ils sont reproduits les jours suivants.",
+    note: "Anarchist graffiti",
+    coment: "It is common to find this graffiti on street furniture or directly on walls; in many cases, when it is erased, it reappears in the following days.",
     rangement: ["A.4.2", "P.5.1", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
   {
     id: 9,
     annee: 2025,
-    titre: "Graffiti récurrent",
+    titre: "Recurrent graffiti",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0709.webp", alt: "Graffiti anarchiste" }],
-    note: "Il est fréquent de retrouver ce graffiti un peu partout à Athènes, à voir s'il a une signification particulière",
+    note: "Graffiti is a frequent feature of Athens, Greece, especially in the aftermath of the 2010–2018 financial crisis, and is often seen as an expression of the hardships and frustrations people faced during that period.",
     coment: "L'inscription \"Man Spreading\" n'est pas présente sur les autres graffitis rencontrés.",
     rangement: ["A.4.2", "T.4"],
+    localisation: { position: "Athens", municipalite: "Athina" }
+  },
+  {
+    id: 41,
+    annee: 2030,
+    titre: "Athens Resilience Strategy for 2030: Redefining the city",
+    type: ["Article"],
+    link: "https://www.academia.edu/34861574/Athens_Resilience_Strategy_for_2030_Redefining_the_city",
+    note: "The City of Athens, a venerable yet intricate city of near 700.000 residents, part of a 3.75 million people metropolis, is for several years now facing a serious socio-economic crisis. Through concerted e orts, the city has managed to survive, to adapt and to transform into a more creative and collaborative city. The struggle is by no means over. This last year, calling on the insights and expertise of hundreds of stakeholders, from opinion leaders and academics to women migrants and the homeless, the city drafted its Resilience Strategy. This is a set of practicable actions which rst of all strengthen and scales up what has made our city stronger: formal and informal networks and alliances. Athens Resilience Strategy o ers a set of new integrated ways to prepare and protect our most vulnerable from future shocks and stresses that the city will face. Boosting the city’s resilience means creating new as well as revitalizing existing open and green public spaces. This is vital for our densely built and populated city, threatened by both intense heat (climate change) and earthquakes. The city needs to become more forward thinking and proactive, turning its challenges into resources (vacant buildings, newly arrived refugee and migrant populations, energy and waste). Around such resources it will build capacity and start to develop economies that, together with tourism and the creative sector, will generate the city’s future. Finally the city will strengthen its government, through becoming more transparent and accountable, opening streams of communication, creating a digital agenda and innovation strategy.",
+    rangement: ["A.7.2", "P.4.1", "P.1.3.1", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
   },
       {
@@ -674,7 +951,7 @@ const articles = [
     {
     id: 13,
     annee: 2025,
-    titre: "Bouche à incendie",
+    titre: "Fire hydrant",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0717.webp", alt: "" }],
     note: "",
@@ -705,20 +982,20 @@ const articles = [
     {
     id: 16,
     annee: 2025,
-    titre: "Scooters et motos",
+    titre: "Scooters and motorcycles",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0740.webp", alt: "" }],
-    note: "Types de véhicules fréquemment utilisés par les Grecs",
+    note: "Type of vehicles commonly used by Greeks",
     rangement: ["A.3.2", "T.4"],
     localisation: { position: "Athens" }
   },
     {
     id: 17,
     annee: 2025,
-    titre: "Trottinettes électriques",
+    titre: "Electric scooters",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0730.webp", alt: "Trottinettes électriques" }],
-    note: "Trottinettes électriques",
+    images: [{ url: "data/images/DSCF0730.webp", alt: "Electric scooters" }],
+    note: "Electric scooters",
     rangement: ["A.3.1", "T.4"],
     localisation: { position: "Athens" }
   },
@@ -744,10 +1021,10 @@ const articles = [
   {
     id: 20,
     annee: 2025,
-    titre: "Cabine téléphonique abandonnée",
+    titre: "Old telephone booths",
     type: ["Picture"],
     images: [{ url: "data/images/DSCF0639.webp", alt: "" }],
-    note: "Ancinnes cabines téléphoniques, peu à peu démentelées.",
+    note: "Old telephone booths, gradually being dismantled.",
     related: [18],
     rangement: ["A.2.1", "P.2.2", "A.8.4", "T.4"],
     localisation: { position: "Athens", municipalite: "Athina" }
@@ -755,9 +1032,9 @@ const articles = [
    {
     id: 21,
     annee: 2025,
-    titre: "Mailboxe",
+    titre: "Mailbox",
     type: ["Picture"],
-    images: [{ url: "data/images/DSCF0637.webp", alt: "Mailboxe" }],
+    images: [{ url: "data/images/DSCF0637.webp", alt: "Mailbox" }],
     note: "The mailboxes of Athens ...",
    rangement: ["A.2.1", "A.8.4", "T.4"],
     localisation: { position: "Athens" }
@@ -777,7 +1054,7 @@ const articles = [
     titre: "Plans d'Athènes pour une ville plus verte et plus fraîche",
     type: ["Article"],
     link: "https://www.c40.org/fr/case-studies/athens-plans-for-a-greener-and-cooler-city/",
-   rangement: ["A.7.3", "P.4.1", "T.4"],
+   rangement: ["A.7.2", "P.4.1", "T.4"],
     localisation: { position: "Athens" }
   },
 ];
@@ -1005,9 +1282,9 @@ function renderArticles(data = articles) {
   const list = document.getElementById("list");
   list.innerHTML = "";
   data.forEach((article, idx) => {
-    // ensure we have a stable id string (coerce to number/string)
     const aid = (article.id !== undefined) ? String(article.id) : `idx-${idx}`;
 
+    // generate images
     let imagesHTML = "";
     if (article.images && article.images.length) {
       imagesHTML = article.images.map(img => `
@@ -1018,10 +1295,11 @@ function renderArticles(data = articles) {
       `).join("");
     }
 
-    // --- construction du HTML pour les tags (fils d'arianne) ---
-    const tagsHtml = buildTagHtmlFromRangement(article.rangement);
+    // iframe HTML (if any)
+    const iframeHTML = renderIframeHTML(article);
 
-    // related links html (empty if none)
+    // tags and related
+    const tagsHtml = buildTagHtmlFromRangement(article.rangement);
     const relatedHtml = renderRelatedLinksHtml(article);
 
     const html = `
@@ -1033,6 +1311,7 @@ function renderArticles(data = articles) {
 
         <div class="details-body">
           ${imagesHTML}
+          ${iframeHTML}
           <div class="info">
             <div>
               ${ article.note ? `<p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>` : "" }
@@ -1066,6 +1345,7 @@ function renderArticles(data = articles) {
   // attach handlers for related links
   wireRelatedLinks();
 }
+
 /* ---------- Build HTML string for a single article (used for temporary render) ---------- */
 function buildArticleHTML(article, aid, isTemporary = false) {
   const imagesHTML = (article.images && article.images.length) ?
@@ -1075,6 +1355,9 @@ function buildArticleHTML(article, aid, isTemporary = false) {
         <figcaption>${img.alt}</figcaption>
       </figure>
     `).join("") : "";
+
+  // iframe (si présent)
+  const iframeHTML = renderIframeHTML(article);
 
   const tagsHtml = buildTagHtmlFromRangement(article.rangement);
   const relatedHtml = renderRelatedLinksHtml(article);
@@ -1092,6 +1375,7 @@ function buildArticleHTML(article, aid, isTemporary = false) {
 
       <div class="details-body">
         ${imagesHTML}
+        ${iframeHTML}
         <div class="info">
           <div>
             ${ article.note ? `<p style="white-space: pre-wrap"><strong>Note:</strong><br>${article.note}</p>` : "" }
@@ -1114,6 +1398,7 @@ function buildArticleHTML(article, aid, isTemporary = false) {
     </details>
   `;
 }
+
 
 /* ---------- Enhanced openArticleById: inserts temporary article if target is filtered out ---------- */
 function openArticleById(id) {

@@ -45,6 +45,7 @@ const thesaurus = {
   "A.3.3.1":  { label: "Bus", description: "" },
   "A.3.3.2":  { label: "Tram", description: "" },
   "A.3.3.3":  { label: "Metro", description: "" },
+  "A.3.4":  { label: "Urban routes & sidewalks", description: "Paved paths, streets, sidewalks, pedestrian zones" },
 
   "A.4":   { label: "Art", description: "Forms of artistic expression in public space." },
 
@@ -214,6 +215,18 @@ const thesaurus = {
     label: "Local pollution", 
     description: ""
   },
+  "P.1.3.3": {
+  label: "Pluie extrême / Inondations",
+  description: "Épisodes de fortes pluies provoquant des inondations et affectant l’espace urbain."
+},
+"P.1.3.4": {
+  label: "Canicules / Réchauffement climatique",
+  description: "Épisodes de températures élevées accentués par le changement climatique, avec effets sur la ville et ses habitants."
+},
+"P.1.3.5": {
+  label: "Autres événements climatiques",
+  description: "Tempêtes, vents violents, gelées inhabituelles affectant le tissu urbain et la biodiversité."
+},
 
   "P.2": { 
     label: "Visible physical transformations", 
