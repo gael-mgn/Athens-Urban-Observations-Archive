@@ -46,7 +46,7 @@ input[type="checkbox"] { accent-color: black; }
 .controls button:hover{ background:var(--ink); color:#fff; }
 .list{display:flex;flex-direction:column;gap:22px;}
 .item{ border:var(--line); background:#fafafa; padding:0; }
-.item summary { cursor: pointer; list-style: none; padding: 16px 18px; border-bottom: var(--line); display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; gap: 20px; transition: background-color 0.4s ease, color 0.4s ease; }
+.item summary { cursor: pointer; list-style: none; padding: 16px 18px; border-bottom: var(--line); border-right: var(--line); display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; gap: 20px; transition: background-color 0.4s ease, color 0.4s ease; }
 .item summary:hover { background: black; color: white; }
 .item summary::-webkit-details-marker{display:none;}
 .details-body{ padding:20px; }
@@ -171,6 +171,12 @@ footer{ grid-column:1/-1; border-top:var(--line); padding-top:16px; margin-top:3
 .tag-pill { padding:4px 8px; border:var(--line); background:#fff; font-size:11px; font-weight:700; display:inline-block; margin-right:6px; }
 
 
+h1, h2, h3 {
+  letter-spacing: -0.1rem;
+}
+p {
+  letter-spacing: -0.025rem;
+}
   </style>
 </head>
 <body>
